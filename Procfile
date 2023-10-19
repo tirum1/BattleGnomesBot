@@ -1,2 +1,2 @@
 web: node index.js
-timeout: 120
+stream: node stream.js
