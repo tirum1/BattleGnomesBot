@@ -4,7 +4,8 @@ require('dotenv').config();
 function livestreamToTwitch() {
     console.log("Starting the livestreamToTwitch function...");
 
-    const cmd = `ffmpeg -stream_loop -1 -i ./src/GnomeMP4.mp4 -stream_loop -1 -i ./src/song.wav -c:v copy -c:a aac -shortest -f flv ${process.env.TWITCH_STREAM_URL}`;
+    const cmd = `ffmpeg -stream_loop -1 -i ./src/GnomeMP4.mp4 -an -c:v copy -shortest -f flv ${process.env.TWITCH_STREAM_URL}`;
+
     console.log(`Executing command: ${cmd}`);
 
     const child = exec(cmd);
