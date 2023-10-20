@@ -96,6 +96,6 @@ async function fetchAndWriteValue() {
 
 fetchAndWriteValue();
 
+setInterval(fetchAndWriteValue, 1000);
 
-console.log('Value written to timerValue.txt successfully!');
 
