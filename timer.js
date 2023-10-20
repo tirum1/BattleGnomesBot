@@ -10,7 +10,6 @@ const tokenContractAddress = '0xc4797381163C492159C30c1d42E633EC0b372006';
 const battleContractABI = JSON.parse(fs.readFileSync('./ABI/BattleContract.json', 'utf8')).abi;
 const tokenContractABI = JSON.parse(fs.readFileSync('./ABI/HungerGames.json', 'utf8')).abi;
 const battleContract = new ethers.Contract(battleContractAddress, battleContractABI, provider);
-const tokenContract = new ethers.Contract(tokenContractAddress, tokenContractABI, provider);
 
 async function fetchAndWriteValue() {
     try {
