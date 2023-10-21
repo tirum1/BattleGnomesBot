@@ -64,14 +64,14 @@ setInterval(async () => {
         console.log('Queue counter:', counter);
 
         if (newGame && timerPassed) {
-
+            sendMessageViaAxios(CHANNEL_ID, "HUNGERGAMES INITIATED");
             await triggerFunction('startHungerGames');  
             console.log('HungerGames Started');
             const hungerGamesMessage = `🚀 HungerGames have started!`;
             sendMessageViaAxios(CHANNEL_ID, hungerGamesMessage);
             
         } else if (timerPassed && counter >= 2) {
-
+            sendMessageViaAxios(CHANNEL_ID, "ROUND INITIATED");
             await triggerFunction('lookForOpponent');
             console.log('Round Started!');
             const maxAmountOfWinnerBigNumber = await contract.maxAmountOfWinners();
@@ -223,7 +223,24 @@ const jokes = [
     "Why did the gnome warrior blush? 🌳 He saw the salad dressing for the royal feast.",
     "What's a gnome's favorite spot in the battle arena? 🌲 The mushroom patch, it's the spore of the moment!",
     "Why was the gnome calm during the battle royale? 🍄 Because he was a fungi!",
-    "How do gnomes communicate in a battle? 🎤 Gnoming code."
+    "How do gnomes communicate in a battle? 🎤 Gnoming code.","Why did the gnome get promoted? 🍄 Because he was a fungi to be with at work!",
+    "Why did the gnome sit on the clock? 🕰️ He wanted to be on gnome time!",
+    "What do you call a gnome's mobile home? 🚐 A gnome-mad.",
+    "Why did the gnome keep his money in the blender? 🍹 He liked liquid assets!",
+    "What did the gnome say to its therapist? 🛋️ I feel like people take me for granite.",
+    "How do gnomes greet each other in a secret society? 🎩 Mystically, with a gnome-knack!",
+    "Why did the gnome always win at cards? 🃏 He could read the crystal ball!",
+    "How do gnomes like their battles? 🌲 Short and sweet!",
+    "Why did the gnome get kicked out of the secret garden? 🌷 He was bad at keeping plant secrets!",
+    "Why did the gnome go to school? 🍎 To improve his elf-esteem!",
+    "Why did the mystical gnome avoid the pond? 🌌 He had a terrifying vision of a frog in his future!",
+    "Why did the gnome dislike the wizard? 🧙‍♂️ He always looked down on him!",
+    "How did the gnome predict the weather? 🌦️ With his gnome-ometer!",
+    "What's a gnome's favorite instrument in a mystic band? 🎵 The magical lute!",
+    "What do gnomes give their wives on Valentine's Day? 🌹 Rubies, because diamonds are too mainstream in the mystical world!",
+    "What did the gnome say after a long day of battling? ⚔️ That gnome-tally wore me out!",
+    "Why did the gnome make a good secret agent? 🕶️ Because he was good at staying low!",
+    "Why did the gnome hate the giant's party? 🎉 Everyone talked over his head!",
 ];
 const mysticQuotes = [
     "The winds of time whisper secrets to those who listen. 🍃🕰️",
