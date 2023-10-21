@@ -40,7 +40,7 @@ bot.onText(/\/?nft ([\d,]+)/i, async (msg, match) => {
 
     for (let nftId of nftIds) {
         if (nftId === 0 || nftId > 2888) {
-            bot.sendMessage(chatId, `${safeUsername}, NFT with ID ${nftId} doesn't exist.`, { parse_mode: 'Markdown' });
+            bot.sendMessage(chatId, `${safeUsername},\n NFT with ID ${nftId} doesn't exist.`, { parse_mode: 'Markdown' });
             continue;
         }
 
@@ -100,7 +100,7 @@ bot.onText(/\/?leaderboard/i, async (msg) => {
         
         const top30 = sortedAliveArray.slice(0, 30);
 
-        let responseTitle = `${safeUsername}, `;
+        let responseTitle = `${safeUsername}, \n`;
         if (top30.length <= 5) {
             responseTitle += '*WINNERS OF LAST GAME*\n\n';
         } else {
@@ -132,7 +132,7 @@ bot.onText(/\/?ca/i, (msg) => {
     const username = msg.from.username ? `@${msg.from.username}` : msg.from.first_name;
     const safeUsername = username.replace(/_/g, '\\_'); // Escape underscores for Markdown
   
-    let replyText = `${safeUsername}, here are the *Smart Contract Addresses:*\n\n`;
+    let replyText = `${safeUsername},\n here are the *Smart Contract Addresses:*\n\n`;
     
     replyText += "🛡️ *Battle Contract:*\n";
     replyText += `\`${battleContractAddress}\`\n\n`;
@@ -251,7 +251,7 @@ bot.onText(/\/?stats ([\d,]+)/i, async (msg, match) => {
 
     if (nftIds.length > 10) {
         nftIds = nftIds.slice(0, 10);  // Limit to the first 10 NFT IDs
-        bot.sendMessage(chatId, `${safeUsername}, You provided more than 10 NFT IDs. I'll only process the first 10.`, { parse_mode: 'Markdown' });
+        bot.sendMessage(chatId, `${safeUsername},\n You provided more than 10 NFT IDs. I'll only process the first 10.`, { parse_mode: 'Markdown' });
     }
 
     for (let nftId of nftIds) {
