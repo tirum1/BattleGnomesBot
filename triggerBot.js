@@ -76,9 +76,9 @@ setInterval(async () => {
             console.log('Round Started!');
             const maxAmountOfWinnerBigNumber = await contract.maxAmountOfWinners();
             const maxAmountOfWinner = maxAmountOfWinnerBigNumber.toNumber();
-            console.log(maxAmountOfWinner);
+            console.log("maxamountofwinners:", maxAmountOfWinner);
             const aliveCount = await getAliveCount(); 
-            console.log(aliveCount);
+            console.log("aliveCount:", aliveCount);
 
             let roundMessage = "";
 
