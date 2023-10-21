@@ -40,7 +40,7 @@ async function getAliveCount() {
 
 setInterval(async () => {
     try {
-        sendMessageViaHTTP(token, CHANNEL_ID, 'TESTING INITIALIZED');
+        sendMessageViaAxios(CHANNEL_ID, 'TESTING INITIALIZED');
         console.log('Polling started...');
 
         const timerPassed = await hasTimerPassed();
@@ -93,7 +93,7 @@ setInterval(async () => {
     }
 }, 10000);
 
-async function sendMessageViaAxios(token, chatId, text) {
+async function sendMessageViaAxios(chatId, text) {
     try {
         const response = await axios.post(TELEGRAM_BASE_URL + 'sendMessage', {
             chat_id: chatId,
