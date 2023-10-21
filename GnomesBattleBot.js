@@ -149,11 +149,9 @@ bot.onText(/\/?ca/i, (msg) => {
 bot.onText(/\/?time/i, async (msg) => {
     const userId = msg.from.id;
     const currentTime = Date.now();
-    const username = msg.from.username ? `@${msg.from.username}` : msg.from.first_name;
-    const safeUsername = username.replace(/_/g, '\\_');
 
     if (userTimestamps[userId] && (currentTime - userTimestamps[userId] < RATE_LIMIT)) {
-        bot.sendMessage(msg.chat.id, `${safeUsername}, Please wait for 10 seconds before using a command again.`);
+        bot.sendMessage(msg.chat.id, `Please wait for 10 seconds before using a command again.`);
         return;
     }
     userTimestamps[userId] = currentTime;
@@ -213,17 +211,17 @@ bot.onText(/\/?time/i, async (msg) => {
 
       // Sending appropriate messages based on game state
       if (timerPassed) {
-          bot.sendMessage(chatId, `🚀 ${safeUsername}, The timer has passed! The Hunger Games or round has begun or will begin shortly!`);
+          bot.sendMessage(chatId, `🚀The timer has passed! The Hunger Games or round has begun or will begin shortly!`);
       } else if (remainingTime > 0) {
           bot.sendMessage(chatId, notificationMessage + `${minutes}:${seconds.toString().padStart(2, '0')} minutes!`);
       } else {
-          bot.sendMessage(chatId, `🚀 ${safeUsername}, The Hunger Games or round has begun!`);
+          bot.sendMessage(chatId, `🚀The Hunger Games or round has begun!`);
       }
 
       if (newGame) {
-        bot.sendMessage(chatId, `${safeUsername}, Currently, in round 0.`);
+        bot.sendMessage(chatId, `Currently, in round 0.`);
     } else {
-        bot.sendMessage(chatId, `${safeUsername}, Currently, in round ${roundsCountNum}.`);
+        bot.sendMessage(chatId, `Currently, in round ${roundsCountNum}.`);
     }
     
       
