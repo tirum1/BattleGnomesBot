@@ -172,7 +172,7 @@ function getRandomJoke() {
     return jokes[Math.floor(Math.random() * jokes.length)];
 }
 function getRandomBullishQuotes() {
-    return bullishQuotes[Math.floor(Math.random() * jokes.length)];
+    return bullishQuotes[Math.floor(Math.random() * bullishQuotes.length)];
 }
 const jokes = [
     "Why did the scarecrow win an award? 🌾 Because he was outstanding in his field!",
