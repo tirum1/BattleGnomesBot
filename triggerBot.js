@@ -38,6 +38,19 @@ setInterval(async () => {
             const randomMessage = getRandomMessage();
             sendMessageViaAxios(CHANNEL_ID, randomMessage);
         }
+        const currentTime = Math.floor(Date.now() / 1000);
+        const startTimer = await contract._startTimer();
+        const startTimerNum = startTimer.toNumber();
+        let intervalTime = await contract.roundDuration();
+        let intervalTimeNum = intervalTime.toNumber();
+        if (await isNewGame()) {
+            intervalTimeNum = intervalTimeNum * 6;
+        }
+        const remainingTime = startTimerNum + intervalTimeNum - currentTime;
+        if (Math.random() < 0.3) { 
+            const readyMessage = getReadyQuote(remainingTime);
+            sendMessageViaAxios(CHANNEL_ID, readyMessage);
+        }
         isProcessing = true;
         console.log('Polling started...');
 
@@ -85,6 +98,8 @@ setInterval(async () => {
             }
             
             sendMessageViaAxios(CHANNEL_ID, roundMessage);
+
+
         }
          else {
             console.log('No conditions met for triggering functions.');
@@ -174,6 +189,22 @@ function getRandomJoke() {
 function getRandomBullishQuotes() {
     return bullishQuotes[Math.floor(Math.random() * bullishQuotes.length)];
 }
+function getReadyQuote(remainingTime) {
+    const minutes = Math.floor(remainingTime / 60);
+    const seconds = remainingTime % 60;
+    const timeString = `${minutes} minutes and ${seconds} seconds`;
+
+    if (remainingTime <= 60) {
+        return `🔥 Gnomes, brace yourselves! Just ${seconds} seconds left!`;
+    } else if (remainingTime <= 300) {
+        return `⏱️ Less than 5 minutes (${timeString}) to go, gnomes! Ready your weapons!`;
+    } else if (remainingTime <= 600) {
+        return `🔜 10 minutes (${timeString}) until the clash! Prepare, brave gnomes!`;
+    } else {
+        return `⏳ ${timeString} till the battle... Gnomes, ready for glory!`;
+    }
+}
+
 const jokes = [
     "Why did the scarecrow win an award? 🌾 Because he was outstanding in his field!",
     "Why don't scientists trust atoms? ⚛️ Because they make up everything.",
