@@ -122,13 +122,9 @@ bot.onText(/\/?leaderboard/i, async (msg) => {
 bot.onText(/\/?ca/i, (msg) => {
     let replyText = '';
     console.log(msg);
-    bot.sendSticker(msg.chat.id, '5879650614354383238')
-   .then(response => {
-       console.log("Sticker sent successfully:", response);
-   })
-   .catch(error => {
-       console.error("Error sending sticker:", error);
-   });
+    if (msg.sticker) {
+        console.log("Received sticker file_id:", msg.sticker.file_id);
+    }
 
     replyText += "*Smart Contract Addresses:*\n\n";
     
