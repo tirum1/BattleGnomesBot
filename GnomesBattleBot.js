@@ -195,10 +195,10 @@ bot.onText(/\/?time/i, async (msg) => {
       
       if (newGame) {
         intervalTimeNum = intervalTimeNum * 6;
-          notificationMessage = `🚀 ${safeUsername}, New Hunger Games will begin in `;
+          notificationMessage = `🚀 New Hunger Games will begin in `;
           console.log("Setting interval for new game:", intervalTimeNum);
       } else if (!newGame && HungerGamesBegin) {
-          notificationMessage = `⏱️ ${safeUsername},  The next round will begin in `;
+          notificationMessage = `⏱️ The next round will begin in `;
           console.log("Setting interval for next round:", intervalTime);
       }
       console.log("Converted new intervalTime:", intervalTimeNum);
