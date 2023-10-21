@@ -47,7 +47,7 @@ setInterval(async () => {
             intervalTimeNum = intervalTimeNum * 6;
         }
         const remainingTime = startTimerNum + intervalTimeNum - currentTime;
-        if (Math.random() < 0.3) { 
+        if (Math.random() < 0.1) { 
             const readyMessage = getReadyQuote(remainingTime);
             sendMessageViaAxios(CHANNEL_ID, readyMessage);
         }
@@ -168,7 +168,7 @@ async function getAliveCount() {
     }
 }
 function shouldTellSomething() {
-    return Math.random() < 0.5;  
+    return Math.random() < 0.1;  
 }
 function getRandomMessage() {
     const random = Math.random();
