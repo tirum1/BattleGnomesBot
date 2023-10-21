@@ -60,12 +60,11 @@ setInterval(async () => {
             let roundMessage = "";
 
             if (nonDead <= maxAmountOfWinner) {
-                const aliveById = await contract.getAliveByID();
-                const roundWinners = await contract.roundWinners();
-            
+                const roundWinnerLength = await contract.getRoundWinnersLength();
+                let roundWinners;
                 roundMessage = `⚔️ THE GAME HAS ENDED AND WE HAVE ${aliveCount} SURVIVORS ${aliveById}`;
-                for (let i = roundWinners.length - 1; i >= 0; i--) {
-                    roundMessage += shortenWallet(roundWinners[i]);
+                for (let i = 0; i < nonDead; i++) {
+                    roundMessage += shortenWallet(roundWinners[roundWinnerLength - i]);
                 }
             } else {
                 roundMessage = `⚔️ A new round has started! There are ${aliveCount} participants left alive.`;
