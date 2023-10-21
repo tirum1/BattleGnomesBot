@@ -28,19 +28,10 @@ bluebird.promisifyAll(client);
 const getAsync = bluebird.promisify(client.get).bind(client);
 
 
-async function getAliveCount() {
-    try {
-        const aliveNFTs = await contract.getAliveByID();
-        return aliveNFTs.length;
-    } catch (error) {
-        console.error('Error in getAliveCount:', error);
-        return 0;  
-    }
-}
+
 
 setInterval(async () => {
     try {
-        sendMessageViaAxios(CHANNEL_ID, 'TESTING INITIALIZED');
         console.log('Polling started...');
 
         const timerPassed = await hasTimerPassed();
@@ -138,4 +129,13 @@ async function shortenWallet(longWallet) {
         return longWallet;
     }
     return longWallet.slice(0, 6) + '...' + longWallet.slice(-4);
+}
+async function getAliveCount() {
+    try {
+        const aliveNFTs = await contract.getAliveByID();
+        return aliveNFTs.length;
+    } catch (error) {
+        console.error('Error in getAliveCount:', error);
+        return 0;  
+    }
 }
