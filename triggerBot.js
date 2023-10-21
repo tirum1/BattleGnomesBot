@@ -7,6 +7,7 @@ const INFURA_ENDPOINT = process.env.INFURA_ENDPOINT;
 const provider = new ethers.providers.JsonRpcProvider(INFURA_ENDPOINT);
 const CONTRACT_ADDRESS = '0x4FF4dd60888F9D640b49ec71662Ca9C000E76124';  
 const ABI_PATH = './ABI/BattleContract.json'; 
+const TelegramBot = require('node-telegram-bot-api');
 const contractData = JSON.parse(fs.readFileSync(ABI_PATH, 'utf8'));
 const ABI = contractData.abi;
 const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, provider);
@@ -22,6 +23,7 @@ const client = new Redis({
   port: process.env.REDIS_PORT, 
   password: process.env.REDIS_PASSWORD, 
 });
+
 bluebird.promisifyAll(client);
 const getAsync = bluebird.promisify(client.get).bind(client);
 
