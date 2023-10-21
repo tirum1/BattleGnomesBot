@@ -106,10 +106,13 @@ bot.onText(/\/?leaderboard/i, async (msg) => {
         const medals = ['🥇', '🥈', '🥉'];
 
         const response = top30.map((id, index) => {
-            const medal = medals[index] ? medals[index] : '';  // If there's a medal for this index, use it.
+            const medal = medals[index] || '';
             const roundWins = roundWinsArray[aliveArray.indexOf(id)];
-            return `${medal} ${index + 1}. ID: ${id} - Game Wins: ${roundWins}`;
+            return medal
+                ? `${medal} ID: ${id} - Game Wins: ${roundWins}`
+                : `${index + 1}. ID: ${id} - Game Wins: ${roundWins}`;
         }).join('\n');
+        
   
         bot.sendMessage(chatId, responseTitle + response, { parse_mode: 'Markdown' });
   
