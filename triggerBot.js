@@ -48,7 +48,7 @@ setInterval(async () => {
             await triggerFunction('startHungerGames');  
             console.log('HungerGames Started');
             const hungerGamesMessage = `🚀 HungerGames have started! There are ${counter} people queued up.`;
-            bot.sendMessage(CHANNEL_ID, hungerGamesMessage);
+            sendMessageViaAxios(CHANNEL_ID, hungerGamesMessage);
             
         } else if (timerPassed && counter >= 2) {
 
@@ -73,7 +73,7 @@ setInterval(async () => {
                 roundMessage = `⚔️ A new round has started! There are ${aliveCount} participants left alive.`;
             }
             
-            bot.sendMessage(CHANNEL_ID, roundMessage);
+            sendMessageViaAxios(CHANNEL_ID, roundMessage);
         }
          else {
             console.log('No conditions met for triggering functions.');
