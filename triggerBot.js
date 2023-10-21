@@ -88,7 +88,8 @@ setInterval(async () => {
                 const aliveById = await contract.getAliveByID();
                 console.log("alivebyID:", aliveById);
                 let roundWinners = await contract.roundWinners();
-
+                console.log("roundWinners:", roundWinners);
+                
                 roundMessage = `⚔️ THE GAME HAS ENDED AND WE HAVE ${aliveCount} SURVIVORS ${aliveById}`;
                 for (let i = 0; i < aliveCount; i++) {
                     roundMessage += shortenWallet(roundWinners[roundWinnerLength - i]);
