@@ -28,8 +28,6 @@ bluebird.promisifyAll(client);
 const getAsync = bluebird.promisify(client.get).bind(client);
 
 
-
-
 setInterval(async () => {
     try {
         console.log('Polling started...');
@@ -62,8 +60,8 @@ setInterval(async () => {
             let roundMessage = "";
 
             if (nonDead <= maxAmountOfWinner) {
-                const aliveById = await contract.methods.getAliveByID().call();
-                const roundWinners = await contract.methods.roundWinners().call();
+                const aliveById = await contract.getAliveByID();
+                const roundWinners = await contract.roundWinners();
             
                 roundMessage = `⚔️ THE GAME HAS ENDED AND WE HAVE ${aliveCount} SURVIVORS ${aliveById}`;
                 for (let i = roundWinners.length - 1; i >= 0; i--) {
