@@ -194,16 +194,49 @@ function getReadyQuote(remainingTime) {
     const seconds = remainingTime % 60;
     const timeString = `${minutes} minutes and ${seconds} seconds`;
 
+    const underOneMinuteQuotes = [
+        `🔥 Just ${seconds} seconds! Gnomes, to your positions!`,
+        `🌪️ A storm's brewing! ${seconds} seconds and it's unleashed!`,
+        `🛡️ Gnomes, rally! Only ${seconds} ticks of the clock remain!`,
+        `🍀 Luck be with you! Just ${seconds} seconds to fate's call!`,
+        `📣 Hear the drums of war? Just ${seconds} seconds to the beatdown!`
+    ];
+
+    const underFiveMinutesQuotes = [
+        `⏱️ ${timeString} until destiny awaits! Are you ready?`,
+        `🌌 As stars align, ${timeString} and the saga unfolds.`,
+        `🌟 Hold onto your dreams, gnomes. ${timeString} till they're tested!`,
+        `⚡️ Energy surges as ${timeString} remain. Charge up, gnomes!`,
+        `🔮 The crystal ball shows... ${timeString} to the showdown!`
+    ];
+
+    const underTenMinutesQuotes = [
+        `🌈 A rainbow of possibilities in the next ${timeString}! Choose your path.`,
+        `🏰 Fortify your defenses! ${timeString} to siege time!`,
+        `🌲 Whispering woods say... ${timeString} to prove your might!`,
+        `⛏️ Dig deep! Resources and time are limited. Only ${timeString} left.`,
+        `🎭 Masks on! The grand theatre of battle begins in ${timeString}.`
+    ];
+
+    const generalQuotes = [
+        `⏳ The sands of time flow, ${timeString} until they reveal all.`,
+        `🌊 As waves crash, so does destiny in ${timeString}.`,
+        `🍂 As leaves fall, so does time. ${timeString} to the next chapter.`,
+        `🌔 By moon's phase, in ${timeString} a new battle dawns.`,
+        `🌻 Sunflowers turn, time churns. ${timeString} to the next challenge.`
+    ];
+
     if (remainingTime <= 60) {
-        return `🔥 Gnomes, brace yourselves! Just ${seconds} seconds left!`;
+        return underOneMinuteQuotes[Math.floor(Math.random() * underOneMinuteQuotes.length)];
     } else if (remainingTime <= 300) {
-        return `⏱️ Less than 5 minutes (${timeString}) to go, gnomes! Ready your weapons!`;
+        return underFiveMinutesQuotes[Math.floor(Math.random() * underFiveMinutesQuotes.length)];
     } else if (remainingTime <= 600) {
-        return `🔜 10 minutes (${timeString}) until the clash! Prepare, brave gnomes!`;
+        return underTenMinutesQuotes[Math.floor(Math.random() * underTenMinutesQuotes.length)];
     } else {
-        return `⏳ ${timeString} till the battle... Gnomes, ready for glory!`;
+        return generalQuotes[Math.floor(Math.random() * generalQuotes.length)];
     }
 }
+
 
 const jokes = [
     "Why did the scarecrow win an award? 🌾 Because he was outstanding in his field!",
