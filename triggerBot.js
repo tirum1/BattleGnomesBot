@@ -84,9 +84,9 @@ setInterval(async () => {
 
             if (aliveCount <= maxAmountOfWinner) {
                 const roundWinnerLength = await contract.getRoundWinnersLength();
-                console.log(roundWinnerLength);
+                console.log("reoundwinnerLength:", roundWinnerLength);
                 const aliveById = await contract.getAliveByID();
-                console.log(aliveById);
+                console.log("alivebyID:", aliveById);
                 let roundWinners;
 
                 roundMessage = `⚔️ THE GAME HAS ENDED AND WE HAVE ${aliveCount} SURVIVORS ${aliveById}`;
