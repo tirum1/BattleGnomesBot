@@ -45,7 +45,7 @@ setInterval(async () => {
 
             await triggerFunction('startHungerGames');  
             console.log('HungerGames Started');
-            const hungerGamesMessage = `🚀 HungerGames have started! There are ${counter} people queued up.`;
+            const hungerGamesMessage = `🚀 HungerGames have started!`;
             sendMessageViaAxios(CHANNEL_ID, hungerGamesMessage);
             
         } else if (timerPassed && counter >= 2) {
@@ -53,17 +53,20 @@ setInterval(async () => {
             await triggerFunction('lookForOpponent');
             console.log('Round Started!');
 
-            const nonDead = await contract.getAmountOfNonDead();
+            const nonDead = await contract.getAliveCount();
+            console.log(nonDead);
             const maxAmountOfWinner = await contract.maxAmountOfWinners();
+            console.log(maxAmountOfWinner);
             const aliveCount = await getAliveCount(); 
+            console.log(aliveCount);
 
             let roundMessage = "";
 
-            if (nonDead <= maxAmountOfWinner) {
+            if (aliveCount <= maxAmountOfWinner) {
                 const roundWinnerLength = await contract.getRoundWinnersLength();
                 let roundWinners;
                 roundMessage = `⚔️ THE GAME HAS ENDED AND WE HAVE ${aliveCount} SURVIVORS ${aliveById}`;
-                for (let i = 0; i < nonDead; i++) {
+                for (let i = 0; i < aliveCount; i++) {
                     roundMessage += shortenWallet(roundWinners[roundWinnerLength - i]);
                 }
             } else {
