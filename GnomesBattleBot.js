@@ -122,6 +122,7 @@ bot.onText(/\/?leaderboard/i, async (msg) => {
 bot.onText(/\/?ca/i, (msg) => {
     let replyText = '';
     console.log(msg);
+    bot.sendDocument(msg.chat.id, '5879650614354383238');
 
     replyText += "*Smart Contract Addresses:*\n\n";
     
