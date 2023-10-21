@@ -168,7 +168,7 @@ async function getAliveCount() {
     }
 }
 function shouldTellSomething() {
-    return Math.random() < 0.15;  
+    return Math.random() < 0.5;  
 }
 function getRandomMessage() {
     const random = Math.random();
