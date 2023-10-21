@@ -34,7 +34,7 @@ setInterval(async () => {
         return;
     }
     try {
-        if (shouldTellJokeOrQuote()) {
+        if (shouldTellSomething()) {
             const randomMessage = getRandomMessage();
             sendMessageViaAxios(CHANNEL_ID, randomMessage);
         }
@@ -71,7 +71,9 @@ setInterval(async () => {
 
             if (aliveCount <= maxAmountOfWinner) {
                 const roundWinnerLength = await contract.getRoundWinnersLength();
+                console.log(roundWinnerLength);
                 const aliveById = await contract.getAliveByID();
+                console.log(aliveById);
                 let roundWinners;
 
                 roundMessage = `⚔️ THE GAME HAS ENDED AND WE HAVE ${aliveCount} SURVIVORS ${aliveById}`;
@@ -150,21 +152,27 @@ async function getAliveCount() {
         return 0;  
     }
 }
-function shouldTellJokeOrQuote() {
+function shouldTellSomething() {
     return Math.random() < 0.15;  
 }
 function getRandomMessage() {
-    if (Math.random() < 0.5) {
+    const random = Math.random();
+    if (random < 0.33) {
         return getRandomJoke();
-    } else {
+    } else if (0.33 >= random < 0.66){
         return getMysticQuote();
-    }
+    } else if (0.66 >= random < 1){
+        return getRandomBullishQuotes();
+    } 
 }
 function getMysticQuote() {
     return mysticQuotes[Math.floor(Math.random() * mysticQuotes.length)];
 }
 function getRandomJoke() {
     return jokes[Math.floor(Math.random() * jokes.length)];
+}
+function getRandomBullishQuotes() {
+    return bullishQuotes[Math.floor(Math.random() * jokes.length)];
 }
 const jokes = [
     "Why did the scarecrow win an award? 🌾 Because he was outstanding in his field!",
