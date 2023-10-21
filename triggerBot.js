@@ -64,14 +64,14 @@ setInterval(async () => {
         console.log('Queue counter:', counter);
 
         if (newGame && timerPassed) {
-            sendMessageViaAxios(CHANNEL_ID, "HUNGERGAMES INITIATED");
+            sendMessageViaAxios(CHANNEL_ID, "🔮✨ HUNGERGAMES INITIATED: DAWN OF DESTINY ✨🔮");
             await triggerFunction('startHungerGames');  
             console.log('HungerGames Started');
-            const hungerGamesMessage = `🚀 HungerGames have started!`;
+            const hungerGamesMessage = `🚀 THE BATTLEGROUND AWAITS THE BRAVE!`;
             sendMessageViaAxios(CHANNEL_ID, hungerGamesMessage);
             
         } else if (timerPassed && counter >= 2) {
-            sendMessageViaAxios(CHANNEL_ID, "ROUND INITIATED");
+            sendMessageViaAxios(CHANNEL_ID, "🌙🔥 ROUND INITIATED: ECHOES OF VALOR 🔥🌙");
             await triggerFunction('lookForOpponent');
             console.log('Round Started!');
             const maxAmountOfWinnerBigNumber = await contract.maxAmountOfWinners();
