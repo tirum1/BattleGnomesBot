@@ -16,7 +16,7 @@ const wallet = new ethers.Wallet(PRIVATE_KEY, provider);
 const token = process.env.MAIN_BOT_TOKEN;
 const TELEGRAM_BASE_URL = `https://api.telegram.org/bot${token}/`;
 const CHANNEL_ID = '-1001672659906';
-
+let isProcessing = false;
 
 const client = new Redis({
   host: process.env.REDIS_HOST, 
@@ -29,7 +29,12 @@ const getAsync = bluebird.promisify(client.get).bind(client);
 
 
 setInterval(async () => {
+    if (isProcessing) {
+        console.log('Still processing the last iteration. Skipping this interval.');
+        return;
+    }
     try {
+        isProcessing = true;
         console.log('Polling started...');
 
         const timerPassed = await hasTimerPassed();
@@ -79,6 +84,8 @@ setInterval(async () => {
 
     } catch (error) {
         console.error('Error in polling mechanism:', error);
+    } finally {
+        isProcessing = false;
     }
 }, 10000);
 
@@ -137,3 +144,33 @@ async function getAliveCount() {
         return 0;  
     }
 }
+function shouldTellJokeOrQuote() {
+    return Math.random() < 0.25;  // 25% chance
+}
+function getRandomMessage() {
+    if (Math.random() < 0.5) {
+        return getRandomJoke();
+    } else {
+        return getMysticQuote();
+    }
+}
+function getMysticQuote() {
+    return mysticQuotes[Math.floor(Math.random() * mysticQuotes.length)];
+}
+function getRandomJoke() {
+    return jokes[Math.floor(Math.random() * jokes.length)];
+}
+const jokes = [
+    "Why did the scarecrow win an award? Because he was outstanding in his field!",
+    "Why don't scientists trust atoms? Because they make up everything.",
+    "How does a penguin build its house? Igloos it together.",
+    // ... add more jokes here
+];
+const mysticQuotes = [
+    "The winds of time whisper secrets to those who listen.",
+    "In the shadow of the moon, destiny awaits.",
+    "Beware the ides of March, for fate is not kind to the unwary.",
+    // ... add more quotes here
+];
+
+  
