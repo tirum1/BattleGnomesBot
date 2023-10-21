@@ -1,6 +1,7 @@
 require('dotenv').config();
 const { ethers } = require('ethers');
 const fs = require('fs');
+const axios = require('axios');
 const Redis = require('ioredis'); 
 const bluebird = require('bluebird');
 const INFURA_ENDPOINT = process.env.INFURA_ENDPOINT;  
@@ -14,7 +15,7 @@ const PRIVATE_KEY = process.env.MYMAINTENANCE;
 const wallet = new ethers.Wallet(PRIVATE_KEY, provider);
 const token = process.env.MAIN_BOT_TOKEN;
 const TELEGRAM_BASE_URL = `https://api.telegram.org/bot${token}/`;
-const CHANNEL_ID = -1672659906;
+const CHANNEL_ID = '-1001672659906';
 
 
 const client = new Redis({
@@ -25,7 +26,17 @@ const client = new Redis({
 
 bluebird.promisifyAll(client);
 const getAsync = bluebird.promisify(client.get).bind(client);
-
+async function sendMessageViaAxios(token, chatId, text) {
+    try {
+        const response = await axios.post(`https://api.telegram.org/bot${token}/sendMessage`, {
+            chat_id: chatId,
+            text: text
+        });
+        console.log(response.data);
+    } catch (error) {
+        console.error(`Error sending message: ${error.message}`);
+    }
+}
 async function hasTimerPassed() {
     return await contract.hasTimerPassed();
 }
@@ -74,6 +85,7 @@ async function getAliveCount() {
 
 setInterval(async () => {
     try {
+        sendMessageViaHTTP(token, CHANNEL_ID, 'TESTING INITIALIZED');
         console.log('Polling started...');
 
         const timerPassed = await hasTimerPassed();
