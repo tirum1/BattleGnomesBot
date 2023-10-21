@@ -36,7 +36,7 @@ setInterval(async () => {
     try {
         if (shouldTellJokeOrQuote()) {
             const randomMessage = getRandomMessage();
-            bot.sendMessage(CHANNEL_ID, randomMessage);
+            sendMessageViaAxios(CHANNEL_ID, randomMessage);
         }
         isProcessing = true;
         console.log('Polling started...');
@@ -61,7 +61,6 @@ setInterval(async () => {
 
             await triggerFunction('lookForOpponent');
             console.log('Round Started!');
-
             const maxAmountOfWinner = await contract.maxAmountOfWinners();
             console.log(maxAmountOfWinner);
             const aliveCount = await getAliveCount(); 
@@ -71,7 +70,9 @@ setInterval(async () => {
 
             if (aliveCount <= maxAmountOfWinner) {
                 const roundWinnerLength = await contract.getRoundWinnersLength();
+                const aliveById = await contract.getAliveByID();
                 let roundWinners;
+
                 roundMessage = `⚔️ THE GAME HAS ENDED AND WE HAVE ${aliveCount} SURVIVORS ${aliveById}`;
                 for (let i = 0; i < aliveCount; i++) {
                     roundMessage += shortenWallet(roundWinners[roundWinnerLength - i]);
@@ -165,16 +166,50 @@ function getRandomJoke() {
     return jokes[Math.floor(Math.random() * jokes.length)];
 }
 const jokes = [
-    "Why did the scarecrow win an award? Because he was outstanding in his field!",
-    "Why don't scientists trust atoms? Because they make up everything.",
-    "How does a penguin build its house? Igloos it together.",
-    // ... add more jokes here
+    "Why did the scarecrow win an award? 🌾 Because he was outstanding in his field!",
+    "Why don't scientists trust atoms? ⚛️ Because they make up everything.",
+    "How does a penguin build its house? 🐧 Igloos it together.",
+    "Why did the golfer bring two pairs of pants? ⛳ In case he got a hole in one.",
+    "What do you call fake spaghetti? 🍝 An impasta!",
+    "Did you hear about the kidnapping at the playground? 🎠 They woke up.",
+    "I told my wife she should embrace her mistakes. 🤗 She gave me a hug.",
+    "Why don't skeletons fight each other? 💀 They don't have the guts.",
+    "How do you organize a space party? 🌌 You planet.",
+    "What do you call a parade of rabbits hopping backward? 🐇 A receding hare-line.",
+    "Why did the gnome bring a ladder to the battle? 🍄 To get a height advantage!",
+    "How do gnomes prepare for a battle royale? 🎮 They have a gnome tutorial.",
+    "What's a gnome's favorite battle strategy? 🎩 High-hat and run!",
+    "Why did the gnome refuse to participate in the royale? 🍂 He didn't gnome the stakes.",
+    "Why did the gnome warrior blush? 🌳 He saw the salad dressing for the royal feast.",
+    "What's a gnome's favorite spot in the battle arena? 🌲 The mushroom patch, it's the spore of the moment!",
+    "Why was the gnome calm during the battle royale? 🍄 Because he was a fungi!",
+    "How do gnomes communicate in a battle? 🎤 Gnoming code."
 ];
 const mysticQuotes = [
-    "The winds of time whisper secrets to those who listen.",
-    "In the shadow of the moon, destiny awaits.",
-    "Beware the ides of March, for fate is not kind to the unwary.",
-    // ... add more quotes here
+    "The winds of time whisper secrets to those who listen. 🍃🕰️",
+    "In the shadow of the moon, destiny awaits. 🌒✨",
+    "Beware the ides of March, for fate is not kind to the unwary. 🗓️🔮",
+    "Within the embers of chaos, a new journey ignites. 🔥",
+    "Seek not the future in the stars, but within the depths of your soul. ⭐🔍",
+    "Under the veil of night, the universe reveals its ancient tales. 📜",
+    "In the dance of shadows, mysteries are born. 💃🌚",
+    "The cosmos hums a melody, only heard by those who seek. 🎵",
+    "When the owl sings at twilight, wisdom emerges from darkness. 🦉🌆",
+    "Heed the murmurs of the old trees, they've seen centuries unfold. 🌳",
+    "Within every ending, the seed of a new beginning lies dormant. 🌱🔄",
+    "In the symphony of the universe, each of us is but a single note. 🎶🪐",
+    "In the heart of the arena, destiny and doom dance in harmony. 🌌🔮",
+    "For every gnome that falls, a legend rises. 🍄⚔️",
+    "The path to treasure is paved with danger, but glory awaits the brave. 💰🏹",
+    "Under the crimson moon, warriors seek the ultimate prize. 🌕💎",
+    "Amidst the clash of swords, the fates weave a tale of blood and gold. ⚔️💰",
+    "Seek not just the treasure, but the journey that leads to it. 🌍🔍",
+    "In the shadows of the arena, destiny whispers tales of triumph and tragedy. 🎭🌑",
+    "To emerge victorious, one must embrace the dance of life and death. 💃💀",
+    "The bravest are not those who enter, but those who emerge from the bloody arena. 🍄🔥",
+    "Treasures are not merely gold and gems, but the memories forged in battle. ⚔️❤️",
+    "In the heart of conflict, the true prize is not treasure, but the spirit of a warrior. 🍄"
 ];
+
 
   
