@@ -61,7 +61,8 @@ setInterval(async () => {
 
             await triggerFunction('lookForOpponent');
             console.log('Round Started!');
-            const maxAmountOfWinner = await contract.maxAmountOfWinners();
+            const maxAmountOfWinnerBigNumber = await contract.maxAmountOfWinners();
+            const maxAmountOfWinner = maxAmountOfWinnerBigNumber.toNumber();
             console.log(maxAmountOfWinner);
             const aliveCount = await getAliveCount(); 
             console.log(aliveCount);
@@ -150,7 +151,7 @@ async function getAliveCount() {
     }
 }
 function shouldTellJokeOrQuote() {
-    return Math.random() < 0.25;  // 25% chance
+    return Math.random() < 0.15;  
 }
 function getRandomMessage() {
     if (Math.random() < 0.5) {
@@ -209,6 +210,43 @@ const mysticQuotes = [
     "The bravest are not those who enter, but those who emerge from the bloody arena. 🍄🔥",
     "Treasures are not merely gold and gems, but the memories forged in battle. ⚔️❤️",
     "In the heart of conflict, the true prize is not treasure, but the spirit of a warrior. 🍄"
+];
+const bullishQuotes = [
+    "💎 HOLD STRONG, WE RISE!",
+    "🚀 TO THE MOON AND BEYOND!",
+    "🐂 BULLISH TERRITORY AHEAD!",
+    "🛡️ FUCK THE BEARS, STAY STRONG!",
+    "🔥 RAID TWITTER, SPREAD THE FIRE!",
+    "🤝 BASED TEAM, STRONGER TOGETHER!",
+    "💼 BASED DEV, ALWAYS DELIVERING!",
+    "⚙️ WORKING UTILITY, THE FUTURE IS NOW!",
+    "🌊 RIDE THE BULL WAVE!",
+    "🔗 UNITY IS OUR STRENGTH, HOLD TOGETHER!",
+    "📈 EVERY DIP IS AN OPPORTUNITY, BULLS TAKE CHARGE!",
+    "🎯 FOCUS ON THE GOAL, LET'S WIN THIS!",
+    "💪 COMMUNITY POWER, UNMATCHED!",
+    "🦁 HEAR US ROAR, BEARS BEWARE!",
+    "✨ BRIGHT FUTURE AWAITS, STAY BULLISH!",
+    "📣 LET OUR VOICES BE HEARD, LOUD AND PROUD!",
+    "💰 THIS IS JUST THE BEGINNING, TREASURES AHEAD!",
+    "🌟 NEVER DOUBT OUR SHINE, ALWAYS BULLISH!",
+    "🚂 FULL STEAM AHEAD! NO BRAKES ON THIS TRAIN!",
+    "🐾 BEARS' STEPS ARE TEMPORARY, BULLS RUN THE SHOW!",
+    "🏆 CHAMPIONS OF THE GAME, ALWAYS LEADING THE WAY!",
+    "🎉 CELEBRATE EVERY VICTORY, BIG OR SMALL!",
+    "🪙 TREASURE ISN'T ALWAYS GOLD, SOMETIMES IT'S DIAMOND HANDS!",
+    "⭐ OUR STARS SHINE THE BRIGHTEST IN THE DARKEST NIGHTS!",
+    "💡 BRILLIANT MINDS, BULLISH HEARTS!",
+    "🌐 TOGETHER, WE'RE UNSTOPPABLE! GLOBAL DOMINATION!",
+    "🌋 ERUPTING WITH POTENTIAL, WATCH US SOAR!",
+    "🏰 OUR FORTRESS STANDS TALL, BEARS SHALL NOT PASS!",
+    "🛡️ DEFENDERS OF THE BULLISH REALM, ONWARD!",
+    "🚀 LAUNCHING INTO PROSPERITY, ONE MILESTONE AT A TIME!",
+    "📯 SOUND THE HORNS, VICTORY AWAITS!",
+    "🔊 BULLISH CHANTS ECHO IN OUR HALLS! LET THEM RING!",
+    "🍀 FORTUNE FAVORS THE BOLD, AND WE'RE THE BOLDEST!",
+    "🔥 IGNITE THE PASSION, BURN BRIGHTER THAN THE STARS!",
+    "💣 BEARS, TICK TOCK! OUR TIME IS NOW!"
 ];
 
 
