@@ -121,6 +121,7 @@ bot.onText(/\/?leaderboard/i, async (msg) => {
 
 bot.onText(/\/?ca/i, (msg) => {
     let replyText = '';
+    console.log(msg);
 
     replyText += "*Smart Contract Addresses:*\n\n";
     
