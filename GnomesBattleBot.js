@@ -119,25 +119,6 @@ bot.onText(/\/?leaderboard/i, async (msg) => {
     }
 });
 
-bot.on('message', (msg) => {
-    // Check if the message contains a custom emoji entity.
-    if (msg.entities && msg.entities[0].type === 'custom_emoji') {
-        const customEmojiId = msg.entities[0].custom_emoji_id;
-
-        // Fetch the custom emoji sticker using its ID.
-        bot.getCustomEmojiStickers([customEmojiId])
-            .then(stickers => {
-                if (stickers && stickers[0]) {
-                    // Reply with the retrieved custom emoji sticker.
-                    bot.sendSticker(msg.chat.id, stickers[0].file_id);
-                }
-            })
-            .catch(error => {
-                console.error("Error fetching custom emoji sticker:", error);
-            });
-    }
-});
-
 bot.onText(/\/?ca/i, (msg) => {
     let replyText = '';
 
