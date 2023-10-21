@@ -90,7 +90,6 @@ setInterval(async () => {
 
         if (newGame && timerPassed) {
 
-            bot.sendMessage(CHANNEL_ID, preHungerGamesMessage);
             await triggerFunction('startHungerGames');  
             console.log('HungerGames Started');
             const hungerGamesMessage = `🚀 HungerGames have started! There are ${counter} people queued up.`;
@@ -98,7 +97,6 @@ setInterval(async () => {
             
         } else if (timerPassed && counter >= 2) {
 
-            bot.sendMessage(CHANNEL_ID, preRoundMessage);
             await triggerFunction('lookForOpponent');
             console.log('Round Started!');
 
