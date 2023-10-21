@@ -53,8 +53,6 @@ setInterval(async () => {
             await triggerFunction('lookForOpponent');
             console.log('Round Started!');
 
-            const nonDead = await contract.getAliveCount();
-            console.log(nonDead);
             const maxAmountOfWinner = await contract.maxAmountOfWinners();
             console.log(maxAmountOfWinner);
             const aliveCount = await getAliveCount(); 
