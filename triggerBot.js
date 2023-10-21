@@ -54,6 +54,13 @@ async function queuecounter() {
         return 0; 
     }
 }
+async function shortenWallet(longWallet) {
+    if (longWallet.length < 11) {
+        return longWallet;
+    }
+    return longWallet.slice(0, 6) + '...' + longWallet.slice(-4);
+}
+
 async function getAliveCount() {
     try {
         const aliveNFTs = await contract.getAliveByID();
@@ -77,9 +84,10 @@ setInterval(async () => {
         const counter = await queuecounter();
         console.log('Queue counter:', counter);
 
+
+
         if (newGame && timerPassed) {
-            console.log('HungerGames will start in 10 seconds...');
-            const preHungerGamesMessage = `📢 HungerGames will start in 10 seconds!`;
+
             bot.sendMessage(CHANNEL_ID, preHungerGamesMessage);
             await triggerFunction('startHungerGames');  
             console.log('HungerGames Started');
@@ -87,15 +95,29 @@ setInterval(async () => {
             bot.sendMessage(CHANNEL_ID, hungerGamesMessage);
             
         } else if (timerPassed && counter >= 2) {
-            console.log('Round will start in 10 seconds...');
-            const preRoundMessage = `📢 A new round will start in 10 seconds! Get ready.`;
+
             bot.sendMessage(CHANNEL_ID, preRoundMessage);
             await triggerFunction('lookForOpponent');
             console.log('Round Started!');
-        
+
+            const nonDead = await contract.getAmountOfNonDead();
+            const maxAmountOfWinner = await contract.maxAmountOfWinners();
             const aliveCount = await getAliveCount(); 
-        
-            const roundMessage = `⚔️ A new round has started! There are ${aliveCount} participants left alive.`;
+
+            let roundMessage = "";
+
+            if (nonDead <= maxAmountOfWinner) {
+                const aliveById = await contract.methods.getAliveByID().call();
+                const roundWinners = await contract.methods.roundWinners().call();
+            
+                roundMessage = `⚔️ THE GAME HAS ENDED AND WE HAVE ${aliveCount} SURVIVORS ${aliveById}`;
+                for (let i = roundWinners.length - 1; i >= 0; i--) {
+                    roundMessage += shortenWallet(roundWinners[i]);
+                }
+            } else {
+                roundMessage = `⚔️ A new round has started! There are ${aliveCount} participants left alive.`;
+            }
+            
             bot.sendMessage(CHANNEL_ID, roundMessage);
         }
          else {
