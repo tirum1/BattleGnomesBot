@@ -118,13 +118,15 @@ bot.onText(/\/?leaderboard/i, async (msg) => {
         console.error(error);
     }
 });
-
-bot.onText(/\/?ca/i, (msg) => {
-    let replyText = '';
+bot.on('message', (msg) => {
     console.log(msg);
     if (msg.sticker) {
         console.log("Received sticker file_id:", msg.sticker.file_id);
     }
+});
+
+bot.onText(/\/?ca/i, (msg) => {
+    let replyText = '';
 
     replyText += "*Smart Contract Addresses:*\n\n";
     
