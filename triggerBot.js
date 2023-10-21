@@ -34,6 +34,10 @@ setInterval(async () => {
         return;
     }
     try {
+        if (shouldTellJokeOrQuote()) {
+            const randomMessage = getRandomMessage();
+            bot.sendMessage(CHANNEL_ID, randomMessage);
+        }
         isProcessing = true;
         console.log('Polling started...');
 
