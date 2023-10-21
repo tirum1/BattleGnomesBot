@@ -7,14 +7,13 @@ const INFURA_ENDPOINT = process.env.INFURA_ENDPOINT;
 const provider = new ethers.providers.JsonRpcProvider(INFURA_ENDPOINT);
 const CONTRACT_ADDRESS = '0x4FF4dd60888F9D640b49ec71662Ca9C000E76124';  
 const ABI_PATH = './ABI/BattleContract.json'; 
-const TelegramBot = require('node-telegram-bot-api');
 const contractData = JSON.parse(fs.readFileSync(ABI_PATH, 'utf8'));
 const ABI = contractData.abi;
 const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, provider);
 const PRIVATE_KEY = process.env.MYMAINTENANCE;  
 const wallet = new ethers.Wallet(PRIVATE_KEY, provider);
 const token = process.env.MAIN_BOT_TOKEN;
-const bot = new TelegramBot(token, { polling: true });
+const TELEGRAM_BASE_URL = `https://api.telegram.org/bot${token}/`;
 const CHANNEL_ID = -1672659906;
 
 
