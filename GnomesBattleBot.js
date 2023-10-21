@@ -150,7 +150,7 @@ bot.onText(/\/?time/i, async (msg) => {
     const userId = msg.from.id;
     const currentTime = Date.now();
     const username = msg.from.username ? `@${msg.from.username}` : msg.from.first_name;
-    const safeUsername = username.replace(/_/g, '\\_'); // Escape underscores for Markdown
+    const safeUsername = username.replace(/_/g, '\\_');
 
     if (userTimestamps[userId] && (currentTime - userTimestamps[userId] < RATE_LIMIT)) {
         bot.sendMessage(msg.chat.id, `${safeUsername}, Please wait for 10 seconds before using a command again.`);
