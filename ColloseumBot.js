@@ -748,7 +748,7 @@ function startBot() {
                                     { parse_mode: 'Markdown' }
                                 );
                                 registerBot.sendMessage(
-                                    await getAsync(`chatId:${transaction.referrer}`),
+                                    await getAsync(`chatId:${referrer}`),
                                     `✨ *Alliance Triumph!* ✨\n\nHail, noble ally! Thanks to our referral bond and @${transaction.username}'s commendable endeavors, ${potionWord}${potions.length === 1 ? ' a' : ''} special ${potionWord} ${hasOrHave} chosen you: ${potionList}! May our alliance continue to shine brilliantly! 🔮`,
                                     { parse_mode: 'Markdown' }
                                 );
