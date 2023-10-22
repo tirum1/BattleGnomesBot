@@ -724,8 +724,7 @@ function startBot() {
                         console.log(`User clicked "Confirm" for transaction ${transactionId}`);
                         try {
                             transaction.status = 'confirmed';
-                            const notSafeReferrer = await getAsync(`referredBy:${transaction.username}`);
-                            const referrer = notSafeReferrer.replace(/_/g, '\\_');
+                            const referrer = await getAsync(`referredBy:${transaction.username}`);
                             console.log("referrer Name:", referrer);
                             let count = 0;
                             if (referrer) {
