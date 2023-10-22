@@ -48,28 +48,32 @@ bot.onText(/\/?nft ([\d,]+)/i, async (msg, match) => {
             const isDead = await battleContract.dead(nftId);
             const battleDetail = await battleContract.getBattleDetail(nftId);
 
-            let message = `${safeUsername}, `;
+            let message = `🌟 ${safeUsername},\n`;
+
             if (isDead) {
-                message += `The NFT with ID ${nftId} is dead.\n\n`;
+                message += `😵 The NFT with ID ${nftId} is no longer among the living.\n`;
             } else {
-                message += `The NFT with ID ${nftId} is alive.\n\n`;
+                message += `🌿 The NFT with ID ${nftId} is alive and well!\n`;
             }
 
             if (battleDetail.opponentId == 0) {
-                message += `This NFT has not participated in a battle yet.\n`;
+                message += `🛡️ This NFT hasn't entered any battles yet.\n`;
             } else {
                 message += `Last Battle Details:\n`;
-                message += `- Opponent ID: ${battleDetail.opponentId}\n`;
+                message += `👥 Opponent ID: ${battleDetail.opponentId}\n`;
 
-                const resultText = battleDetail.result === 0 ? 'Won' :
-                                   battleDetail.result === 1 ? 'Lost' : 'Skipped';
-                message += `- Result: ${resultText}\n`;
+                const resultText = battleDetail.result === 0 ? 'Victory' :
+                                battleDetail.result === 1 ? 'Defeat' : 'No Contest';
+                message += `🏆 Result: ${resultText}\n`;
 
-                message += `- Used XTRA: ${battleDetail.usedXTRA ? 'Yes' : 'No'}\n`;
-                message += `- Used BOOST: ${battleDetail.usedBOOST ? 'Yes' : 'No'}\n`;
-                message += `- Used V: ${battleDetail.usedV ? 'Yes' : 'No'}\n`;
-                message += `- Used SKIP: ${battleDetail.usedSKIP ? 'Yes' : 'No'}`;
+                message += `💥 Used XTRA: ${battleDetail.usedXTRA ? 'Yes' : 'No'}\n`;
+                message += `⚡ Used BOOST: ${battleDetail.usedBOOST ? 'Yes' : 'No'}\n`;
+                message += `✨ Used V: ${battleDetail.usedV ? 'Yes' : 'No'}\n`;
+                message += `⏭️ Used SKIP: ${battleDetail.usedSKIP ? 'Yes' : 'No'}`;
             }
+
+            // You can further customize the emojis and formatting as desired.
+
 
             bot.sendMessage(chatId, message, { parse_mode: 'Markdown' });
         } catch (error) {
