@@ -294,11 +294,7 @@ bot.onText(/\/?stats ([\d,]+)/i, async (msg, match) => {
     }
 });
 
-bot.on('message', (msg) => {
-    console.log(JSON.stringify(msg, null, 2)); // This will log the whole message object in a formatted manner
-    // If you just want to log the text of the message:
-     console.log(msg.text);
-});
+
 
 
 

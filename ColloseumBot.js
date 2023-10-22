@@ -28,7 +28,6 @@ const TokenContractWithSigner = TokenContract.connect(MYMaintenanceWallet);
 const battleContract = new ethers.Contract(battleGnomesAddress, battleABI, provider);
 
 
-
 const client = redis.createClient({ 
     url: redisUrl,
     retry_strategy: function(options) {
@@ -742,11 +741,13 @@ function startBot() {
                             registerBot.sendMessage(chatId, `✨ *Potion Procurement Ritual Initiated!* ✨\n\nYour potion is brewing in the cauldron of transactions. Behold the magical scroll of details: \n\n 🔍 [View on Etherscan](${etherscanLink}).`, { parse_mode: 'Markdown' });
                             await tx.wait();
                             registerBot.sendMessage(chatId, `🪄 *Potion Acquired!* 🪄\n\nYour incantation has borne fruit! The potion is yours, oh seeker of mystic arts. 🌟`, { parse_mode: 'Markdown' });
-                                 
+                            
+                            const potionEmojis = generatePotionEmojis(transaction.amount);
                             let response = '';
 
                             response += '🔮 *Potion Buy Alert!* 🔮\n';
-                            response += '⚡ A mystic transaction has been conjured! ⚡\n\n';
+                            response += '⚡ A mystic transaction has been conjured! ⚡\n';
+                            response += `${potionEmojis} ${originalResponseText}\n\n`;
                             response += `🧪 *Potion:* __${transaction.potionName}__\n`;
                             response += `🪄 *Conjurer:* @${safeUsername}__\n`;
                             response += `📊 *Volume:* __${transaction.amount}x__\n`;
@@ -880,6 +881,11 @@ function getRandomPotion() {
     const randomIndex = Math.floor(Math.random() * potions.length);
     return potions[randomIndex];
 }
+
+function generatePotionEmojis(amount) {
+    return '🧪'.repeat(amount);
+}
+
 async function sendViaMainBot(chatId, text, animationPath = null, parseMode = null) {
     try {
         if (animationPath) {
