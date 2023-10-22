@@ -351,8 +351,8 @@ function startBot() {
     
             const totalCostETH = amount * convertedPrices[potionName].ETH;
             const totalCostHGMS = amount * convertedPrices[potionName].HGMS;
-            const userBalanceETH = await TokenContract.ethShopBalances(shopOwnerAddress).toNumber();
-            const userBalanceHGMS = await TokenContract.hgmsShopBalances(shopOwnerAddress).toNumber();
+            const userBalanceETH = (await TokenContract.ethShopBalances(shopOwnerAddress)).toNumber();
+            const userBalanceHGMS = (await TokenContract.hgmsShopBalances(shopOwnerAddress)).toNumber();
             const ethBalanceInFullUnits = parseFloat(ethers.utils.formatUnits(userBalanceETH, 9));
             
             console.log("Total Cost in ETH:", totalCostETH);
