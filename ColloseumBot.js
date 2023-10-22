@@ -725,7 +725,7 @@ function startBot() {
                             let extraPotions = Math.floor(count / 10); 
                             count -= (10 * extraPotions);
                             
-                            if (transaction.referrer) {
+                            if (referrer) {
                                 referrerAddress = await getAsync(`${transaction.referrer}`);
                                 const potions = [];
                                 for (let i = 0; i < extraPotions; i++) {
