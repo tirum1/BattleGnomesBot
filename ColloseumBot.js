@@ -375,7 +375,7 @@ function startBot() {
                 response += "💎 *Shine on, legend!* 💎";
                 
                 registerBot.sendMessage(chatId, response, { parse_mode: 'Markdown' });
-                
+                userOngoingTransactions[username] = false;
                 return;
             }
 
