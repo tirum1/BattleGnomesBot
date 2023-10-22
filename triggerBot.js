@@ -93,7 +93,7 @@ setInterval(async () => {
             const maxAmountOfWinnerBigNumber = await contract.maxAmountOfWinners();
             const maxAmountOfWinner = maxAmountOfWinnerBigNumber.toNumber();
             console.log("maxamountofwinners:", maxAmountOfWinner);
-            const aliveCount = await getAmountOfNonDead(); 
+            const aliveCount = await contract.getAmountOfNonDead(); 
             console.log("aliveCount:", aliveCount);
 
             let roundMessage = "";
