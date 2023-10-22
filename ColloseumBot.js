@@ -356,7 +356,7 @@ function startBot() {
     
             if (!convertedPrices[potionName]) {
                 registerBot.sendMessage(chatId, "🚫 Uh-Oh, Invalid Potion Name.");
-                userOngoingTransactions[username] = true;
+                userOngoingTransactions[username] = false;
                 return;
             }
     
