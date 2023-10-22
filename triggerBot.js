@@ -34,7 +34,11 @@ bluebird.promisifyAll(client);
 const getAsync = bluebird.promisify(client.get).bind(client);
 
 
-const tokenFilter = TokenContract.filters.PayoutWinnersExecuted();
+const tokenFilter = {
+    address: TokenContract.address,
+    topics: [ethers.utils.id("PayoutWinnersExecuted(address[],uint256)")], // Use the event signature
+};
+
 TokenContract.on(tokenFilter, async (eventData) => {
     try {
         console.log("PayoutWinnersExecuted event detected on TokenContract:", eventData);
@@ -43,6 +47,7 @@ TokenContract.on(tokenFilter, async (eventData) => {
         console.error('Error while handling PayoutWinnersExecuted event on TokenContract:', error);
     }
 });
+
 
 
 setInterval(async () => {
