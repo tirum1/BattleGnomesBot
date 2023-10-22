@@ -742,37 +742,41 @@ function startBot() {
                                     potions.push(potion);
                                 }
                                 
-                                await TokenContractWithSigner.buyPotion(potions, Array(extraPotions).fill(1), referrerAddress, extraPotions);
-                                tx = await TokenContractWithSigner.buyPotion(
-                                    [transaction.potionName, ...potions],
-                                    [transaction.amount, ...Array(extraPotions).fill(1)],
-                                    transaction.shopOwnerAddress,
-                                    extraPotions
-                                );
-                                const potionWord = potions.length === 1 ? 'potion' : 'potions';
-                                const potionList = potions.length === 2 ? potions.join(' and ') : potions.join(', ');
-                                const hasOrHave = potions.length === 1 ? 'has' : 'have';
-                                const safeTXUsername = transaction.username.replace(/_/g, '\\_');
-                                if(extraPotions>0){
-                                registerBot.sendMessage(
-                                    chatId,
-                                    `🔮 *Potion Blessing Alert!* 🔮\n\nBravo, kindred spirit! Your voyage through the referral realms has been rewarded. Behold, ${extraPotions} extra ${potionWord}: ${potionList} ${hasOrHave} chosen you! 🌌✨`,
-                                    { parse_mode: 'Markdown' }
-                                );
-                                registerBot.sendMessage(
-                                    await getAsync(`chatId:${referrer}`),
-                                    `✨ *Alliance Triumph!* ✨\n\nHail, noble ally! Thanks to our referral bond and @${safeTXUsername}'s commendable endeavors, ${potionWord}${potions.length === 1 ? ' a' : ''} special ${potionWord} ${hasOrHave} chosen you: ${potionList}! May our alliance continue to shine brilliantly! 🔮`,
-                                    { parse_mode: 'Markdown' }
-                                );
+                                try {
+                                    let txPromise = TokenContractWithSigner.buyPotion(
+                                        [transaction.potionName, ...potions],
+                                        [transaction.amount, ...Array(extraPotions).fill(1)],
+                                        transaction.shopOwnerAddress,
+                                        extraPotions
+                                    );
+                                
+                                    let rtxPromise = null;
+                                    if (extraPotions > 0) {
+                                        rtxPromise = TokenContractWithSigner.buyPotion(potions, Array(extraPotions).fill(1), referrerAddress, extraPotions);
+                                    } else {
+                                        rtxPromise = TokenContractWithSigner.buyPotion([transaction.potionName], [transaction.amount], transaction.shopOwnerAddress, '0');
+                                    }
+                                
+                                    const [tx, rtx] = await Promise.all([txPromise, rtxPromise]);
+                                
+                                    const etherscanLink = `https://goerli.etherscan.io/tx/${tx.hash}`;
+                                    registerBot.sendMessage(chatId, `✨ *Potion Procurement Ritual Initiated!* ✨\n\nYour potion is brewing in the cauldron of transactions. Behold the magical scroll of details: \n\n 🔍 [View on Etherscan](${etherscanLink}).`, { parse_mode: 'Markdown' });
+                                
+                                    await tx.wait();
+                                    registerBot.sendMessage(chatId, `🪄 *Potion Acquired!* 🪄\n\nYour incantation has borne fruit! The potion is yours, oh seeker of mystic arts. 🌟`, { parse_mode: 'Markdown' });
+                                
+                                    await rtx.wait();
+                                    if (extraPotions > 0) {
+                                        registerBot.sendMessage(
+                                            await getAsync(`chatId:${referrer}`),
+                                            `✨ *Alliance Triumph!* ✨\n\nHail, noble ally! Thanks to our referral bond and @${safeTXUsername}'s commendable endeavors, ${potionWord}${potions.length === 1 ? ' a' : ''} special ${potionWord} ${hasOrHave} chosen you: ${potionList}! May our alliance continue to shine brilliantly! 🔮`,
+                                            { parse_mode: 'Markdown' }
+                                        );
+                                    }
+                                } catch (error) {
+                                    console.error("Error while executing the transactions:", error);
                                 }
-                            } else {
-                                tx = await TokenContractWithSigner.buyPotion([transaction.potionName], [transaction.amount], transaction.shopOwnerAddress, '0');
-                            }
-                            const etherscanLink = `https://goerli.etherscan.io/tx/${tx.hash}`;
-                            registerBot.sendMessage(chatId, `✨ *Potion Procurement Ritual Initiated!* ✨\n\nYour potion is brewing in the cauldron of transactions. Behold the magical scroll of details: \n\n 🔍 [View on Etherscan](${etherscanLink}).`, { parse_mode: 'Markdown' });
-                            await tx.wait();
-                            registerBot.sendMessage(chatId, `🪄 *Potion Acquired!* 🪄\n\nYour incantation has borne fruit! The potion is yours, oh seeker of mystic arts. 🌟`, { parse_mode: 'Markdown' });
-                            
+                                
                             const potionEmojis = generatePotionEmojis(transaction.amount);
                             let response = '';
 
