@@ -726,6 +726,7 @@ function startBot() {
                             transaction.status = 'confirmed';
                             const notSafeReferrer = await getAsync(`referredBy:${transaction.username}`);
                             const referrer = notSafeReferrer.replace(/_/g, '\\_');
+                            console.log("referrer Name:", referrer);
                             let count = 0;
                             if (referrer) {
                                 count = parseInt(await getAsync(`userPotionCount:${transaction.username}`) || "0") + transaction.amount;
