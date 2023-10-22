@@ -729,6 +729,7 @@ function startBot() {
                             if (referrer) {
                                 count = parseInt(await getAsync(`userPotionCount:${transaction.username}`) || "0") + transaction.amount;
                             }
+                            
                             let extraPotions = Math.floor(count / 10); 
                             count -= (10 * extraPotions);
                             
