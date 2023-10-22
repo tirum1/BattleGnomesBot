@@ -729,7 +729,7 @@ function startBot() {
                             if (referrer) {
                                 count = parseInt(await getAsync(`userPotionCount:${transaction.username}`) || "0") + transaction.amount;
                             }
-                            
+
                             let extraPotions = Math.floor(count / 10); 
                             count -= (10 * extraPotions);
                             
@@ -740,6 +740,7 @@ function startBot() {
                                     const potion = getRandomPotion();
                                     potions.push(potion);
                                 }
+                                if(extraPotions>0){
                                 await TokenContractWithSigner.buyPotion(potions, Array(extraPotions).fill(1), referrerAddress, extraPotions);
                                 tx = await TokenContractWithSigner.buyPotion(
                                     [transaction.potionName, ...potions],
@@ -750,7 +751,7 @@ function startBot() {
                                 const potionWord = potions.length === 1 ? 'potion' : 'potions';
                                 const potionList = potions.length === 2 ? potions.join(' and ') : potions.join(', ');
                                 const hasOrHave = potions.length === 1 ? 'has' : 'have';
-
+                                
                                 registerBot.sendMessage(
                                     chatId,
                                     `🔮 *Potion Blessing Alert!* 🔮\n\nBravo, kindred spirit! Your voyage through the referral realms has been rewarded. Behold, ${extraPotions} extra ${potionWord}: ${potionList} ${hasOrHave} chosen you! 🌌✨`,
@@ -761,6 +762,7 @@ function startBot() {
                                     `✨ *Alliance Triumph!* ✨\n\nHail, noble ally! Thanks to our referral bond and @${transaction.username}'s commendable endeavors, ${potionWord}${potions.length === 1 ? ' a' : ''} special ${potionWord} ${hasOrHave} chosen you: ${potionList}! May our alliance continue to shine brilliantly! 🔮`,
                                     { parse_mode: 'Markdown' }
                                 );
+                                }
                             } else {
                                 tx = await TokenContractWithSigner.buyPotion([transaction.potionName], [transaction.amount], transaction.shopOwnerAddress, '0');
                             }
