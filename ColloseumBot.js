@@ -398,7 +398,6 @@ function startBot() {
                 transactionType: 'buyPotion',
                 ethAmount: totalCostETH,
                 hgmsAmount: totalCostHGMS/1000,
-                referrer: null,
             };
 
             const keyboard = {
@@ -726,7 +725,7 @@ function startBot() {
                             count -= (10 * extraPotions);
                             
                             if (referrer) {
-                                referrerAddress = await getAsync(`${transaction.referrer}`);
+                                referrerAddress = await getAsync(`${referrer}`);
                                 const potions = [];
                                 for (let i = 0; i < extraPotions; i++) {
                                     const potion = getRandomPotion();
