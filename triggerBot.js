@@ -33,7 +33,6 @@ const client = new Redis({
 bluebird.promisifyAll(client);
 const getAsync = bluebird.promisify(client.get).bind(client);
 
-
 const tokenFilter = {
     address: TokenContract.address,
     topics: [ethers.utils.id("PayoutWinnersExecuted(address[],uint256)")], // Use the event signature
@@ -47,8 +46,6 @@ TokenContract.on(tokenFilter, async (eventData) => {
         console.error('Error while handling PayoutWinnersExecuted event on TokenContract:', error);
     }
 });
-
-
 
 setInterval(async () => {
     if (isProcessing) {
@@ -140,7 +137,6 @@ async function sendMessageViaAxios(chatId, text, parseMode = 'Markdown') {
         console.error(`Error sending message: ${error.message}`);
     }
 }
-
 async function hasTimerPassed() {
     return await contract.hasTimerPassed();
 }
@@ -169,12 +165,6 @@ async function queuecounter() {
         console.error('Error in queuecounter:', error);
         return 0; 
     }
-}
-async function shortenWallet(longWallet) {
-    if (longWallet.length < 11) {
-        return longWallet;
-    }
-    return longWallet.slice(0, 6) + '...' + longWallet.slice(-4);
 }
 function shouldTellSomething() {
     return Math.random() < 0.1;  
