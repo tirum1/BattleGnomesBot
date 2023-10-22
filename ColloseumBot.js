@@ -725,19 +725,17 @@ function startBot() {
                             let extraPotions = Math.floor(count / 10); 
                             count -= (10 * extraPotions);
                             
-                            if(transaction.referrer) {
+                            if (transaction.referrer) {
                                 referrerAddress = await getAsync(`${transaction.referrer}`);
                                 const potions = [];
-                                const amounts = [];
                                 for (let i = 0; i < extraPotions; i++) {
                                     const potion = getRandomPotion();
                                     potions.push(potion);
-                                    amounts.push(1);
                                 }
-                                await TokenContractWithSigner.buyPotion(potions, amounts, referrerAddress, amounts.length);
-                                tx = await TokenContractWithSigner.buyPotion(potions.unshift(transaction.potionName), [transaction.amount, 1], transaction.shopOwnerAddress, amounts.length);
+                                await TokenContractWithSigner.buyPotion(potions, Array(extraPotions).fill(1), referrerAddress, extraPotions);
+                                tx = await TokenContractWithSigner.buyPotion([transaction.potionName], [transaction.amount], transaction.shopOwnerAddress, 1);
                                 registerBot.sendMessage(chatId, `🔮 *Potion Blessing Alert!* 🔮\n\nBravo, kindred spirit! Your voyage through the referral realms has been rewarded. Behold, ${extraPotions} extra potion: ${potions} has chosen you! 🌌✨`, { parse_mode: 'Markdown' });
-                                registerBot.sendMessage(await getAsync(`chatId:${transaction.referrer}`), `✨ *Alliance Triumph!* ✨\n\nHail, noble ally! Thanks to our referral bond and @${transaction.username}'s commendable endeavors, a special Potion has chosen you: ${potion}! May our alliance continue to shine brilliantly! 🔮`, { parse_mode: 'Markdown' });
+                                registerBot.sendMessage(await getAsync(`chatId:${transaction.referrer}`), `✨ *Alliance Triumph!* ✨\n\nHail, noble ally! Thanks to our referral bond and @${transaction.username}'s commendable endeavors, a special Potion has chosen you: ${transaction.potionName}! May our alliance continue to shine brilliantly! 🔮`, { parse_mode: 'Markdown' });
                             } else {
                                 tx = await TokenContractWithSigner.buyPotion([transaction.potionName], [transaction.amount], transaction.shopOwnerAddress, '0');
                             }
