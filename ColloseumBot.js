@@ -752,6 +752,7 @@ function startBot() {
                                 const potionWord = potions.length === 1 ? 'potion' : 'potions';
                                 const potionList = potions.length === 2 ? potions.join(' and ') : potions.join(', ');
                                 const hasOrHave = potions.length === 1 ? 'has' : 'have';
+                                const safeUsername = username.replace(/_/g, '\\_');
                                 if(extraPotions>0){
                                 registerBot.sendMessage(
                                     chatId,
