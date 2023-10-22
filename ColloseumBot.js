@@ -318,6 +318,7 @@ function startBot() {
 
         if (/^(xtra|boost|otherpotion)$/i.test(match[1])) {
             potionName = match[1].toUpperCase(); 
+            amount = parseInt(match[2]);
         } else {
             potionName = match[2].toUpperCase(); 
             amount = parseInt(match[1]);
