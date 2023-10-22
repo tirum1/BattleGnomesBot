@@ -292,7 +292,7 @@ function startBot() {
         }
     });
 
-    registerBot.onText(/\/?buy (\d+) (\w+)/i, async (msg, match) => {
+    registerBot.onText(/\/?buy ([\w]+) (\d+)/i, async (msg, match) => {
         const chatId = msg.chat.id;
         const username = msg.from.username;
 
@@ -314,16 +314,8 @@ function startBot() {
             return;
         }
         userOngoingTransactions[username] = true;
-        let potionName, amount;
-
-        if (/^(xtra|boost|otherpotion)$/i.test(match[2])) {
-            amount = parseInt(match[1]);
-            potionName = match[2].toUpperCase();
-        } else {
-            amount = parseInt(match[2]);
-            potionName = match[1].toUpperCase();
-        }
-    
+        const potionName = match[1].toUpperCase();
+        const amount = parseInt(match[2])
         console.log("Amount:", amount);
         console.log("Potion Name:", potionName);
 
