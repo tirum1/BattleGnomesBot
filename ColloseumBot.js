@@ -739,7 +739,7 @@ function startBot() {
                                     extraPotions
                                 );
                                 const potionWord = potions.length === 1 ? 'potion' : 'potions';
-                                const potionList = potions.join(', '); // Join the potions with a comma and a space
+                                const potionList = potions.join(', '); 
                                 const hasOrHave = potions.length === 1 ? 'has' : 'have';
 
                                 registerBot.sendMessage(
