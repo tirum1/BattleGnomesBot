@@ -85,8 +85,7 @@ bot.onText(/\/?nft ([\d,]+)/i, async (msg, match) => {
 
 bot.onText(/\/?leaderboard/i, async (msg) => {
     const chatId = msg.chat.id;
-    
-    // Extract username or first name from the message sender
+
     const username = msg.from.username ? `@${msg.from.username}` : msg.from.first_name;
     const safeUsername = username.replace(/_/g, '\\_'); // Escape underscores for Markdown
   
@@ -105,11 +104,16 @@ bot.onText(/\/?leaderboard/i, async (msg) => {
         const top30 = sortedAliveArray.slice(0, 30);
 
         let responseTitle = `${safeUsername} \n`;
-        if (top30.length <= 5) {
-            responseTitle += '*WINNERS OF LAST GAME*\n\n';
+        if (top30.length === 0) {
+            responseTitle = 'GAMES NOT STARTED YET';
         } else {
-            responseTitle += '*TOP 30 ALIVE NFTs*\n\n';
+            if (top30.length <= 5) {
+                responseTitle += '*WINNERS OF LAST GAME*\n\n';
+            } else {
+                responseTitle += '*TOP 30 ALIVE NFTs*\n\n';
+            }
         }
+        
 
         const medals = ['🥇', '🥈', '🥉'];
 
