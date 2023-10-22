@@ -362,7 +362,7 @@ function startBot() {
             console.log("User ETH Balance (Full Units):", ethBalanceInFullUnits);
             
 
-            if (userBalanceETH < totalCostETH || userBalanceHGMS < totalCostHGMS) {
+            if (ethBalanceInFullUnits < totalCostETH || userBalanceHGMS < totalCostHGMS) {
                 let response = '';
 
                 response += "🚫 *Whoa, hold your horses!* 🐎\n\n";
