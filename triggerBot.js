@@ -7,10 +7,15 @@ const bluebird = require('bluebird');
 const INFURA_ENDPOINT = process.env.INFURA_ENDPOINT;  
 const provider = new ethers.providers.JsonRpcProvider(INFURA_ENDPOINT);
 const CONTRACT_ADDRESS = '0xd7aC93dd2415bd5c33F3386C23B4A42BDd150854';  
+const TOKEN_CONTRACT_ADDRESS = '0x5E5475450DA50FA0a7A6614C8fe527DD5D14c8C0';  
 const ABI_PATH = './ABI/BattleContract.json'; 
+const TOKEN_ABI_PATH = './ABI/HungerGames.json'; 
 const contractData = JSON.parse(fs.readFileSync(ABI_PATH, 'utf8'));
+const TokenContractData = JSON.parse(fs.readFileSync(ABI_PATH, 'utf8'));
 const ABI = contractData.abi;
+const TokenABI = TokenContractData.abi;
 const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, provider);
+const TokenContract = new ethers.Contract(TOKEN_CONTRACT_ADDRESS, TokenABI, provider);
 const PRIVATE_KEY = process.env.MYMAINTENANCE;  
 const wallet = new ethers.Wallet(PRIVATE_KEY, provider);
 const token = process.env.MAIN_BOT_TOKEN;
@@ -18,6 +23,7 @@ const TELEGRAM_BASE_URL = `https://api.telegram.org/bot${token}/`;
 const CHANNEL_ID = '-1001672659906';
 let isProcessing = false;
 let txHashForWinnersFound; 
+
 const client = new Redis({
   host: process.env.REDIS_HOST, 
   port: process.env.REDIS_PORT, 
@@ -28,21 +34,16 @@ bluebird.promisifyAll(client);
 const getAsync = bluebird.promisify(client.get).bind(client);
 
 
-contract.on("WinnersFound", async () => {
+const tokenFilter = TokenContract.filters.PayoutWinnersExecuted();
+TokenContract.on(tokenFilter, async (eventData) => {
     try {
-        console.log("WinnersFound event detected!");
-        const filter = contract.filters.WinnersFound();  
-        const logs = await provider.getLogs({
-            fromBlock: 'latest',
-            toBlock: 'latest',
-            address: contract.address,
-            topics: filter.topics
-        });
-        txHashForWinnersFound = logs[0]?.transactionHash;
+        console.log("PayoutWinnersExecuted event detected on TokenContract:", eventData);
+        txHashForWinnersFound = eventData.transactionHash;
     } catch (error) {
-        console.error('Error while handling WinnersFound event:', error);
+        console.error('Error while handling PayoutWinnersExecuted event on TokenContract:', error);
     }
 });
+
 
 setInterval(async () => {
     if (isProcessing) {
@@ -115,8 +116,6 @@ setInterval(async () => {
             }
             
             sendMessageViaAxios(CHANNEL_ID, roundMessage);
-
-
         }
          else {
             console.log('No conditions met for triggering functions.');
@@ -264,7 +263,8 @@ const jokes = [
     "Why did the gnome warrior blush? 🌳 He saw the salad dressing for the royal feast.",
     "What's a gnome's favorite spot in the battle arena? 🌲 The mushroom patch, it's the spore of the moment!",
     "Why was the gnome calm during the battle royale? 🍄 Because he was a fungi!",
-    "How do gnomes communicate in a battle? 🎤 Gnoming code.","Why did the gnome get promoted? 🍄 Because he was a fungi to be with at work!",
+    "How do gnomes communicate in a battle? 🎤 Gnoming code.",
+    "Why did the gnome get promoted? 🍄 Because he was a fungi to be with at work!",
     "Why did the gnome sit on the clock? 🕰️ He wanted to be on gnome time!",
     "What do you call a gnome's mobile home? 🚐 A gnome-mad.",
     "Why did the gnome keep his money in the blender? 🍹 He liked liquid assets!",
