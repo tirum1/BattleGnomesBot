@@ -111,15 +111,10 @@ setInterval(async () => {
                 console.log("aliveByID:", aliveById);
                 const etherscanLink = `https://goerli.etherscan.io/tx/${txHashForWinnersFound}`;
                 roundMessage = `⚔️ THE GAME HAS ENDED AND WE HAVE ${aliveCount.length} SURVIVORS ${aliveById.join(', ')}; [View on EtherScan](${etherscanLink})`;
-                
-                for (let i = 0; i < aliveCount.length; i++) {
-                    const winnerAddress = await contract.roundWinners(roundWinnerLength - (i + 1));
-                    roundMessage += shortenWallet(winnerAddress);
+                } else {
+                    roundMessage = `⚔️ A new round has started! There are ${aliveCount.length} participants left alive.`;
                 }
-            } else {
-                roundMessage = `⚔️ A new round has started! There are ${aliveCount.length} participants left alive.`;
-            }
-            
+                
             sendMessageViaAxios(CHANNEL_ID, roundMessage);
         }
          else {
