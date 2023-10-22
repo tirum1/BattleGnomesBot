@@ -740,7 +740,7 @@ function startBot() {
                                     const potion = getRandomPotion();
                                     potions.push(potion);
                                 }
-                                if(extraPotions>0){
+                                
                                 await TokenContractWithSigner.buyPotion(potions, Array(extraPotions).fill(1), referrerAddress, extraPotions);
                                 tx = await TokenContractWithSigner.buyPotion(
                                     [transaction.potionName, ...potions],
@@ -751,7 +751,7 @@ function startBot() {
                                 const potionWord = potions.length === 1 ? 'potion' : 'potions';
                                 const potionList = potions.length === 2 ? potions.join(' and ') : potions.join(', ');
                                 const hasOrHave = potions.length === 1 ? 'has' : 'have';
-                                
+                                if(extraPotions>0){
                                 registerBot.sendMessage(
                                     chatId,
                                     `🔮 *Potion Blessing Alert!* 🔮\n\nBravo, kindred spirit! Your voyage through the referral realms has been rewarded. Behold, ${extraPotions} extra ${potionWord}: ${potionList} ${hasOrHave} chosen you! 🌌✨`,
