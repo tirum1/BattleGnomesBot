@@ -34,7 +34,7 @@ bot.onText(/\/?nft ([\d,]+)/i, async (msg, match) => {
     const safeUsername = username.replace(/_/g, '\\_');
 
     if (nftIds.length > 10) {
-        nftIds = nftIds.slice(0, 10);  // Limit to the first 10 NFT IDs
+        nftIds = nftIds.slice(0, 10);  
         bot.sendMessage(chatId, `${safeUsername}, You provided more than 10 NFT IDs. I'll only process the first 10.`, { parse_mode: 'Markdown' });
     }
 
@@ -46,7 +46,7 @@ bot.onText(/\/?nft ([\d,]+)/i, async (msg, match) => {
 
         try {
             const isDead = await battleContract.dead(nftId);
-            const battleDetail = await battleContract.getBattleDetail(nftId);
+            const battleDetail = await battleContract.lastBattleDetails(nftId);
 
             let message = `🌟 ${safeUsername},\n`;
 
