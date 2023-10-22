@@ -317,13 +317,14 @@ function startBot() {
         let potionName, amount;
 
         if (/^(xtra|boost|otherpotion)$/i.test(match[1])) {
-            potionName = match[1].toUpperCase(); 
+            potionName = match[1].toUpperCase();
             amount = parseInt(match[2]);
         } else {
-            potionName = match[2].toUpperCase(); 
-            amount = parseInt(match[1]);
+            potionName = match[2].toUpperCase();
+            amount = parseInt(match[3]);
         }
         console.log("potionName", potionName);
+
         try {
             const shopOwnerAddress = await client.getAsync(username);
             if (!shopOwnerAddress) {
