@@ -746,7 +746,7 @@ function startBot() {
                             let response = '';
 
                             response += '🔮 *Potion Buy Alert!* 🔮\n';
-                            response += '⚡ A mystic transaction has been conjured! ⚡\n';
+                            response += '⚡ A mystic transaction has been conjured! ⚡\n\n';
                             response += ` ${potionEmojis}\n\n`;
                             response += `🧪 *Potion:* __${transaction.potionName}__\n`;
                             response += `🪄 *Conjurer:* @${safeUsername}__\n`;
