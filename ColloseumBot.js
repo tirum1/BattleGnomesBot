@@ -323,7 +323,7 @@ function startBot() {
             potionName = match[2].toUpperCase(); 
             amount = parseInt(match[1]);
         }
-    
+        console.log("potionName", potionName);
         try {
             const shopOwnerAddress = await client.getAsync(username);
             if (!shopOwnerAddress) {
