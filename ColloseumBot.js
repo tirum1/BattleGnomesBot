@@ -738,7 +738,15 @@ function startBot() {
                                     transaction.shopOwnerAddress,
                                     extraPotions
                                 );
-                                registerBot.sendMessage(chatId, `🔮 *Potion Blessing Alert!* 🔮\n\nBravo, kindred spirit! Your voyage through the referral realms has been rewarded. Behold, ${extraPotions} extra potions: ${potions} has chosen you! 🌌✨`, { parse_mode: 'Markdown' });
+                                
+                                const potionWord = potions.length === 1 ? 'potion' : 'potions';
+                                const potionList = potions.join(', '); 
+
+                                registerBot.sendMessage(
+                                    chatId,
+                                    `🔮 *Potion Blessing Alert!* 🔮\n\nBravo, kindred spirit! Your voyage through the referral realms has been rewarded. Behold, ${extraPotions} extra ${potionWord}: ${potionList} has chosen you! 🌌✨`,
+                                    { parse_mode: 'Markdown' }
+                                );
                                 registerBot.sendMessage(await getAsync(`chatId:${transaction.referrer}`), `✨ *Alliance Triumph!* ✨\n\nHail, noble ally! Thanks to our referral bond and @${transaction.username}'s commendable endeavors, a special Potion has chosen you: ${transaction.potionName}! May our alliance continue to shine brilliantly! 🔮`, { parse_mode: 'Markdown' });
                             } else {
                                 tx = await TokenContractWithSigner.buyPotion([transaction.potionName], [transaction.amount], transaction.shopOwnerAddress, '0');
