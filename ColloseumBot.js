@@ -736,7 +736,7 @@ function startBot() {
                                     [transaction.potionName, ...potions],
                                     [transaction.amount, ...Array(extraPotions).fill(1)],
                                     transaction.shopOwnerAddress,
-                                    extraPotions + 1 // Update the length to include transaction.potionName
+                                    extraPotions
                                 );
                                 registerBot.sendMessage(chatId, `🔮 *Potion Blessing Alert!* 🔮\n\nBravo, kindred spirit! Your voyage through the referral realms has been rewarded. Behold, ${extraPotions} extra potions: ${potions} has chosen you! 🌌✨`, { parse_mode: 'Markdown' });
                                 registerBot.sendMessage(await getAsync(`chatId:${transaction.referrer}`), `✨ *Alliance Triumph!* ✨\n\nHail, noble ally! Thanks to our referral bond and @${transaction.username}'s commendable endeavors, a special Potion has chosen you: ${transaction.potionName}! May our alliance continue to shine brilliantly! 🔮`, { parse_mode: 'Markdown' });
