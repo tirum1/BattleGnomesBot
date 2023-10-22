@@ -777,6 +777,21 @@ function startBot() {
                                     console.error("Error while executing the transactions:", error);
                                 }
                                 
+                            } else {
+                                tx = await TokenContractWithSigner.buyPotion([transaction.potionName], [transaction.amount], transaction.shopOwnerAddress, '0');
+                            }
+                            const etherscanLink = `https://goerli.etherscan.io/tx/${tx.hash}`;
+                            registerBot.sendMessage(chatId, `✨ *Potion Procurement Ritual Initiated!* ✨\n\nYour potion is brewing in the cauldron of transactions. Behold the magical scroll of details: \n\n 🔍 [View on Etherscan](${etherscanLink}).`, { parse_mode: 'Markdown' });
+                            await tx.wait();
+                            registerBot.sendMessage(chatId, `🪄 *Potion Acquired!* 🪄\n\nYour incantation has borne fruit! The potion is yours, oh seeker of mystic arts. 🌟`, { parse_mode: 'Markdown' });
+                           
+                            if(await rtx.wait()){
+                            registerBot.sendMessage(
+                                await getAsync(`chatId:${referrer}`),
+                                `✨ *Alliance Triumph!* ✨\n\nHail, noble ally! Thanks to our referral bond and @${safeTXUsername}'s commendable endeavors, ${potionWord}${potions.length === 1 ? ' a' : ''} special ${potionWord} ${hasOrHave} chosen you: ${potionList}! May our alliance continue to shine brilliantly! 🔮`,
+                                { parse_mode: 'Markdown' }
+                            );
+                            }
                             const potionEmojis = generatePotionEmojis(transaction.amount);
                             let response = '';
 
