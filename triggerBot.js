@@ -17,7 +17,7 @@ const token = process.env.MAIN_BOT_TOKEN;
 const TELEGRAM_BASE_URL = `https://api.telegram.org/bot${token}/`;
 const CHANNEL_ID = '-1001672659906';
 let isProcessing = false;
-
+let txHashForWinnersFound; 
 const client = new Redis({
   host: process.env.REDIS_HOST, 
   port: process.env.REDIS_PORT, 
@@ -27,6 +27,22 @@ const client = new Redis({
 bluebird.promisifyAll(client);
 const getAsync = bluebird.promisify(client.get).bind(client);
 
+
+contract.on("WinnersFound", async () => {
+    try {
+        console.log("WinnersFound event detected!");
+        const filter = contract.filters.WinnersFound();  
+        const logs = await provider.getLogs({
+            fromBlock: 'latest',
+            toBlock: 'latest',
+            address: contract.address,
+            topics: filter.topics
+        });
+        txHashForWinnersFound = logs[0]?.transactionHash;
+    } catch (error) {
+        console.error('Error while handling WinnersFound event:', error);
+    }
+});
 
 setInterval(async () => {
     if (isProcessing) {
@@ -83,20 +99,21 @@ setInterval(async () => {
             let roundMessage = "";
 
             if (aliveCount <= maxAmountOfWinner) {
-                const roundWinnerLength = await contract.getRoundWinnersLength.toNumber();
+                const roundWinnerLength = (await contract.getRoundWinnersLength()).toNumber();
                 console.log("roundWinnerLength:", roundWinnerLength);
-                const aliveById = await contract.getAliveByID();
-                console.log("aliveByID:", aliveById.map(id => id.toNumber()));
-            
-                roundMessage = `⚔️ THE GAME HAS ENDED AND WE HAVE ${aliveCount} SURVIVORS ${aliveById.join(', ')}`; 
-            
+                const aliveById = (await contract.getAliveByID()).map(id => id.toNumber());
+                console.log("aliveByID:", aliveById);
+                
+                roundMessage = `⚔️ THE GAME HAS ENDED AND WE HAVE ${aliveCount} SURVIVORS ${aliveById.join(', ')}; Transaction Hash: ${txHashForWinnersFound}`; 
+                
                 for (let i = 0; i < aliveCount; i++) {
-                    const winnerAddress = await contract.roundWinners(roundWinnerLength.sub(i + 1));
+                    const winnerAddress = await contract.roundWinners(roundWinnerLength - (i + 1));
                     roundMessage += shortenWallet(winnerAddress);
                 }
             } else {
                 roundMessage = `⚔️ A new round has started! There are ${aliveCount} participants left alive.`;
             }
+            
             
             
             sendMessageViaAxios(CHANNEL_ID, roundMessage);
