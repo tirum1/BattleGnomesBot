@@ -133,17 +133,19 @@ setInterval(async () => {
     }
 }, 10000);
 
-async function sendMessageViaAxios(chatId, text) {
+async function sendMessageViaAxios(chatId, text, parseMode = 'Markdown') {
     try {
         const response = await axios.post(TELEGRAM_BASE_URL + 'sendMessage', {
             chat_id: chatId,
-            text: text
+            text: text,
+            parse_mode: parseMode
         });
         console.log(response.data);
     } catch (error) {
         console.error(`Error sending message: ${error.message}`);
     }
 }
+
 async function hasTimerPassed() {
     return await contract.hasTimerPassed();
 }
