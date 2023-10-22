@@ -785,7 +785,6 @@ function startBot() {
                             response += `🔍 [View on Etherscan](${etherscanLink})\n\n`;
                             response += '🌀 May the ethers keep swirling and the potions keep twirling! 🌀';
                             
-
                             sendViaMainBot(
                                 '-1001672659906', 
                                 response,
