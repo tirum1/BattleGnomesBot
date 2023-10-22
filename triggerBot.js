@@ -93,28 +93,26 @@ setInterval(async () => {
             const maxAmountOfWinnerBigNumber = await contract.maxAmountOfWinners();
             const maxAmountOfWinner = maxAmountOfWinnerBigNumber.toNumber();
             console.log("maxamountofwinners:", maxAmountOfWinner);
-            const aliveCount = await contract.getAmountOfNonDead(); 
+            const aliveCount = await contract.getAliveByID(); 
             console.log("aliveCount:", aliveCount);
 
             let roundMessage = "";
 
-            if (aliveCount <= maxAmountOfWinner) {
+            if (aliveCount.length <= maxAmountOfWinner) {
                 const roundWinnerLength = (await contract.getRoundWinnersLength()).toNumber();
                 console.log("roundWinnerLength:", roundWinnerLength);
                 const aliveById = (await contract.getAliveByID()).map(id => id.toNumber());
                 console.log("aliveByID:", aliveById);
                 
-                roundMessage = `⚔️ THE GAME HAS ENDED AND WE HAVE ${aliveCount} SURVIVORS ${aliveById.join(', ')}; Transaction Hash: ${txHashForWinnersFound}`; 
+                roundMessage = `⚔️ THE GAME HAS ENDED AND WE HAVE ${aliveCount.length} SURVIVORS ${aliveById.join(', ')}; Transaction Hash: ${txHashForWinnersFound}`; 
                 
-                for (let i = 0; i < aliveCount; i++) {
+                for (let i = 0; i < aliveCount.length; i++) {
                     const winnerAddress = await contract.roundWinners(roundWinnerLength - (i + 1));
                     roundMessage += shortenWallet(winnerAddress);
                 }
             } else {
-                roundMessage = `⚔️ A new round has started! There are ${aliveCount} participants left alive.`;
+                roundMessage = `⚔️ A new round has started! There are ${aliveCount.length} participants left alive.`;
             }
-            
-            
             
             sendMessageViaAxios(CHANNEL_ID, roundMessage);
 
