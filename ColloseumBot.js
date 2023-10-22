@@ -314,8 +314,14 @@ function startBot() {
             return;
         }
         userOngoingTransactions[username] = true;
-        const potionName = match[1].toUpperCase();
-        const amount = parseInt(match[2]);
+        let potionName, amount;
+
+        if (/^(xtra|boost|otherpotion)$/i.test(match[1])) {
+            potionName = match[1].toUpperCase(); 
+        } else {
+            potionName = match[2].toUpperCase(); 
+            amount = parseInt(match[1]);
+        }
     
         try {
             const shopOwnerAddress = await client.getAsync(username);
