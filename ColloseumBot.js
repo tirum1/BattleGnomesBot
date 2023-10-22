@@ -14,8 +14,8 @@ const MYMaintenance = process.env.MYMAINTENANCE;
 const TELEGRAM_BASE_URL = `https://api.telegram.org/bot${mainBotToken}/`;
 
 const registerBot = new TelegramBot(registerBotToken, { polling: true });
-const hungerGamesAddress = '0xc4797381163C492159C30c1d42E633EC0b372006';
-const battleGnomesAddress = '0x4FF4dd60888F9D640b49ec71662Ca9C000E76124';
+const hungerGamesAddress = '0x5E5475450DA50FA0a7A6614C8fe527DD5D14c8C0';
+const battleGnomesAddress = '0x9e5439DbBDE0E76F050F356852501394DD940770';
 const GnomesCollectiveAddress = "0x2391C069B5262E5c1aC2dfD84b09743a91657239";
 const provider = new ethers.providers.JsonRpcProvider(process.env.PROVIDER_URL);
 const MYMaintenanceWallet = new ethers.Wallet(MYMaintenance, provider);
@@ -718,24 +718,28 @@ function startBot() {
                         try {
                             transaction.status = 'confirmed';
                             const referrer = await getAsync(`referredBy:${transaction.username}`);
-                            let tx;
                             let count = 0;
                             if (referrer) {
                                 count = parseInt(await getAsync(`userPotionCount:${transaction.username}`) || "0") + transaction.amount;
                             }
-                            if (count >= 10) {
-                                transaction.referrer = referrer;
-                                count -= 10;
-                            }
+                            let extraPotions = Math.floor(count / 10); // Determine the number of extra potions to give
+                            count -= (10 * extraPotions);
+                            
                             if(transaction.referrer) {
                                 referrerAddress = await getAsync(`${transaction.referrer}`);
-                                const potion = getRandomPotion();
-                                await TokenContractWithSigner.buyPotion([potion], [1], referrerAddress, true);
-                                tx = await TokenContractWithSigner.buyPotion([transaction.potionName, potion], [transaction.amount, 1], transaction.shopOwnerAddress, true);
-                                registerBot.sendMessage(chatId, `🔮 *Potion Blessing Alert!* 🔮\n\nBravo, kindred spirit! Your voyage through the referral realms has been rewarded. Behold, an extra potion: ${potion} has chosen you! 🌌✨`, { parse_mode: 'Markdown' });
+                                const potions = [];
+                                const amounts = [];
+                                for (let i = 0; i < extraPotions; i++) {
+                                    const potion = getRandomPotion();
+                                    potions.push(potion);
+                                    amounts.push(1);
+                                }
+                                await TokenContractWithSigner.buyPotion(potions, amounts, referrerAddress, amounts.length);
+                                tx = await TokenContractWithSigner.buyPotion(potions.unshift(transaction.potionName), [transaction.amount, 1], transaction.shopOwnerAddress, amounts.length);
+                                registerBot.sendMessage(chatId, `🔮 *Potion Blessing Alert!* 🔮\n\nBravo, kindred spirit! Your voyage through the referral realms has been rewarded. Behold, an extra potion: ${potions} has chosen you! 🌌✨`, { parse_mode: 'Markdown' });
                                 registerBot.sendMessage(await getAsync(`chatId:${transaction.referrer}`), `✨ *Alliance Triumph!* ✨\n\nHail, noble ally! Thanks to our referral bond and @${transaction.username}'s commendable endeavors, a special Potion has chosen you: ${potion}! May our alliance continue to shine brilliantly! 🔮`, { parse_mode: 'Markdown' });
                             } else {
-                                tx = await TokenContractWithSigner.buyPotion([transaction.potionName], [transaction.amount], transaction.shopOwnerAddress, false);
+                                tx = await TokenContractWithSigner.buyPotion([transaction.potionName], [transaction.amount], transaction.shopOwnerAddress, '0');
                             }
                             const etherscanLink = `https://goerli.etherscan.io/tx/${tx.hash}`;
                             registerBot.sendMessage(chatId, `✨ *Potion Procurement Ritual Initiated!* ✨\n\nYour potion is brewing in the cauldron of transactions. Behold the magical scroll of details: \n\n 🔍 [View on Etherscan](${etherscanLink}).`, { parse_mode: 'Markdown' });
