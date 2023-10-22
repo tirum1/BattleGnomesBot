@@ -48,7 +48,7 @@ bot.onText(/\/?nft ([\d,]+)/i, async (msg, match) => {
             const isDead = await battleContract.dead(nftId);
             const battleDetail = await battleContract.lastBattleDetails(nftId);
 
-            let message = `🌟 ${safeUsername},\n`;
+            let message = `${safeUsername}\n`;
 
             if (isDead) {
                 message += `😵 The NFT with ID ${nftId} is no longer among the living.\n`;
@@ -113,7 +113,6 @@ bot.onText(/\/?leaderboard/i, async (msg) => {
                 responseTitle += '*TOP 30 ALIVE NFTs*\n\n';
             }
         }
-        
 
         const medals = ['🥇', '🥈', '🥉'];
 
