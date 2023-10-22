@@ -752,7 +752,7 @@ function startBot() {
                                 const potionWord = potions.length === 1 ? 'potion' : 'potions';
                                 const potionList = potions.length === 2 ? potions.join(' and ') : potions.join(', ');
                                 const hasOrHave = potions.length === 1 ? 'has' : 'have';
-                                const safeUsername = username.replace(/_/g, '\\_');
+                                const safeTXUsername = transaction.username.replace(/_/g, '\\_');
                                 if(extraPotions>0){
                                 registerBot.sendMessage(
                                     chatId,
@@ -761,7 +761,7 @@ function startBot() {
                                 );
                                 registerBot.sendMessage(
                                     await getAsync(`chatId:${referrer}`),
-                                    `✨ *Alliance Triumph!* ✨\n\nHail, noble ally! Thanks to our referral bond and @${safeUsername}'s commendable endeavors, ${potionWord}${potions.length === 1 ? ' a' : ''} special ${potionWord} ${hasOrHave} chosen you: ${potionList}! May our alliance continue to shine brilliantly! 🔮`,
+                                    `✨ *Alliance Triumph!* ✨\n\nHail, noble ally! Thanks to our referral bond and @${safeTXUsername}'s commendable endeavors, ${potionWord}${potions.length === 1 ? ' a' : ''} special ${potionWord} ${hasOrHave} chosen you: ${potionList}! May our alliance continue to shine brilliantly! 🔮`,
                                     { parse_mode: 'Markdown' }
                                 );
                                 }
