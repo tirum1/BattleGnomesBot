@@ -193,12 +193,13 @@ function getRandomMessage() {
     const random = Math.random();
     if (random < 0.33) {
         return getRandomJoke();
-    } else if (0.33 >= random < 0.66){
+    } else if (random >= 0.33 && random < 0.66) {
         return getMysticQuote();
-    } else if (0.66 >= random < 1){
+    } else {
         return getRandomBullishQuotes();
     } 
 }
+
 function getMysticQuote() {
     return mysticQuotes[Math.floor(Math.random() * mysticQuotes.length)];
 }
