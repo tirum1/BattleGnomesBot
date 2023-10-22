@@ -93,7 +93,7 @@ setInterval(async () => {
             const maxAmountOfWinnerBigNumber = await contract.maxAmountOfWinners();
             const maxAmountOfWinner = maxAmountOfWinnerBigNumber.toNumber();
             console.log("maxamountofwinners:", maxAmountOfWinner);
-            const aliveCount = await getAliveCount(); 
+            const aliveCount = await getAmountOfNonDead(); 
             console.log("aliveCount:", aliveCount);
 
             let roundMessage = "";
@@ -199,7 +199,6 @@ function getRandomMessage() {
         return getRandomBullishQuotes();
     } 
 }
-
 function getMysticQuote() {
     return mysticQuotes[Math.floor(Math.random() * mysticQuotes.length)];
 }
