@@ -350,13 +350,16 @@ function startBot() {
             }
     
             const totalCostETH = amount * convertedPrices[potionName].ETH;
+            console.log("userBalance:", totalCostETH);
             const totalCostHGMS = amount * convertedPrices[potionName].HGMS;
-    
+            console.log("userBalance:", totalCostHGMS);
             const userBalanceETH = await TokenContract.ethShopBalances(shopOwnerAddress);
+            console.log("userBalance:", userBalanceETH);
             const userBalanceHGMS = await TokenContract.hgmsShopBalances(shopOwnerAddress);
-    
+            console.log("userBalance:", userBalanceHGMS);
             const ethBalanceInFullUnits = parseFloat(ethers.utils.formatUnits(userBalanceETH, 9));
-    
+            console.log("userBalance:", ethBalanceInFullUnits);
+            
             if (userBalanceETH < totalCostETH || userBalanceHGMS < totalCostHGMS) {
                 let response = '';
 
