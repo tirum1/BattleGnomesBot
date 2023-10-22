@@ -109,8 +109,8 @@ setInterval(async () => {
                 console.log("roundWinnerLength:", roundWinnerLength);
                 const aliveById = (await contract.getAliveByID()).map(id => id.toNumber());
                 console.log("aliveByID:", aliveById);
-                
-                roundMessage = `⚔️ THE GAME HAS ENDED AND WE HAVE ${aliveCount.length} SURVIVORS ${aliveById.join(', ')}; Transaction Hash: ${txHashForWinnersFound}`; 
+                const etherscanLink = `https://goerli.etherscan.io/tx/${txHashForWinnersFound}`;
+                roundMessage = `⚔️ THE GAME HAS ENDED AND WE HAVE ${aliveCount.length} SURVIVORS ${aliveById.join(', ')}; [View on EtherScan](${etherscanLink})`;
                 
                 for (let i = 0; i < aliveCount.length; i++) {
                     const winnerAddress = await contract.roundWinners(roundWinnerLength - (i + 1));
