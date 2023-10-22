@@ -100,7 +100,7 @@ bot.onText(/\/?leaderboard/i, async (msg) => {
         
         const top30 = sortedAliveArray.slice(0, 30);
 
-        let responseTitle = `${safeUsername}, \n`;
+        let responseTitle = `${safeUsername} \n`;
         if (top30.length <= 5) {
             responseTitle += '*WINNERS OF LAST GAME*\n\n';
         } else {

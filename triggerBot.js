@@ -84,17 +84,20 @@ setInterval(async () => {
 
             if (aliveCount <= maxAmountOfWinner) {
                 const roundWinnerLength = await contract.getRoundWinnersLength();
-                console.log("reoundwinnerLength:", roundWinnerLength);
+                console.log("roundWinnerLength:", roundWinnerLength);
                 const aliveById = await contract.getAliveByID();
-                console.log("alivebyID:", aliveById);
-
-                roundMessage = `⚔️ THE GAME HAS ENDED AND WE HAVE ${aliveCount} SURVIVORS ${aliveById}`;
+                console.log("aliveByID:", aliveById);
+            
+                roundMessage = `⚔️ THE GAME HAS ENDED AND WE HAVE ${aliveCount} SURVIVORS ${aliveById.join(', ')}`; 
+            
                 for (let i = 0; i < aliveCount; i++) {
-                    roundMessage += shortenWallet(await contract.roundWinners[roundWinnerLength - i]);
+                    const winnerAddress = await contract.roundWinners(roundWinnerLength - i - 1); 
+                    roundMessage += shortenWallet(winnerAddress);
                 }
             } else {
                 roundMessage = `⚔️ A new round has started! There are ${aliveCount} participants left alive.`;
             }
+            
             
             sendMessageViaAxios(CHANNEL_ID, roundMessage);
 
