@@ -177,15 +177,6 @@ async function shortenWallet(longWallet) {
     }
     return longWallet.slice(0, 6) + '...' + longWallet.slice(-4);
 }
-async function getAliveCount() {
-    try {
-        const aliveNFTs = await contract.getAliveByID();
-        return aliveNFTs.length;
-    } catch (error) {
-        console.error('Error in getAliveCount:', error);
-        return 0;  
-    }
-}
 function shouldTellSomething() {
     return Math.random() < 0.1;  
 }

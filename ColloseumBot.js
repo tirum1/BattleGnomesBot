@@ -857,9 +857,8 @@ function startBot() {
                 console.error('Error in callback query handler:', error);
                 registerBot.sendMessage(chatId, "🌟 *Mystical Conundrum* 🌟\n\nAlas, the arcane currents have stirred in an unexpected fashion, causing a momentary bewilderment. Seek your path anew when the celestial tides are more favorable. 🪄", { parse_mode: 'Markdown' });
             }
-        });
-
-    }
+    });
+}
 
 function isValidEthereumAddress(address) {
 
