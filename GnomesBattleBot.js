@@ -5,7 +5,7 @@ const TelegramBot = require('node-telegram-bot-api');
 const token = process.env.MAIN_BOT_TOKEN;
 
 const bot = new TelegramBot(token, { polling: true });
-const battleContractAddress = '0x9e5439DbBDE0E76F050F356852501394DD940770';
+const battleContractAddress = '0xd7aC93dd2415bd5c33F3386C23B4A42BDd150854';
 const hungerGamesAddress = '0x5E5475450DA50FA0a7A6614C8fe527DD5D14c8C0';
 const GnomesCollectiveAddress = '0x2391C069B5262E5c1aC2dfD84b09743a91657239';
 

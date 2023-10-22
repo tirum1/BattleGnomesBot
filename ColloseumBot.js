@@ -15,7 +15,7 @@ const TELEGRAM_BASE_URL = `https://api.telegram.org/bot${mainBotToken}/`;
 
 const registerBot = new TelegramBot(registerBotToken, { polling: true });
 const hungerGamesAddress = '0x5E5475450DA50FA0a7A6614C8fe527DD5D14c8C0';
-const battleGnomesAddress = '0x9e5439DbBDE0E76F050F356852501394DD940770';
+const battleGnomesAddress = '0xd7aC93dd2415bd5c33F3386C23B4A42BDd150854';
 const GnomesCollectiveAddress = "0x2391C069B5262E5c1aC2dfD84b09743a91657239";
 const provider = new ethers.providers.JsonRpcProvider(process.env.PROVIDER_URL);
 const MYMaintenanceWallet = new ethers.Wallet(MYMaintenance, provider);
