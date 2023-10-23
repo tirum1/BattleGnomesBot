@@ -428,7 +428,7 @@ function startBot() {
         const chatId = msg.chat.id;
         const username = msg.from.username;
         const potionName = match[1];
-        const nftIds = match[2].split(',').map(id => parseInt(id));
+        const nftIds = [...new Set(match[2].split(',').map(id => parseInt(id)))];
 
         if (!username) {
             console.error("Username is not defined.");
@@ -486,13 +486,7 @@ function startBot() {
                 userOngoingTransactions[username] = false;
                 return;
             }
-            const mintedAmount = await battleContract.getMintAmount();
-            const allNFTsMinted = nftIds.every(id => id <= mintedAmount);
-            if (!allNFTsMinted) { 
-                registerBot.sendMessage(chatId, "❌ Some of the provided NFT IDs haven't been minted yet.");
-                userOngoingTransactions[username] = false;
-                return;
-            }
+           
             
             let hasSufficientBalance = false;
 
@@ -543,7 +537,6 @@ function startBot() {
                 userOngoingTransactions[username] = false;
                 return;
             }
-
 
             let confirmMessage = '';
 
