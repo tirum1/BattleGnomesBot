@@ -493,31 +493,7 @@ function startBot() {
                 userOngoingTransactions[username] = false;
                 return;
             }
-            const potionFunctionName = `NFT${potionName.toUpperCase()}Balance`;
-
-            // Log the potion function name to verify if it's correct
-            console.log(`Using function name: ${potionFunctionName}`);
-
-            const nftsWithPotionPromises = await Promise.all(nftIds.map(async id => {
-                const hasPotion = await battleContract[potionFunctionName](id);
-                // Log the response from the contract for each NFT ID
-                console.log(`NFT ID: ${id}, hasPotion: ${hasPotion}`);
-                return {
-                    id: id,
-                    hasPotion: hasPotion
-                };
-            }));
-
-            const nftsWithPotion = nftsWithPotionPromises.filter(nft => nft.hasPotion).map(nft => nft.id);
-
-            // Log the NFT IDs with the potion applied
-            console.log(`NFTs with the potion applied: ${nftsWithPotion.join(', ')}`);
-
-            if (nftsWithPotion.length) { 
-                registerBot.sendMessage(chatId, `❌ The following NFT IDs already have the specified potion applied: ${nftsWithPotion.join(', ')}.`);
-                return;
-            }
-
+            
 
 
 
@@ -548,6 +524,29 @@ function startBot() {
                 userOngoingTransactions[username] = false;
                 return;
             }
+
+            const potionFunctionName = `NFT${potionName.toUpperCase()}Balance`;
+
+            console.log(`Using function name: ${potionFunctionName}`);
+
+            const nftsWithPotionPromises = await Promise.all(nftIds.map(async id => {
+                const hasPotion = await battleContract[potionFunctionName](id);
+                console.log(`NFT ID: ${id}, hasPotion: ${hasPotion}`);
+                return {
+                    id: id,
+                    hasPotion: hasPotion
+                };
+            }));
+
+            const nftsWithPotion = nftsWithPotionPromises.filter(nft => nft.hasPotion).map(nft => nft.id);
+
+            console.log(`NFTs with the potion applied: ${nftsWithPotion.join(', ')}`);
+
+            if (nftsWithPotion.length) { 
+                registerBot.sendMessage(chatId, `❌ The following NFT IDs already have the specified potion applied: ${nftsWithPotion.join(', ')}.`);
+                return;
+            }
+
 
             let confirmMessage = '';
 
