@@ -494,19 +494,30 @@ function startBot() {
                 return;
             }
             const potionFunctionName = `NFT${potionName.toUpperCase()}Balance`;
+
+            // Log the potion function name to verify if it's correct
+            console.log(`Using function name: ${potionFunctionName}`);
+
             const nftsWithPotionPromises = await Promise.all(nftIds.map(async id => {
+                const hasPotion = await battleContract[potionFunctionName](id);
+                // Log the response from the contract for each NFT ID
+                console.log(`NFT ID: ${id}, hasPotion: ${hasPotion}`);
                 return {
                     id: id,
-                    hasPotion: await battleContract[potionFunctionName](id)
+                    hasPotion: hasPotion
                 };
             }));
 
-const nftsWithPotion = nftsWithPotionPromises.filter(nft => nft.hasPotion).map(nft => nft.id);
+            const nftsWithPotion = nftsWithPotionPromises.filter(nft => nft.hasPotion).map(nft => nft.id);
 
-if (nftsWithPotion.length) { 
-    registerBot.sendMessage(chatId, `❌ The following NFT IDs already have the specified potion applied: ${nftsWithPotion.join(', ')}.`);
-    return;
-}
+            // Log the NFT IDs with the potion applied
+            console.log(`NFTs with the potion applied: ${nftsWithPotion.join(', ')}`);
+
+            if (nftsWithPotion.length) { 
+                registerBot.sendMessage(chatId, `❌ The following NFT IDs already have the specified potion applied: ${nftsWithPotion.join(', ')}.`);
+                return;
+            }
+
 
 
 
