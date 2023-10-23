@@ -24,7 +24,8 @@ bot.onText(/\/?nft ([\d,]+)/i, async (msg, match) => {
     const username = msg.from.username ? `@${msg.from.username}` : msg.from.first_name;
     const safeUsername = username.replace(/_/g, '\\_');
     if (userTimestamps[userId] && (currentTime - userTimestamps[userId] < RATE_LIMIT)) {
-        bot.sendMessage(msg.chat.id, `${safeUsername} Please wait 10 seconds before using a command again. Alternatively, you can use /nft with up to 10 IDs at once (e.g., /nft ID1, ID2, ...).`);
+        bot.sendMessage(msg.chat.id, `${safeUsername} Please wait 10 seconds before using a command again. Alternatively, you can use /nft with up to 10 IDs at once (e.g., /nft ID1, ID2, ...).`, { parse_mode: 'Markdown' });
+
         return;
     }
     userTimestamps[userId] = currentTime;
