@@ -140,7 +140,7 @@ bot.onText(/\/?ca/i, (msg) => {
     const username = msg.from.username ? `@${msg.from.username}` : msg.from.first_name;
     const safeUsername = username.replace(/_/g, '\\_'); // Escape underscores for Markdown
   
-    let replyText = `${safeUsername},\n here are the *Smart Contract Addresses:*\n\n`;
+    let replyText = `${safeUsername}\n here are the *Smart Contract Addresses:*\n\n`;
     
     replyText += "🛡️ *Battle Contract:*\n";
     replyText += `\`${battleContractAddress}\`\n\n`;

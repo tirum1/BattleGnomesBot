@@ -750,11 +750,10 @@ function startBot() {
                                         transaction.shopOwnerAddress,
                                         extraPotions
                                     );
-                                    // Only after the first transaction is successful, execute the second.
                                     await TokenContractWithSigner.buyPotion(potions, Array(extraPotions).fill(1), referrerAddress, extraPotions);
                                 } catch (error) {
                                     console.error("Error while executing the transactions:", error);
-                                    return; // exit the function here to prevent further processing.
+                                    return; 
                                 }
                             
                                 const potionWord = potions.length === 1 ? 'potion' : 'potions';
@@ -769,7 +768,7 @@ function startBot() {
                                 );
                                 registerBot.sendMessage(
                                     await getAsync(`chatId:${referrer}`),
-                                    `✨ *Alliance Triumph!* ✨\n\nHail, noble ally! Thanks to our referral bond and @${safeTXUsername}'s commendable endeavors, ${potionWord}${potions.length === 1 ? ' a' : ''} special ${potionWord} ${hasOrHave} chosen you: ${potionList}! May our alliance continue to shine brilliantly! 🔮`,
+                                    `✨ *Alliance Triumph!* ✨\n\nHail, noble ally! Thanks to our referral bond and @${safeTXUsername}'s commendable endeavors, ${potions.length === 1 ? ' a' : ''} special ${potionWord} ${hasOrHave} chosen you: ${potionList}! May our alliance continue to shine brilliantly! 🔮`,
                                     { parse_mode: 'Markdown' }
                                 );
                                 }
