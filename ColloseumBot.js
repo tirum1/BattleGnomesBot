@@ -473,6 +473,7 @@ function startBot() {
 
             console.log('ownedNFTsAsNumbers:', ownedNFTsAsNumbers);
             console.log('nftIds:', nftIds);
+
             const ownsAllNFTs = nftIds.every(id => ownedNFTsAsNumbers.includes(id));
             if (!ownsAllNFTs) {
                 registerBot.sendMessage(chatId, "❌ You don't own all the provided NFT IDs.");
@@ -480,12 +481,11 @@ function startBot() {
                 return;
             }
             const allNFTsAlive = await Promise.all(nftIds.map(id => battleContract.dead(id)));
-            if (allNFTsAlive.some(status => status)) { // If any of the NFTs is dead
+            if (allNFTsAlive.some(status => status)) { 
                 registerBot.sendMessage(chatId, "❌ Some of the provided NFT IDs correspond to dead NFTs.");
                 userOngoingTransactions[username] = false;
                 return;
             }
-
             const mintedAmount = await battleContract.getMintAmount();
             const allNFTsMinted = nftIds.every(id => id <= mintedAmount);
             if (!allNFTsMinted) { 
@@ -493,7 +493,23 @@ function startBot() {
                 userOngoingTransactions[username] = false;
                 return;
             }
-            
+            const potionFunctionName = `${potionName.toUpperCase()}Balance`;
+            const nftsWithPotionPromises = await Promise.all(nftIds.map(async id => {
+                return {
+                    id: id,
+                    hasPotion: await battleContract[potionFunctionName](id)
+                };
+            }));
+
+const nftsWithPotion = nftsWithPotionPromises.filter(nft => nft.hasPotion).map(nft => nft.id);
+
+if (nftsWithPotion.length) { 
+    registerBot.sendMessage(chatId, `❌ The following NFT IDs already have the specified potion applied: ${nftsWithPotion.join(', ')}.`);
+    return;
+}
+
+
+
 
             let hasSufficientBalance = false;
 
@@ -517,7 +533,7 @@ function startBot() {
             }
     
             if (!hasSufficientBalance) {
-                registerBot.sendMessage(msg.chat.id, `❌ Insufficient ${potionName} balance for the provided NFT IDs.`);
+                registerBot.sendMessage(msg.chat.id, `❌ Insufficient ${potionName.toUpperCase()} balance for the provided NFT IDs.`);
                 userOngoingTransactions[username] = false;
                 return;
             }
