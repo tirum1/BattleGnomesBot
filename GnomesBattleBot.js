@@ -243,8 +243,10 @@ bot.onText(/\/?stats ([\d,]+)/i, async (msg, match) => {
     const userId = msg.from.id;
     const currentTime = Date.now();
     const mintAmount = await battleContract.getMintAmount();
+    const username = msg.from.username ? `@${msg.from.username}` : msg.from.first_name;
+    const safeUsername = username.replace(/_/g, '\\_');
     if (userTimestamps[userId] && (currentTime - userTimestamps[userId] < RATE_LIMIT)) {
-        bot.sendMessage(msg.chat.id, "Please wait for 10 seconds before using a command again. Alternatively, you can use /stats with up to 10 IDs at once (e.g., /stats ID1, ID2, ...).");
+        bot.sendMessage(msg.chat.id, `${safeUsername} Please wait for 10 seconds before using a command again. Alternatively, you can use /stats with up to 10 IDs at once (e.g., /stats ID1, ID2, ...).`);
         return;
     }
     userTimestamps[userId] = currentTime;
@@ -252,8 +254,6 @@ bot.onText(/\/?stats ([\d,]+)/i, async (msg, match) => {
     const chatId = msg.chat.id;
     let nftIds = match[1].split(',').map(id => Number(id.trim()));
 
-    const username = msg.from.username ? `@${msg.from.username}` : msg.from.first_name;
-    const safeUsername = username.replace(/_/g, '\\_');
 
     if (nftIds.length > 10) {
         nftIds = nftIds.slice(0, 10);  // Limit to the first 10 NFT IDs
