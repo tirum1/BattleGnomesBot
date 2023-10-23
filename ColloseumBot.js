@@ -727,6 +727,7 @@ function startBot() {
                             const referrer = await getAsync(`referredBy:${transaction.username}`);
                             console.log("referrer Name:", referrer);
                             let count = 0;
+                            
                             if (referrer) {
                                 count = parseInt(await getAsync(`userPotionCount:${transaction.username}`) || "0") + transaction.amount;
                             }
