@@ -493,7 +493,7 @@ function startBot() {
                 userOngoingTransactions[username] = false;
                 return;
             }
-            const potionFunctionName = `${potionName.toUpperCase()}Balance`;
+            const potionFunctionName = `NFT${potionName.toUpperCase()}Balance`;
             const nftsWithPotionPromises = await Promise.all(nftIds.map(async id => {
                 return {
                     id: id,
