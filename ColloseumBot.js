@@ -494,10 +494,6 @@ function startBot() {
                 return;
             }
             
-
-
-
-
             let hasSufficientBalance = false;
 
             switch (potionName.toLowerCase()) {
@@ -530,7 +526,7 @@ function startBot() {
             console.log(`Using function name: ${potionFunctionName}`);
 
             const nftsWithPotionPromises = await Promise.all(nftIds.map(async id => {
-                const hasPotion = await battleContract[potionFunctionName](id);
+                const hasPotion = await TokenContract[potionFunctionName](id);
                 console.log(`NFT ID: ${id}, hasPotion: ${hasPotion}`);
                 return {
                     id: id,
