@@ -323,6 +323,7 @@ function startBot() {
             const shopOwnerAddress = await client.getAsync(username);
             if (!shopOwnerAddress) {
                 registerBot.sendMessage(msg.chat.id, `🔮 *Mystical Bindings Alert!* 🔮\nGreetings, @${username}! The cosmos whispers that your wallet remains unbound. Please tether your etheric pouch to journey further.`);
+                userOngoingTransactions[username] = false;
                 return;
             }
             const BOOSTPriceETHBig = await TokenContract.BOOSTPriceETH();
@@ -452,6 +453,7 @@ function startBot() {
 
         if (!walletAddress) {
             registerBot.sendMessage(msg.chat.id, `No wallet registered for @${username}`);
+            userOngoingTransactions[username] = false;
             return;
         }
         try {
@@ -459,6 +461,7 @@ function startBot() {
             const shopOwnerAddress = await client.getAsync(username);
             if (!shopOwnerAddress) {
                 registerBot.sendMessage(msg.chat.id, `No wallet registered for @${username}`);
+                userOngoingTransactions[username] = false;
                 return;
             }
             const xtraBalance = await TokenContract.XTRAShopBalances(walletAddress);
@@ -473,8 +476,24 @@ function startBot() {
             const ownsAllNFTs = nftIds.every(id => ownedNFTsAsNumbers.includes(id));
             if (!ownsAllNFTs) {
                 registerBot.sendMessage(chatId, "❌ You don't own all the provided NFT IDs.");
+                userOngoingTransactions[username] = false;
                 return;
             }
+            const allNFTsAlive = await Promise.all(nftIds.map(id => battleContract.dead(id)));
+            if (allNFTsAlive.some(status => status)) { // If any of the NFTs is dead
+                registerBot.sendMessage(chatId, "❌ Some of the provided NFT IDs correspond to dead NFTs.");
+                userOngoingTransactions[username] = false;
+                return;
+            }
+
+            const mintedAmount = await battleContract.getMintAmount();
+            const allNFTsMinted = nftIds.every(id => id <= mintedAmount);
+            if (!allNFTsMinted) { 
+                registerBot.sendMessage(chatId, "❌ Some of the provided NFT IDs haven't been minted yet.");
+                userOngoingTransactions[username] = false;
+                return;
+            }
+            
 
             let hasSufficientBalance = false;
 
@@ -493,11 +512,13 @@ function startBot() {
                     break;
                 default:
                     registerBot.sendMessage(msg.chat.id, "❌ Unknown potion name.");
+                    userOngoingTransactions[username] = false;
                     return;
             }
     
             if (!hasSufficientBalance) {
                 registerBot.sendMessage(msg.chat.id, `❌ Insufficient ${potionName} balance for the provided NFT IDs.`);
+                userOngoingTransactions[username] = false;
                 return;
             }
 
