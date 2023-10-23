@@ -21,6 +21,8 @@ const RATE_LIMIT = 1 * 10 * 1000;
 bot.onText(/\/?nft ([\d,]+)/i, async (msg, match) => {
     const userId = msg.from.id;
     const currentTime = Date.now();
+    const username = msg.from.username ? `@${msg.from.username}` : msg.from.first_name;
+    const safeUsername = username.replace(/_/g, '\\_');
     if (userTimestamps[userId] && (currentTime - userTimestamps[userId] < RATE_LIMIT)) {
         bot.sendMessage(msg.chat.id, `${safeUsername} Please wait 10 seconds before using a command again. Alternatively, you can use /nft with up to 10 IDs at once (e.g., /nft ID1, ID2, ...).`);
         return;
@@ -30,8 +32,7 @@ bot.onText(/\/?nft ([\d,]+)/i, async (msg, match) => {
     const chatId = msg.chat.id;
     let nftIds = match[1].split(',').map(id => Number(id.trim()));
 
-    const username = msg.from.username ? `@${msg.from.username}` : msg.from.first_name;
-    const safeUsername = username.replace(/_/g, '\\_');
+    
 
     if (nftIds.length > 10) {
         nftIds = nftIds.slice(0, 10);  
