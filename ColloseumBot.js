@@ -540,6 +540,7 @@ function startBot() {
 
             if (nftsWithPotion.length) { 
                 registerBot.sendMessage(chatId, `❌ The following NFT IDs already have the specified potion applied: ${nftsWithPotion.join(', ')}.`);
+                userOngoingTransactions[username] = false;
                 return;
             }
 
