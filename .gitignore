@@ -6,6 +6,7 @@
 /.pnp
 .pnp.js
 alchemyAcc.txt
+stats.csv
 # testing
 /coverage
 
