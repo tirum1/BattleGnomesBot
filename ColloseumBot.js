@@ -241,9 +241,11 @@ function startBot() {
                 "\n" +
                 "Thank you for using the Hunger Games Colosseum!\n" +
                 "──────────────────────────────────\n";
-                            
-                registerBot.sendMessage(msg.chat.id, response);
+                
+                // Await for the message to be sent before proceeding to the next chunk.
+                await registerBot.sendMessage(msg.chat.id, response);
             }
+            
 
         } catch (err) {
             console.error('Error fetching balance:', err);
