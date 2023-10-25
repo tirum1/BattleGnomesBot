@@ -1,5 +1,5 @@
 console.log("Starting the script...");
-
+require('colors');
 require('dotenv').config({ path: './.env' });
 const fs = require('fs');
 const TelegramBot = require('node-telegram-bot-api');
