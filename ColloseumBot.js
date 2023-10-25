@@ -1,4 +1,5 @@
 require('dotenv').config({ path: './.env' });
+require('colors');
 const fs = require('fs');
 const TelegramBot = require('node-telegram-bot-api');
 const { ethers } = require('ethers');
