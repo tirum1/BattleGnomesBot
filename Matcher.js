@@ -9,7 +9,7 @@ const redis = require('redis');
 const axios = require('axios');
 const FormData = require('form-data');
 
-const redisUrl = process.env.MAIN_REDIS_URL;
+const MainRedisUrl = process.env.MAIN_REDIS_URL;
 const MYMaintenance = process.env.MYMAINTENANCE;
 const hungerGamesAddress = '0x86B8837f50Cb1f6d07a0245fDC123A66CC50d581';
 const battleGnomesAddress = '0xe306cB8DCeA669d9De206BE116468d5a8AbB6bDb';
@@ -23,7 +23,7 @@ const TokenContractWithSigner = TokenContract.connect(MYMaintenanceWallet);
 const battleContract = new ethers.Contract(battleGnomesAddress, battleABI, provider);
 
 const client = redis.createClient({ 
-    url: redisUrl,
+    url: MainRedisUrl,
     retry_strategy: function(options) {
         if (options.error && options.error.code === 'ECONNREFUSED') {
             return new Error('The server refused the connection');
