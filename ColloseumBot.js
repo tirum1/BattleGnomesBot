@@ -218,26 +218,33 @@ function startBot() {
     
             const shortWalletAddress = shortenWalletAddress(walletAddress);
     
-            const response = 
-            "─────────────────────────────────\n" +
-            "🔹 Hunger Games Balance 🔹\n" +
-            "─────────────────────────────────\n" +
-            "\n" +
-            "👤 User: @" + username + "\n" +
-            "🔗 Wallet Address: " + shortWalletAddress + "\n" +
-            "\n" +
-            "🟢 HGMS: " + hgmsBalanceInMillions + "K $HGMS\n" +
-            "🔵 ETH: " + ethBalanceInFullUnits + " ETH\n" +
-            "🟣 XTRA: " + xtraBalance + " XTRA\n" +
-            "🟠 BOOST: " + boostBalance + " BOOST\n" +
-            "🔷 V: " + vBalance + " V\n" +
-            "🟡 SKIP: " + skipBalance + " SKIP\n" +
-            "🔖 NFT IDs: " + NFTByID.join(', ') + "\n" +
-            "\n" +
-            "Thank you for using the Hunger Games Colosseum!\n" +
-            "──────────────────────────────────\n";
-                        
-            registerBot.sendMessage(msg.chat.id, response);
+            const NFTChunks = chunkArray(NFTByID, 50); 
+
+            for (const [index, chunk] of NFTChunks.entries()) {
+                const response = 
+                "─────────────────────────────────\n" +
+                "🔹 Hunger Games Balance 🔹 (Page " + (index + 1) + "/" + NFTChunks.length + ")\n" +
+                "─────────────────────────────────\n" +
+                "\n" +
+                "👤 User: @" + username + "\n" +
+                "🔗 Wallet Address: " + shortWalletAddress + "\n" +
+                "\n" +
+                (index === 0 ? (
+                "🟢 HGMS: " + hgmsBalanceInMillions + "K $HGMS\n" +
+                "🔵 ETH: " + ethBalanceInFullUnits + " ETH\n" +
+                "🟣 XTRA: " + xtraBalance + " XTRA\n" +
+                "🟠 BOOST: " + boostBalance + " BOOST\n" +
+                "🔷 V: " + vBalance + " V\n" +
+                "🟡 SKIP: " + skipBalance + " SKIP\n"
+                ) : "") +
+                "🔖 NFT IDs: " + chunk.join(', ') + "\n" +
+                "\n" +
+                "Thank you for using the Hunger Games Colosseum!\n" +
+                "──────────────────────────────────\n";
+                            
+                registerBot.sendMessage(msg.chat.id, response);
+            }
+
         } catch (err) {
             console.error('Error fetching balance:', err);
             registerBot.sendMessage(msg.chat.id, "Error fetching the balance. Please try again later.");
@@ -992,6 +999,13 @@ async function sendViaMainBot(chatId, text, animationPath = null, parseMode = nu
     }
 }
 
+function chunkArray(arr, chunkSize) {
+    const result = [];
+    for (let i = 0; i < arr.length; i += chunkSize) {
+        result.push(arr.slice(i, i + chunkSize));
+    }
+    return result;
+}
 
 
 startBot();
