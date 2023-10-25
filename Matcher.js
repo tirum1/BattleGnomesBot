@@ -70,33 +70,34 @@ const BattleResult = {
     Lost: "Lost",
     Skipped: "Skipped"
 };
-const stats = [null];
+const stats = [];
 const csvData = fs.readFileSync('stats.csv', 'utf8');
 const rows = csvData.split('\n');
 
-rows.forEach((row, rowIndex) => {
-  const trimmedRow = row.trim();
-  if (trimmedRow !== '') {
-    const values = trimmedRow.split(',').map(Number);
+rows.forEach((row) => {
+    const trimmedRow = row.trim();
+    if (trimmedRow !== '') {
+        const values = trimmedRow.split(',').map(Number);
 
-    stats.push(values);
-  }
+        stats.push(values);
+    }
 });
 
-    startTimer();
-    startHungerGames();
+startTimer();
+startHungerGames();
 
+setInterval(async () => {
+    await setAsync("hasTimerPassed", hasTimerPassed());
+    await setAsync("newGame", newGame);
+    await setAsync("HungerGamesBegin", HungerGamesBegin);
+    await setAsync("roundsCount", roundsCount);
+    await setAsync("time", time);
+    await setAsync("stats", stats);
 
-    setInterval(async () => {
-      await setAsync("hasTimerPassed", hasTimerPassed());
-      await setAsync("newGame", newGame);
-      await setAsync("HungerGamesBegin", HungerGamesBegin);
-      await setAsync("roundsCount", roundsCount);
-      await setAsync("time", time);
+    const retrievedStats = await getAsync("stats");
+    console.log("First Element:", stats[5][4]);
 
-    }, 1000);
-
-
+}, 1000);
 
 
 function startTimer() {
