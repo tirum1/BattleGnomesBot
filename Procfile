@@ -1,2 +1,2 @@
-web: index.js
-matcher: Matcher.js
+web: node index.js
+matcher: node Matcher.js
