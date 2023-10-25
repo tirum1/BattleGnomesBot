@@ -242,7 +242,6 @@ function startBot() {
                 "Thank you for using the Hunger Games Colosseum!\n" +
                 "──────────────────────────────────\n";
                 
-                // Await for the message to be sent before proceeding to the next chunk.
                 await registerBot.sendMessage(msg.chat.id, response);
             }
             
