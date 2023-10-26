@@ -489,8 +489,7 @@ async function deleteMessageViaBotAPI(chatId, messageId) {
     try {
         const response = await axios.post(TELEGRAM_BASE_URL + 'deleteMessage', {
             chat_id: chatId,
-            text: text,
-            parse_mode: parseMode
+            message_id: messageId
         });
         if (response.status === 200) {
             console.log(`Message deleted: ${messageId}`);
