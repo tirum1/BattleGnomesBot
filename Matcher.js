@@ -487,7 +487,7 @@ async function sendMessageViaAxios(chatId, text, parseMode = 'Markdown') {
 
 async function deleteMessageViaBotAPI(chatId, messageId) {
     try {
-        const response = await axios.post(TELEGRAM_BASE_URL + 'sendMessage', {
+        const response = await axios.post(TELEGRAM_BASE_URL + 'deleteMessage', {
             chat_id: chatId,
             text: text,
             parse_mode: parseMode
