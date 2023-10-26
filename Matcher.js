@@ -53,6 +53,7 @@ client.on('error', (err) => {
 const getAsync = bluebird.promisify(client.get).bind(client);
 const setAsync = bluebird.promisify(client.set).bind(client);
 const delAsync = bluebird.promisify(client.del).bind(client);
+let progressMessageSent = false;
 let previousMessageID = null;
 let _decimals = 9;
 let aliveByID = [];
@@ -158,14 +159,18 @@ async function lookForOpponent (){
                     }
                 }
                 const progressPercentage = Math.round((i / queuecounter) * 100);
-                if (progressPercentage % progressUpdateInterval === 0) {
+                if (progressPercentage % progressUpdateInterval === 0 && !progressMessageSent) {
                     if (previousMessageID) {
                         deleteMessageViaBotAPI(CHANNEL_ID, previousMessageID);
                     }
                     const response = sendMessageViaAxios(CHANNEL_ID, `Round Progress: ${progressPercentage.toFixed(2)}%`);
-                     previousMessageID = response.message_id;
-                     console.log("preciousMessageID: ", previousMessageID);
+                    previousMessageID = response.message_id;
+                    console.log("previousMessageID: ", previousMessageID);
+                    progressMessageSent = true; // Set the flag
+                } else {
+                    progressMessageSent = false; // Reset the flag
                 }
+                
             }
         }
     }
