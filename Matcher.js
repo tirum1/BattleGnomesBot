@@ -158,17 +158,11 @@ async function lookForOpponent (){
                         firstOpponent = 0;
                     }
                 }
+                let previousProgressPercentage = -1;
                 const progressPercentage = Math.round((i / queuecounter) * 100);
-                if (progressPercentage % progressUpdateInterval === 0 && !progressMessageSent) {
-                    if (previousMessageID) {
-                        deleteMessageViaBotAPI(CHANNEL_ID, previousMessageID);
-                    }
-                    const response = sendMessageViaAxios(CHANNEL_ID, `Round Progress: ${progressPercentage.toFixed(2)}%`);
-                    previousMessageID = response.message_id;
-                    console.log("previousMessageID: ", previousMessageID);
-                    progressMessageSent = true; // Set the flag
-                } else {
-                    progressMessageSent = false; // Reset the flag
+                if (progressPercentage !== previousProgressPercentage) {
+                    sendMessageViaAxios(CHANNEL_ID, `Round Progress: ${progressPercentage.toFixed(2)}%`);
+                    previousProgressPercentage = progressPercentage;
                 }
                 
             }
@@ -491,18 +485,3 @@ async function sendMessageViaAxios(chatId, text, parseMode = 'Markdown') {
     }
 }
 
-async function deleteMessageViaBotAPI(chatId, messageId) {
-    try {
-        const response = await axios.post(TELEGRAM_BASE_URL + 'deleteMessage', {
-            chat_id: chatId,
-            message_id: messageId
-        });
-        if (response.status === 200) {
-            console.log(`Message deleted: ${messageId}`);
-        } else {
-            console.error('Failed to delete message:', response.data);
-        }
-    } catch (error) {
-        console.error('Error deleting message:', error);
-    }
-}
