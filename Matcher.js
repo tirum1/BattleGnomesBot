@@ -121,7 +121,7 @@ async function lookForOpponent (){
     if(!hasTimerPassed()) return;
     activeRound = true;
     console.log("started");
-    
+    aliveByID = [];
     let firstOpponent = 0;
     for (let i = 1; i <= queuecounter; i++) {
         if (queue.get(i) && !alive.get(i) && !dead.get(i)) {
@@ -376,10 +376,6 @@ async function updateNFTStatus(First, Second, isFirstWinner, firstNFTData, secon
     }
     if(isLoserDead){
     dead.set(loserId, true);
-    index = aliveByID.indexOf(loserId);
-    if(index !== -1){
-        aliveByID.splice(index)
-    }
     alive.set(winnerId, true)
     } else{
         alive.set(loserId, true)
@@ -446,10 +442,6 @@ async function payoutWinners(nonDeads) {
 function reviveAll(){
     for (let i = 1; i <= queuecounter; i++) {
         dead.set(i, false);
-        const index = aliveByID.indexOf(loserId);
-        if(index !== -1){
-            aliveByID.splice(index)
-        }
         alive.set(i, false);
     }
 }
