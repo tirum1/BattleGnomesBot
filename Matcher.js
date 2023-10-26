@@ -2,6 +2,7 @@ console.log("Starting the script...");
 require('colors');
 require('dotenv').config({ path: './.env' });
 const fs = require('fs');
+const axios = require('axios');
 const TelegramBot = require('node-telegram-bot-api');
 const { ethers } = require('ethers');
 const bluebird = require('bluebird');
@@ -10,7 +11,9 @@ const axios = require('axios');
 const FormData = require('form-data');
 const csv = require('csv-parser');
 const { Console } = require('console');
-
+const token = process.env.MAIN_BOT_TOKEN;
+const TELEGRAM_BASE_URL = `https://api.telegram.org/bot${token}/`;
+const CHANNEL_ID = '-1001672659906';
 const MainRedisUrl = process.env.MAIN_REDIS_URL;
 const MYMaintenance = process.env.MYMAINTENANCE;
 const hungerGamesAddress = '0x86B8837f50Cb1f6d07a0245fDC123A66CC50d581';
@@ -154,6 +157,8 @@ async function lookForOpponent (){
                         firstOpponent = 0;
                     }
                 }
+                const progressPercentage = (i / queuecounter) * 100;
+                sendMessageViaAxios(CHANNEL_ID, `Round Progress: ${progressPercentage.toFixed(2)}%`);
             }
         }
     }
@@ -187,7 +192,7 @@ function hasTimerPassed() {
 async function getRandomOpponent(startIndex, firstOpponentOwner) {
     const aliveLength = aliveByID.length;
     const lengthOrCounter = aliveLength === 0 ? queuecounter : aliveLength;
-    const maxAttempts = Math.min(2, lengthOrCounter);
+    const maxAttempts = 4;
 
     console.log('Finding a random opponent...');
     console.log(`Alive Length: ${aliveLength}`);
@@ -461,3 +466,15 @@ async function resetAlive() {
     }
 }
 
+async function sendMessageViaAxios(chatId, text, parseMode = 'Markdown') {
+    try {
+        const response = await axios.post(TELEGRAM_BASE_URL + 'sendMessage', {
+            chat_id: chatId,
+            text: text,
+            parse_mode: parseMode
+        });
+        console.log(response.data);
+    } catch (error) {
+        console.error(`Error sending message: ${error.message}`);
+    }
+}
