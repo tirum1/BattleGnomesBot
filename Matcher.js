@@ -306,7 +306,7 @@ async function enterBattle(First, Second) {
     const randomFactor = calculateRandomFactor();
     const isFirstWinner = determineWinner(P1, P2, randomFactor);
 
-    updateNFTStatus(First, Second, isFirstWinner, firstNFTData, secondNFTData);
+    await updateNFTStatus(First, Second, isFirstWinner, firstNFTData, secondNFTData);
     restoreOriginalStats(First, Second, originalStatsFirst, originalStatsSecond);
     removePotions(First, Second);
 }
