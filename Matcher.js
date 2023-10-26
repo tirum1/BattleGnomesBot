@@ -162,7 +162,7 @@ async function lookForOpponent (){
                     if (previousMessageID) {
                         deleteMessageViaBotAPI(CHANNEL_ID, previousMessageID);
                     }
-                     sendMessageViaAxios(CHANNEL_ID, `Round Progress: ${progressPercentage.toFixed(2)}%`);
+                    const response = sendMessageViaAxios(CHANNEL_ID, `Round Progress: ${progressPercentage.toFixed(2)}%`);
                      previousMessageID = response.message_id;
                 }
             }
