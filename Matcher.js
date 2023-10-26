@@ -67,7 +67,7 @@ let newGame = true;
 let HungerGamesBegin = false;
 let queuecounter = 0;
 let StatsSize = 5;
-const progressUpdateInterval = 10;
+const progressUpdateInterval = 1;
 
 const BattleResult = {
     Won: "Won",
