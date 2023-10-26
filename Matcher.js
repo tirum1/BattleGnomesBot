@@ -187,7 +187,7 @@ function hasTimerPassed() {
 async function getRandomOpponent(startIndex, firstOpponentOwner) {
     const aliveLength = aliveByID.length;
     const lengthOrCounter = aliveLength === 0 ? queuecounter : aliveLength;
-    const maxAttempts = Math.min(100, lengthOrCounter);
+    const maxAttempts = Math.min(2, lengthOrCounter);
 
     console.log('Finding a random opponent...');
     console.log(`Alive Length: ${aliveLength}`);
@@ -308,7 +308,7 @@ async function enterBattle(First, Second) {
 
     await updateNFTStatus(First, Second, isFirstWinner, firstNFTData, secondNFTData);
     restoreOriginalStats(First, Second, originalStatsFirst, originalStatsSecond);
-    removePotions(First, Second);
+    await removePotions(First, Second);
 }
 async function collectNFTData(tokenId) {
     console.log("collecting data for: ", tokenId);
