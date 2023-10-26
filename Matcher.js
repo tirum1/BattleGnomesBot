@@ -2,7 +2,6 @@ console.log("Starting the script...");
 require('colors');
 require('dotenv').config({ path: './.env' });
 const fs = require('fs');
-const axios = require('axios');
 const TelegramBot = require('node-telegram-bot-api');
 const { ethers } = require('ethers');
 const bluebird = require('bluebird');
@@ -68,6 +67,7 @@ let newGame = true;
 let HungerGamesBegin = false;
 let queuecounter = 0;
 let StatsSize = 5;
+const progressUpdateInterval = 10;
 
 const BattleResult = {
     Won: "Won",
@@ -158,7 +158,9 @@ async function lookForOpponent (){
                     }
                 }
                 const progressPercentage = (i / queuecounter) * 100;
+                if (progressPercentage % progressUpdateInterval === 0) {
                 sendMessageViaAxios(CHANNEL_ID, `Round Progress: ${progressPercentage.toFixed(2)}%`);
+                }
             }
         }
     }
