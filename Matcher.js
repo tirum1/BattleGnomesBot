@@ -9,6 +9,7 @@ const redis = require('redis');
 const axios = require('axios');
 const FormData = require('form-data');
 const csv = require('csv-parser');
+const { Console } = require('console');
 
 const MainRedisUrl = process.env.MAIN_REDIS_URL;
 const MYMaintenance = process.env.MYMAINTENANCE;
@@ -54,14 +55,14 @@ const delAsync = bluebird.promisify(client.del).bind(client);
 let _decimals = 9;
 let aliveByID = [];
 let time = 0;
-const roundDuration = 300;
+let activeRound = false;
+const roundDuration = 5;
 let queue = new Map();
 let alive = new Map();
 let dead = new Map();
 let roundsCount = 0;
 let newGame = true;
 let HungerGamesBegin = false;
-const roundWinsOfNFT = {};
 let queuecounter = 0;
 let StatsSize = 5;
 
@@ -70,7 +71,7 @@ const BattleResult = {
     Lost: "Lost",
     Skipped: "Skipped"
 };
-const stats = [];
+const stats = [[0, 0, 0, 0, 0]];
 const csvData = fs.readFileSync('stats.csv', 'utf8');
 const rows = csvData.split('\n');
 
@@ -87,16 +88,18 @@ startTimer();
 startHungerGames();
 
 setInterval(async () => {
-    await setAsync("hasTimerPassed", hasTimerPassed());
+    await setAsync("time", time);
     await setAsync("newGame", newGame);
+    await setAsync("hasTimerPassed", hasTimerPassed());
     await setAsync("HungerGamesBegin", HungerGamesBegin);
     await setAsync("roundsCount", roundsCount);
-    await setAsync("time", time);
-    await setAsync("stats", stats);
-
-    const retrievedStats = await getAsync("stats");
-    console.log("First Element:", stats[5][4]);
-
+    await setAsync("dead", JSON.stringify(Array.from(dead.entries())));
+    await setAsync("queue", JSON.stringify(Array.from(queue.entries())));
+    await setAsync("aliveByID", JSON.stringify(aliveByID));
+    await setAsync("queuecounter", queuecounter.toString());
+    if(!activeRound){
+    lookForOpponent();
+    }
 }, 1000);
 
 
@@ -106,29 +109,31 @@ function startTimer() {
 }
 async function startHungerGames () {
     queuecounter = await NFTContract.getMintAmount();
-    for (let i=0;i<queuecounter;i++){
+    for (let i=1;i<=queuecounter;i++){
     queue.set(i, true);
     aliveByID.push(i);
     }
     newGame = false;
 }
 async function lookForOpponent (){
-    hasTimerPassed = await battleContract.hasTimerPassed();
 
     if(queuecounter <= 2) return;
-    if(!hasTimerPassed) return;
-
-    aliveByID = [];
-
+    if(!hasTimerPassed()) return;
+    activeRound = true;
+    console.log("started");
+    
     let firstOpponent = 0;
     for (let i = 1; i <= queuecounter; i++) {
-        if (queue[i] && !alive[i] && !dead[i]) {
+        if (queue.get(i) && !alive.get(i) && !dead.get(i)) {
             if (firstOpponent == 0) {
                 firstOpponent = i;
+                console.log(`First: ${firstOpponent}`);
             } else {
-                let secondOpponent = getRandomOpponent(i, await NFTContract.ownerOf(firstOpponent));
-
-                if(secondOpponent != firstOpponent) {
+                console.log("lookign for second opponent");
+                const owneroffirst = await NFTContract.ownerOf(firstOpponent);
+                let secondOpponent = await getRandomOpponent(i, owneroffirst);
+                console.log(`secondopponent: ${secondOpponent}`);
+                if(secondOpponent == firstOpponent) {
                     throw new Error("Second opponent shouldn't be the same as the first")
                 }
 
@@ -138,7 +143,7 @@ async function lookForOpponent (){
                     firstOpponent = 0;
                 } else {
                     let nextAvailableOpponent = getNextAvailable(i);
-
+                    console.log(`nextAvailableOpponent: ${nextAvailableOpponent}`);
                     if (nextAvailableOpponent === firstOpponent) {
                         throw new Error("Next available opponent shouldn't be the same as the first");
                     }                    
@@ -165,46 +170,58 @@ async function lookForOpponent (){
     roundsCount++;
     resetTimer();
     resetAlive();
-
+    activeRound = false;
+    console.log("Look For Opponend PASS");
 }
 function hasTimerPassed() {
     if (newGame) {
-        return Date.now() >= (time + roundDuration * 6 * 1000); 
+        return Math.floor(Date.now() / 1000) >= (time + roundDuration * 6); 
     } else if (HungerGamesBegin) {
-        return Date.now() >= (time + roundDuration * 1000); 
+        return Math.floor(Date.now() / 1000) >= (time + roundDuration);
     } else {
         return false;
     }
 }
 
-function getRandomOpponent(){
-    let aliveLength = aliveByID.length;
-        let lengthOrCounter = aliveLength == 0 ? queuecounter : aliveLength;
-        let maxAttempts = Math.min(100, lengthOrCounter);
 
-        for (let attempts = 0; attempts < maxAttempts; attempts++) { 
-            let randomIndex = (uint256(keccak256(abi.encodePacked(block.timestamp, startIndex))) % lengthOrCounter) + 1;
-            let randomID = (aliveLength == 0 ? randomIndex : aliveByID[randomIndex]);
+async function getRandomOpponent(startIndex, firstOpponentOwner) {
+    const aliveLength = aliveByID.length;
+    const lengthOrCounter = aliveLength === 0 ? queuecounter : aliveLength;
+    const maxAttempts = Math.min(100, lengthOrCounter);
 
-            if (queue[randomID] && !alive[randomID] && !dead[randomID] && 
-                ownerOf(randomID) != firstOpponentOwner) {
-                
+    console.log('Finding a random opponent...');
+    console.log(`Alive Length: ${aliveLength}`);
+    console.log(`Length Or Counter: ${lengthOrCounter}`);
+
+    for (let attempts = 0; attempts < maxAttempts; attempts++) {
+        const currentTimestamp = Math.floor(Date.now() / 1000);
+        const inputForHash = ethers.utils.solidityKeccak256(['uint', 'uint'], [currentTimestamp, startIndex]);
+        const keccak256HashNum = ethers.BigNumber.from(inputForHash);
+        const randomIndex = keccak256HashNum.mod(lengthOrCounter).add(1);
+        const randomID = aliveLength === 0 ? randomIndex.toNumber() : aliveByID[randomIndex.toNumber()];
+
+        console.log(`Attempt ${attempts + 1}: Random Index: ${randomIndex.toNumber()}, Random ID: ${randomID}`);
+
+        if (queue.get(randomID) && !alive.get(randomID) && !dead.get(randomID)) {
+            if (await NFTContract.ownerOf(randomID) !== firstOpponentOwner) {
+                console.log(`Found a valid opponent: Random ID ${randomID}`);
                 return randomID;
             }
         }
+    }
 
-    return 0;  
+    console.log('No valid opponent found.');
+    return 0;
 }
 
 function getNextAvailable(startIndex) {
         for (let i = startIndex; i <= queuecounter; i++) {
-            if (queue[i] && !alive[i] && !dead[i]) {
+            if (queue.get(i) && !alive.get(i) && !dead.get(i)) {
                 return i;
             }
         }
         return 0;  
 }
-
 async function fillLastBattle(First, Second, result, firstNFTData, secondNFTData) {
     const firstBattleResult = {
         opponentId: Second,
@@ -218,10 +235,13 @@ async function fillLastBattle(First, Second, result, firstNFTData, secondNFTData
         ...secondNFTData,
     };
 
-    lastBattleDetails[First] = firstBattleResult;
-    lastBattleDetails[Second] = secondBattleResult;
-}
+    const firstBattleResultJson = JSON.stringify(firstBattleResult);
+    const secondBattleResultJson = JSON.stringify(secondBattleResult);
 
+    await setAsync(`${First}BattleResult`, firstBattleResultJson);
+    await setAsync(`${Second}BattleResult`, secondBattleResultJson);
+
+}
 function getOpponentResult(result) {
     switch (result) {
         case BattleResult.Won:
@@ -232,17 +252,19 @@ function getOpponentResult(result) {
             return BattleResult.Skipped;
     }
 }
-
 async function enterBattle(First, Second) {
-    const isFirstAlive = !dead[First];
-    const isSecondAlive = !dead[Second];
+    console.log(`${First} entered the battle.`);
+    console.log(`against ${Second}.`);    
+    const isFirstAlive = !dead.get(First);
+    const isSecondAlive = !dead.get(Second);
     const firstNFTData = await collectNFTData(First);
     const secondNFTData = await collectNFTData(Second);
 
     if (!(isFirstAlive && isSecondAlive)) {
         throw new Error("Both NFTs must be alive to battle");
     }
-
+    console.log("stats[First]: ", stats[First]);
+    console.log("stats[Second]: ", stats[Second]);
     if (stats[First].length !== StatsSize || stats[Second].length !== StatsSize) {
         throw new Error("Invalid stats for one of the NFTs");
     }
@@ -250,8 +272,8 @@ async function enterBattle(First, Second) {
     if (shouldSkipBattle(firstNFTData, secondNFTData)) {
         fillLastBattle(First, Second, BattleResult.Skipped, firstNFTData, secondNFTData);
         removePotions(First, Second);
-        alive[First] = true;
-        alive[Second] = true;
+        alive.set(First, true);
+        alive.set(Second, true);
         return;
     }
 
@@ -287,10 +309,9 @@ async function enterBattle(First, Second) {
     updateNFTStatus(First, Second, isFirstWinner, firstNFTData, secondNFTData);
     restoreOriginalStats(First, Second, originalStatsFirst, originalStatsSecond);
     removePotions(First, Second);
-    battlesCount++;
 }
-
 async function collectNFTData(tokenId) {
+    console.log("collecting data for: ", tokenId);
     return {
         XTRA: await TokenContract.getNFTXTRABalance(tokenId),
         BOOST: await TokenContract.getNFTBOOSTBalance(tokenId),
@@ -298,40 +319,32 @@ async function collectNFTData(tokenId) {
         SKIP: await TokenContract.getNFTSKIPBalance(tokenId),
     };
 }
-
 function shouldSkipBattle(firstNFTData, secondNFTData) {
     return (firstNFTData.SKIP && !secondNFTData.V) || (secondNFTData.SKIP && !firstNFTData.V);
 }
-
 function hasBOOSTBalance(nftData) {
     return nftData.BOOST;
 }
-
 function hasVBalance(nftData) {
     return nftData.V;
 }
-
 function setRandomStats(tokenId) {
     const stat1 = Math.floor(Math.random() * 5);
     const stat2 = (stat1 + 1 + Math.floor(Math.random() * 4)) % 5;
     stats[tokenId][stat1] = 10;
     stats[tokenId][stat2] = 10;
 }
-
 function setAllStatsTo10(tokenId) {
     for (let i = 0; i < 5; i++) {
         stats[tokenId][i] = 10;
     }
 }
-
 function calculateTotalPower(statsArray) {
     return statsArray.reduce((acc, value) => acc + value, 0);
 }
-
 function calculateRandomFactor() {
     return (Date.now() + Math.floor(Math.random() * 1000)) % 100;
 }
-
 function determineWinner(P1, P2, randomFactor) {
     if (P1 > P2) {
         return randomFactor < 70;
@@ -341,77 +354,83 @@ function determineWinner(P1, P2, randomFactor) {
         return randomFactor < 50;
     }
 }
-
-function updateNFTStatus(First, Second, isFirstWinner, firstNFTData, secondNFTData) {
+async function updateNFTStatus(First, Second, isFirstWinner, firstNFTData, secondNFTData) {
     const loserId = isFirstWinner ? Second : First;
-    const isLoserDead = shouldSetNFTDead(loserId, firstNFTData, secondNFTData);
-    const isWinnerAlive = !isLoserDead;
+    const winnerId = isFirstWinner ? First : Second;
+    console.log(`${winnerId} won the battle against`, loserId);
+    const isLoserDead = shouldSetNFTDead(loserId, First, firstNFTData, secondNFTData);
     const result = isFirstWinner ? BattleResult.Won : BattleResult.Lost;
     fillLastBattle(First, Second, result, firstNFTData, secondNFTData);
 
     if (isFirstWinner) {
-        battleWinsOfNFT[First]++;
-        battleLossOfNFT[Second]++;
+        const battleWinsOfFirst = await getAsync(`battleWinsOf${First}`);
+        const battleLossOfSecond = await getAsync(`battleLossOf${Second}`);
+        
+        await setAsync(`battleWinsOf${First}`, parseInt(battleWinsOfFirst || 0) + 1);
+        await setAsync(`battleLossOf${Second}`, parseInt(battleLossOfSecond || 0) + 1);
     } else {
-        battleWinsOfNFT[Second]++;
-        battleLossOfNFT[First]++;
+        const battleWinsOfSecond = await getAsync(`battleWinsOf${Second}`);
+        const battleLossOfFirst = await getAsync(`battleLossOf${First}`);
+        
+        await setAsync(`battleWinsOf${Second}`, parseInt(battleWinsOfSecond || 0) + 1);
+        await setAsync(`battleLossOf${First}`, parseInt(battleLossOfFirst || 0) + 1);
     }
-
-    dead[loserId] = isLoserDead;
-    alive[First] = isWinnerAlive;
-    alive[Second] = isWinnerAlive;
+    if(isLoserDead){
+    dead.set(loserId, true);
+    index = aliveByID.indexOf(loserId);
+    if(index !== -1){
+        aliveByID.splice(index)
+    }
+    alive.set(winnerId, true)
+    } else{
+        alive.set(loserId, true)
+        alive.set(winnerId, true)
+    }
 }
-
-function shouldSetNFTDead(loserId, firstNFTData, secondNFTData) {
+function shouldSetNFTDead(loserId, First, firstNFTData, secondNFTData) {
     const loserXTRA = loserId === First ? firstNFTData.XTRA : secondNFTData.XTRA;
     return !loserXTRA;
 }
-
 function restoreOriginalStats(First, Second, originalStatsFirst, originalStatsSecond) {
     stats[First] = originalStatsFirst;
     stats[Second] = originalStatsSecond;
 }
-
 async function removePotions(First, Second) {
-    await TokenContract.removePotions(First, Second);
+    // const tx = await TokenContractWithSigner.removePotions(First, Second);
 }
-
 function getAmountOfNonDead() {
     let nonDeadCount = 0;
 
     for (let i = 1; i <= queuecounter; i++) {
-        if (!dead[i]) {
+        if (!dead.has(i)) {
             nonDeadCount++;
             aliveByID.push(i); 
         }
     }
-
+    console.log(`nonDeadCount: ${nonDeadCount}`);
     return nonDeadCount;
 }
-
 async function storeRoundWinners() {
-    
+    const roundWinners = []; 
+
     for (let i = 1; i <= queuecounter; i++) {
-        if (!dead[i]) {
-            const owner = await NFTContract.ownerOf(i); 
+        if (!dead.has(i)) {
+            const roundWinsOfNFT = await redisClient.getAsync(`roundWinsOf${i}`);
+            const owner = await NFTContract.ownerOf(i);
             roundWinners.push(owner);
-            roundWinsOfNFT[i]++;
+            await setAsync(`roundWinsOf${i}`, parseInt(roundWinsOfNFT || 0) + 1);
         }
     }
-    
-    return roundWinners;
-}
 
+    return roundWinners; 
+}
 async function payoutWinners(nonDeads) {
     if (nonDeads === 0) {
         return;
     }
     const contractBalance = await provider.getBalance(hungerGamesAddress);
-    console.log("contractBalance: ", contractBalance);
     const balanceInEther = ethers.utils.formatEther(contractBalance);
-    console.log("balanceInEther: ", balanceInEther);
     const share = balanceInEther * 10**_decimals / nonDeads;
-    console.log("share: ", share);
     try {
         const estimatedGas = await TokenContractWithSigner.estimateGas[payoutWinners](roundWinners, share, nonDeads);
         const gasWithBuffer = estimatedGas.mul(ethers.BigNumber.from("120")).div(ethers.BigNumber.from("100"));
@@ -424,26 +443,26 @@ async function payoutWinners(nonDeads) {
     }
 
 }
-
 function reviveAll(){
     for (let i = 1; i <= queuecounter; i++) {
         dead.set(i, false);
+        const index = aliveByID.indexOf(loserId);
+        if(index !== -1){
+            aliveByID.splice(index)
+        }
         alive.set(i, false);
     }
 }
-
 function resetQueue() {
     for (let i = 1; i <= queuecounter; i++) {
-        queue[i] = false;
+        queue.set(i, false);
     }
     queuecounter = 0;
 }
-
 function resetTimer() {
     time = Math.floor(Date.now() / 1000); 
     console.log('Timer reset at timestamp:', time);
 }
-
 async function resetAlive() {
     for (let i = 1; i <= queuecounter; i++) {
         alive.set(i, false);

@@ -9,7 +9,7 @@ alchemyAcc.txt
 stats.csv
 # testing
 /coverage
-
+HowToRetrieveStats
 # production
 /build
 .env
