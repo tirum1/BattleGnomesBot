@@ -157,7 +157,7 @@ async function lookForOpponent (){
                         firstOpponent = 0;
                     }
                 }
-                const progressPercentage = ((i*2) / queuecounter) * 100;
+                const progressPercentage = Math.round((i / queuecounter) * 100);
                 console.log(`Progress: ${progressPercentage}`);
                 if (progressPercentage % progressUpdateInterval === 0) {
                 sendMessageViaAxios(CHANNEL_ID, `Round Progress: ${progressPercentage.toFixed(2)}%`);
