@@ -100,7 +100,7 @@ setInterval(async () => {
     if(!activeRound){
     lookForOpponent();
     }
-}, 1000);
+}, 500);
 
 
 function startTimer() {
@@ -134,7 +134,7 @@ async function lookForOpponent (){
                 let secondOpponent = await getRandomOpponent(i, owneroffirst);
                 console.log(`secondopponent: ${secondOpponent}`);
                 if(secondOpponent == firstOpponent) {
-                    throw new Error("Second opponent shouldn't be the same as the first")
+                    secondOpponent = 0;
                 }
 
                 if (secondOpponent != 0) {
@@ -145,7 +145,7 @@ async function lookForOpponent (){
                     let nextAvailableOpponent = getNextAvailable(i);
                     console.log(`nextAvailableOpponent: ${nextAvailableOpponent}`);
                     if (nextAvailableOpponent === firstOpponent) {
-                        throw new Error("Next available opponent shouldn't be the same as the first");
+                        nextAvailableOpponent = 0;
                     }                    
 
                     if (nextAvailableOpponent != 0) {
@@ -357,7 +357,6 @@ function determineWinner(P1, P2, randomFactor) {
 async function updateNFTStatus(First, Second, isFirstWinner, firstNFTData, secondNFTData) {
     const loserId = isFirstWinner ? Second : First;
     const winnerId = isFirstWinner ? First : Second;
-    console.log(`${winnerId} won the battle against`, loserId);
     const isLoserDead = shouldSetNFTDead(loserId, First, firstNFTData, secondNFTData);
     const result = isFirstWinner ? BattleResult.Won : BattleResult.Lost;
     fillLastBattle(First, Second, result, firstNFTData, secondNFTData);
@@ -386,6 +385,7 @@ async function updateNFTStatus(First, Second, isFirstWinner, firstNFTData, secon
         alive.set(loserId, true)
         alive.set(winnerId, true)
     }
+    console.log(`${winnerId} won the battle against`, loserId);
 }
 function shouldSetNFTDead(loserId, First, firstNFTData, secondNFTData) {
     const loserXTRA = loserId === First ? firstNFTData.XTRA : secondNFTData.XTRA;
