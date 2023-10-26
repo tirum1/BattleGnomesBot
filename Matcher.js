@@ -164,6 +164,7 @@ async function lookForOpponent (){
                     }
                     const response = sendMessageViaAxios(CHANNEL_ID, `Round Progress: ${progressPercentage.toFixed(2)}%`);
                      previousMessageID = response.message_id;
+                     console.log("preciousMessageID: ", previousMessageID);
                 }
             }
         }
