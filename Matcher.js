@@ -424,7 +424,7 @@ function getAmountOfNonDead() {
 }
 async function storeRoundWinners() {
     
-    for (let i = 1; i <= aliveByID.length; i++) {
+    for (let i = 0; i < aliveByID.length; i++) {
             const roundWinsOfNFT = await getAsync(`roundWinsOf${aliveByID[i]}`);
             const owner = await NFTContract.ownerOf(aliveByID[i]);
             roundWinners.push(owner);
@@ -447,9 +447,10 @@ async function payoutWinners(nonDeads) {
 
     try {
         const estimatedGas = await TokenContractWithSigner['payoutWinners'](roundWinners, share, nonDeads);
+        console.log('Estimated Gas:', estimatedGas);
         const gasWithBuffer = estimatedGas.mul(ethers.BigNumber.from("120")).div(ethers.BigNumber.from("100"));
 
-        console.log('Estimated Gas:', estimatedGas);
+
         console.log('Gas with Buffer:', gasWithBuffer);
 
         let tx = await TokenContractWithSigner['payoutWinners']({ gasLimit: gasWithBuffer }, roundWinners, share, nonDeads);
