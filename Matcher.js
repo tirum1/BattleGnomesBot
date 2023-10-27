@@ -418,7 +418,7 @@ function getAmountOfNonDead() {
     let nonDeadCount = 0;
 
     for (let i = 1; i <= queuecounter; i++) {
-        if (!dead.has(i)) {
+        if (!dead.get(i)) {
             nonDeadCount++;
             aliveByID.push(i); 
         }
