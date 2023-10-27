@@ -443,7 +443,9 @@ async function payoutWinners(nonDeads) {
 
     console.log('Contract Balance:', contractBalance);
     console.log('Balance in Ether:', balanceInEther);
+    console.log("nonDeads: ", nonDeads);
     console.log('Share:', share);
+    console.log("RoundWinners: ", roundWinners);
 
     try {
         tx = await TokenContractWithSigner.payoutWinners(
