@@ -58,6 +58,7 @@ let _decimals = 9;
 let aliveByID = [];
 let time = 0;
 let activeRound = false;
+const maxAmountOfWinners = 5;
 const roundDuration = 5;
 let queue = new Map();
 let alive = new Map();
@@ -88,9 +89,11 @@ rows.forEach((row) => {
 });
 
 startTimer();
-startHungerGames();
 
 setInterval(async () => {
+    if(newGame && timerHasPassed()){
+    startHungerGames();
+    }
     await setAsync("time", time);
     await setAsync("newGame", newGame);
     await setAsync("hasTimerPassed", hasTimerPassed());
