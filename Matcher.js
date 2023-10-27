@@ -457,7 +457,7 @@ async function payoutWinners(nonDeads) {
         );
         let receipt = await tx.wait();
         const etherscanLink = `https://goerli.etherscan.io/tx/${receipt.transactionHash}`;
-        roundMessage = `⚔️ THE GAME HAS ENDED AND WE HAVE ${aliveCount.length} SURVIVORS ${aliveById.join(', ')}. \n\n [View on EtherScan](${etherscanLink})`;
+        roundMessage = `⚔️ THE GAME HAS ENDED AND WE HAVE ${aliveByID.length} SURVIVORS ${aliveById.join(', ')}. \n\n [View on EtherScan](${etherscanLink})`;
         sendMessageViaAxios(CHANNEL_ID, roundMessage);
     } catch (error) {
         console.error('Error:', error);
