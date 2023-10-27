@@ -54,6 +54,7 @@ const getAsync = bluebird.promisify(client.get).bind(client);
 const setAsync = bluebird.promisify(client.set).bind(client);
 const delAsync = bluebird.promisify(client.del).bind(client);
 
+let roundWinners = []; 
 let _decimals = 9;
 let aliveByID = [];
 let time = 0;
@@ -102,6 +103,7 @@ setInterval(async () => {
     await setAsync("dead", JSON.stringify(Array.from(dead.entries())));
     await setAsync("queue", JSON.stringify(Array.from(queue.entries())));
     await setAsync("aliveByID", JSON.stringify(aliveByID));
+    await setAsync("roundWinners", JSON.stringify(roundWinners));
     await setAsync("queuecounter", queuecounter.toString());
     if(!activeRound){
     lookForOpponent();
@@ -421,7 +423,7 @@ function getAmountOfNonDead() {
     return nonDeadCount;
 }
 async function storeRoundWinners() {
-    const roundWinners = []; 
+    
 
     for (let i = 1; i <= queuecounter; i++) {
         if (!dead.has(i)) {
