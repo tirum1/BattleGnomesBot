@@ -91,7 +91,7 @@ rows.forEach((row) => {
 startTimer();
 
 setInterval(async () => {
-    if(newGame && timerHasPassed()){
+    if(newGame && hasTimerPassed()){
     startHungerGames();
     }
     await setAsync("time", time);
