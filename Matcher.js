@@ -95,6 +95,7 @@ setInterval(async () => {
     if(newGame && hasTimerPassed()){
     startHungerGames();
     }
+    console.log("running");
     await setAsync("time", time);
     await setAsync("newGame", newGame);
     await setAsync("hasTimerPassed", hasTimerPassed());
@@ -189,6 +190,7 @@ async function lookForOpponent (){
     activeRound = false;
     console.log("Look For Opponend PASS");
 }
+
 function hasTimerPassed() {
     if (newGame) {
         return Math.floor(Date.now() / 1000) >= (time + roundDuration * 6); 
@@ -454,7 +456,9 @@ async function payoutWinners(nonDeads) {
             nonDeads
         );
         let receipt = await tx.wait();
-        console.log(`Successfully called payoutWinners! Transaction hash: ${receipt.transactionHash}`);
+        const etherscanLink = `https://goerli.etherscan.io/tx/${receipt.transactionHash}`;
+        roundMessage = `⚔️ THE GAME HAS ENDED AND WE HAVE ${aliveCount.length} SURVIVORS ${aliveById.join(', ')}. \n\n [View on EtherScan](${etherscanLink})`;
+        sendMessageViaAxios(CHANNEL_ID, roundMessage);
     } catch (error) {
         console.error('Error:', error);
     }
