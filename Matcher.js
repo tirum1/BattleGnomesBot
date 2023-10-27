@@ -178,7 +178,7 @@ async function lookForOpponent (){
     let nonDeads = getAmountOfNonDead();
     if (nonDeads <= maxAmountOfWinners) {
         await storeRoundWinners();
-        payoutWinners(nonDeads);
+        await payoutWinners(nonDeads);
         reviveAll();
         resetQueue();
         roundsCount = 0;
