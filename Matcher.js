@@ -67,8 +67,8 @@ let newGame = true;
 let HungerGamesBegin = false;
 let queuecounter = 0;
 let StatsSize = 5;
-const progressUpdateInterval = 1;
 let previousProgressPercentage = -1; 
+
 const BattleResult = {
     Won: "Won",
     Lost: "Lost",
@@ -161,10 +161,6 @@ async function lookForOpponent (){
                 const progressPercentage = Math.round((i / queuecounter) * 100);
 
                 if (progressPercentage !== previousProgressPercentage) {
-                    if (previousMessageID) {
-                        deleteMessageViaBotAPI(CHANNEL_ID, previousMessageID);
-                    }
-
                     sendMessageViaAxios(CHANNEL_ID, `Round Progress: ${progressPercentage.toFixed(2)}%`);
                     previousProgressPercentage = progressPercentage;
                     previousMessageID = null; 
