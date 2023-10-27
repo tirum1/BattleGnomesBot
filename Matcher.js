@@ -182,6 +182,7 @@ async function lookForOpponent (){
         reviveAll();
         resetQueue();
         roundsCount = 0;
+        newGame = true;
     } 
 
     roundsCount++;
