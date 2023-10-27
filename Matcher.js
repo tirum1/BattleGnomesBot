@@ -444,7 +444,7 @@ async function payoutWinners(nonDeads) {
     const balanceInEther = ethers.utils.formatEther(contractBalance);
     const share = balanceInEther * 10**_decimals / nonDeads;
     try {
-        const estimatedGas = await TokenContractWithSigner.estimateGas[payoutWinners](roundWinners, share, nonDeads);
+        const estimatedGas = await TokenContractWithSigner[payoutWinners](roundWinners, share, nonDeads);
         const gasWithBuffer = estimatedGas.mul(ethers.BigNumber.from("120")).div(ethers.BigNumber.from("100"));
 
         let tx = await TokenContractWithSigner[payoutWinners]({ gasLimit: gasWithBuffer }, roundWinners, share, nonDeads);
