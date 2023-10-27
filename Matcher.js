@@ -425,7 +425,7 @@ async function storeRoundWinners() {
 
     for (let i = 1; i <= queuecounter; i++) {
         if (!dead.has(i)) {
-            const roundWinsOfNFT = await redisClient.getAsync(`roundWinsOf${i}`);
+            const roundWinsOfNFT = await getAsync(`roundWinsOf${i}`);
             const owner = await NFTContract.ownerOf(i);
             roundWinners.push(owner);
             await setAsync(`roundWinsOf${i}`, parseInt(roundWinsOfNFT || 0) + 1);
