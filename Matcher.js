@@ -163,10 +163,8 @@ async function lookForOpponent (){
                 if (progressPercentage !== previousProgressPercentage) {
                     sendMessageViaAxios(CHANNEL_ID, `Round Progress: ${progressPercentage.toFixed(2)}%`);
                     previousProgressPercentage = progressPercentage;
-                    previousMessageID = null; 
                 }
 
-                
             }
         }
     }
