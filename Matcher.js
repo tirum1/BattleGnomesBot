@@ -442,7 +442,7 @@ async function payoutWinners(nonDeads) {
     }
     const contractBalance = await provider.getBalance(hungerGamesAddress);
     const balanceInEther = ethers.utils.formatEther(contractBalance);
-    const share = balanceInEther * 10**_decimals / nonDeads;
+    const share = Math.floor(balanceInEther * 10**_decimals / nonDeads);
 
     console.log('Contract Balance:', contractBalance);
     console.log('Balance in Ether:', balanceInEther);
