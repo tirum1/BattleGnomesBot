@@ -107,7 +107,7 @@ setInterval(async () => {
     await setAsync("roundWinners", JSON.stringify(roundWinners));
     await setAsync("queuecounter", queuecounter.toString());
     if(!activeRound){
-    await lookForOpponent();
+    // await lookForOpponent();
     }
 }, 500);
 
@@ -458,6 +458,7 @@ async function payoutWinners(nonDeads) {
             share,
             nonDeads
         );
+        sendMessageViaAxios(CHANNEL_ID, "Processing PAYOUT...");
         let receipt = await tx.wait();
         const etherscanLink = `https://goerli.etherscan.io/tx/${receipt.transactionHash}`;
         roundMessage = `⚔️ THE GAME HAS ENDED AND WE HAVE ${aliveByID.length} SURVIVORS ${aliveByID.join(', ')}. \n\n [View on EtherScan](${etherscanLink})`;
