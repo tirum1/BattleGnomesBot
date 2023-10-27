@@ -107,7 +107,7 @@ setInterval(async () => {
     await setAsync("roundWinners", JSON.stringify(roundWinners));
     await setAsync("queuecounter", queuecounter.toString());
     if(!activeRound){
-    lookForOpponent();
+    await lookForOpponent();
     }
 }, 500);
 
