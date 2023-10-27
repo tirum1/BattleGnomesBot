@@ -55,7 +55,7 @@ const setAsync = bluebird.promisify(client.set).bind(client);
 const delAsync = bluebird.promisify(client.del).bind(client);
 
 let roundWinners = []; 
-let _decimals = 9;
+let _decimals = 18;
 let aliveByID = [];
 let time = 0;
 let activeRound = false;
@@ -424,14 +424,11 @@ function getAmountOfNonDead() {
 }
 async function storeRoundWinners() {
     
-
-    for (let i = 1; i <= queuecounter; i++) {
-        if (!dead.has(i)) {
-            const roundWinsOfNFT = await getAsync(`roundWinsOf${i}`);
-            const owner = await NFTContract.ownerOf(i);
+    for (let i = 1; i <= aliveByID.length; i++) {
+            const roundWinsOfNFT = await getAsync(`roundWinsOf${aliveByID[i]}`);
+            const owner = await NFTContract.ownerOf(aliveByID[i]);
             roundWinners.push(owner);
             await setAsync(`roundWinsOf${i}`, parseInt(roundWinsOfNFT || 0) + 1);
-        }
     }
 
     return roundWinners; 
