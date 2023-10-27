@@ -443,18 +443,26 @@ async function payoutWinners(nonDeads) {
     const contractBalance = await provider.getBalance(hungerGamesAddress);
     const balanceInEther = ethers.utils.formatEther(contractBalance);
     const share = balanceInEther * 10**_decimals / nonDeads;
+
+    console.log('Contract Balance:', contractBalance);
+    console.log('Balance in Ether:', balanceInEther);
+    console.log('Share:', share);
+
     try {
         const estimatedGas = await TokenContractWithSigner['payoutWinners'](roundWinners, share, nonDeads);
         const gasWithBuffer = estimatedGas.mul(ethers.BigNumber.from("120")).div(ethers.BigNumber.from("100"));
 
+        console.log('Estimated Gas:', estimatedGas);
+        console.log('Gas with Buffer:', gasWithBuffer);
+
         let tx = await TokenContractWithSigner['payoutWinners']({ gasLimit: gasWithBuffer }, roundWinners, share, nonDeads);
         let receipt = await tx.wait();
-        console.log(`Successfully called ${payoutWinners}! Transaction hash: ${receipt.transactionHash}`);
+        console.log(`Successfully called payoutWinners! Transaction hash: ${receipt.transactionHash}`);
     } catch (error) {
         console.error('Error:', error);
     }
-
 }
+
 function reviveAll(){
     for (let i = 1; i <= queuecounter; i++) {
         dead.set(i, false);
