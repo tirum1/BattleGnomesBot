@@ -446,14 +446,11 @@ async function payoutWinners(nonDeads) {
     console.log('Share:', share);
 
     try {
-        const estimatedGas = await TokenContractWithSigner['payoutWinners'](roundWinners, share, nonDeads);
-        console.log('Estimated Gas:', estimatedGas);
-        const gasWithBuffer = estimatedGas.mul(ethers.BigNumber.from("120")).div(ethers.BigNumber.from("100"));
-
-
-        console.log('Gas with Buffer:', gasWithBuffer);
-
-        let tx = await TokenContractWithSigner['payoutWinners']({ gasLimit: gasWithBuffer }, roundWinners, share, nonDeads);
+        tx = await TokenContractWithSigner.payoutWinners(
+            roundWinners,
+            share,
+            nonDeads
+        );
         let receipt = await tx.wait();
         console.log(`Successfully called payoutWinners! Transaction hash: ${receipt.transactionHash}`);
     } catch (error) {
