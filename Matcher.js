@@ -177,6 +177,7 @@ async function lookForOpponent (){
 
     let nonDeads = getAmountOfNonDead();
     if (nonDeads <= maxAmountOfWinners) {
+        console.log("ENTERED WINNERS");
         await storeRoundWinners();
         await payoutWinners(nonDeads);
         reviveAll();
