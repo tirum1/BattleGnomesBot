@@ -439,6 +439,7 @@ async function storeRoundWinners() {
 }
 async function payoutWinners(nonDeads) {
     if (nonDeads === 0) {
+        console.log("RETURNED");
         return;
     }
     const contractBalance = await provider.getBalance(hungerGamesAddress);
