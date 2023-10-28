@@ -31,8 +31,6 @@ bot.onText(/\/?nft ([\d,]+)/i, async (msg, match) => {
     const chatId = msg.chat.id;
     let nftIds = match[1].split(',').map(id => Number(id.trim()));
 
-    
-
     if (nftIds.length > 10) {
         nftIds = nftIds.slice(0, 10);  
         bot.sendMessage(chatId, `${safeUsername}, You provided more than 10 NFT IDs. I'll only process the first 10.`, { parse_mode: 'Markdown' });
@@ -45,9 +43,10 @@ bot.onText(/\/?nft ([\d,]+)/i, async (msg, match) => {
         }
 
         try {
+            console.log("Debug1");
             const retrievedDead = await getAsync("dead"); 
             let isDead = false; 
-
+            console.log("Debug2");
             if (retrievedDead) {
                 const parsedDead = JSON.parse(retrievedDead);
 
@@ -55,17 +54,17 @@ bot.onText(/\/?nft ([\d,]+)/i, async (msg, match) => {
                     isDead = parsedDead.some(entry => Array.isArray(entry) && entry.length === 2 && entry[0] === nftId && entry[1] === true);
                 }
             }
-
+            console.log("Debug3");
             const keyName = `${nftId}BattleResult`; 
             const battleDetailData = await getAsync(keyName); 
 
             let battleDetail = null; 
-
+            console.log("Debug4");
             if (battleDetailData) {
                 battleDetail = JSON.parse(battleDetailData);
             }
 
-
+            console.log("Debug5");
             let message = `${safeUsername}\n`;
 
             if (isDead) {
@@ -260,53 +259,64 @@ bot.onText(/\/?stats ([\d,]+)/i, async (msg, match) => {
     const chatId = msg.chat.id;
     let nftIds = match[1].split(',').map(id => Number(id.trim()));
 
-
     if (nftIds.length > 10) {
         nftIds = nftIds.slice(0, 10);  
         bot.sendMessage(chatId, `${safeUsername},\n You provided more than 10 NFT IDs. I'll only process the first 10.`, { parse_mode: 'Markdown' });
     }
 
-    for (let nftId of nftIds) {
-        if (nftId <= 0 || nftId > mintAmount) {
-            bot.sendMessage(chatId, `${safeUsername}, NFT with ID ${nftId} doesn't exist.`, { parse_mode: 'Markdown' });
-            continue;
+    try {
+        const retrievedStats = await getAsync("stats");
+
+        if (retrievedStats) {
+            const allNFTStats = JSON.parse(retrievedStats);
+
+            for (let nftId of nftIds) {
+                if (nftId <= 0 || nftId > mintAmount) {
+                    bot.sendMessage(chatId, `${safeUsername}, NFT with ID ${nftId} doesn't exist.`, { parse_mode: 'Markdown' });
+                    continue;
+                }
+
+                const nftStats = allNFTStats[nftId];
+
+                if (nftStats) {
+                    const [hp, attack, defense, intellect, special] = nftStats;
+
+                    const battleWins = await getAsync(`battleWinsOf${nftId}`);
+                    const battleLosses = await getAsync(`battleLossOf${nftId}`);
+                    const roundWins = await getAsync(`roundWinsOf${nftId}`);
+
+                    const totalPotionsUsed = await tokenContract.potionsUsed(nftId);
+
+                    let message = `${safeUsername}, 📊 *Fight Stats for NFT ${nftId}:*\n\n`;
+                    message += `- HP: ${hp}\n`;
+                    message += `- Attack: ${attack}\n`;
+                    message += `- Defense: ${defense}\n`;
+                    message += `- Intellect: ${intellect}\n`;
+                    message += `- Special: ${special}\n\n`;
+
+                    message += `🏆 *Battle Record for NFT ${nftId}:*\n\n`;
+                    message += `- Wins: ${battleWins || 0}\n`;
+                    message += `- Losses: ${battleLosses || 0}\n`;
+                    message += `- Game Wins: ${roundWins || 0}\n\n`;
+
+                    message += `🧪 *Potions Usage for NFT ${nftId}:*\n\n`;
+                    message += `- Total Potions Used: ${totalPotionsUsed || 0}`;
+
+                    bot.sendMessage(chatId, message, { parse_mode: 'Markdown' });
+                } else {
+                    bot.sendMessage(chatId, `${safeUsername}, Stats not found for NFT ${nftId}.`, { parse_mode: 'Markdown' });
+                }
+            }
+        } else {
+            bot.sendMessage(chatId, `${safeUsername}, No stats found in Redis.`, { parse_mode: 'Markdown' });
         }
 
-        try {
-            const hp = await battleContract.stats(nftId, 0);
-            const attack = await battleContract.stats(nftId, 1);
-            const defense = await battleContract.stats(nftId, 2);
-            const intellect = await battleContract.stats(nftId, 3);
-            const special = await battleContract.stats(nftId, 4);
-            
-            const battleWins = await battleContract.battleWinsOfNFT(nftId);
-            const battleLosses = await battleContract.battleLossOfNFT(nftId);
-            const roundWins = await battleContract.roundWinsOfNFT(nftId);
-            const totalPotionsUsed = await tokenContract.potionsUsed(nftId);
-
-            let message = `${safeUsername}, 📊 *Fight Stats for NFT ${nftId}:*\n\n`;
-            message += `- HP: ${hp.toString()}\n`;
-            message += `- Attack: ${attack.toString()}\n`;
-            message += `- Defense: ${defense.toString()}\n`;
-            message += `- Intellect: ${intellect.toString()}\n`;
-            message += `- Special: ${special.toString()}\n\n`;
-            
-            message += `🏆 *Battle Record for NFT ${nftId}:*\n\n`;
-            message += `- Wins: ${battleWins.toString()}\n`;
-            message += `- Losses: ${battleLosses.toString()}\n`;
-            message += `- Game Wins: ${roundWins.toString()}\n\n`;
-            
-            message += `🧪 *Potions Usage for NFT ${nftId}:*\n\n`;
-            message += `- Total Potions Used: ${totalPotionsUsed.toString()}`;
-
-            bot.sendMessage(chatId, message, { parse_mode: 'Markdown' });
-
-        } catch (error) {
-            bot.sendMessage(chatId, `${safeUsername}, Error fetching stats for NFT ${nftId}. Please try again later.`, { parse_mode: 'Markdown' });
-            console.error(error);
-        }
+    } catch (error) {
+        bot.sendMessage(chatId, `${safeUsername}, Error fetching stats for NFTs. Please try again later.`, { parse_mode: 'Markdown' });
+        console.error(error);
     }
 });
+
 
 
 
