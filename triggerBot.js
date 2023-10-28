@@ -1,11 +1,7 @@
 require('dotenv').config();
-const { ethers } = require('ethers');
 const axios = require('axios');
 const Redis = require('ioredis'); 
 const bluebird = require('bluebird');
-const AlchemyProvider = new ethers.providers.JsonRpcProvider(process.env.PROVIDER_URL);
-const PRIVATE_KEY = process.env.MYMAINTENANCE;  
-const wallet = new ethers.Wallet(PRIVATE_KEY, AlchemyProvider);
 const token = process.env.MAIN_BOT_TOKEN;
 const TELEGRAM_BASE_URL = `https://api.telegram.org/bot${token}/`;
 const CHANNEL_ID = '-1001672659906';
@@ -62,33 +58,7 @@ setInterval(async () => {
             const hungerGamesMessage = `🚀 THE BATTLEGROUND AWAITS THE BRAVE!`;
             sendMessageViaAxios(CHANNEL_ID, hungerGamesMessage);
             
-        } else if (timerPassed && counter >= 2) {
-            sendMessageViaAxios(CHANNEL_ID, "🌙🔥 ROUND INITIATED: ECHOES OF VALOR 🔥🌙");
-            const maxAmountOfWinnerBigNumber = await getAsync("maxAmountOfWinners");
-            const maxAmountOfWinner =  parseInt(maxAmountOfWinnerBigNumber);
-            console.log("maxamountofwinners:", maxAmountOfWinner);
-            const aliveData = await getAsync("aliveByID");
-            const aliveCount = aliveData ? JSON.parse(aliveData).length : 0;
-            console.log("aliveCountLength:", aliveCount);            
-
-            let roundMessage = "";
-
-            if (aliveCount.length <= maxAmountOfWinner) {
-                const roundWinnerLengthNUM = await getAsync("roundWinnersLength")
-                const roundWinnerLength =  parseInt(roundWinnerLengthNUM);
-                console.log("roundWinnerLength:", roundWinnerLength);
-                const aliveData = await getAsync("aliveByID");
-                const aliveArray = aliveData ? JSON.parse(aliveData).map(id => parseInt(id)) : [];
-                console.log("aliveById:", aliveArray);
-                const etherscanLink = `https://goerli.etherscan.io/tx/${txHashForWinnersFound}`;
-                roundMessage = `⚔️ THE GAME HAS ENDED AND WE HAVE ${aliveCount.length} SURVIVORS ${aliveById.join(', ')}. \n\n [View on EtherScan](${etherscanLink})`;
-                } else {
-                    roundMessage = `⚔️ A new round has started! There are ${aliveCount.length} participants left alive.`;
-                }
-                
-            sendMessageViaAxios(CHANNEL_ID, roundMessage);
-        }
-         else {
+        } else {
             console.log('No conditions met for triggering functions.');
         }
 
