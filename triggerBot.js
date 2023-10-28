@@ -34,7 +34,7 @@ setInterval(async () => {
         }
         const currentTime = Math.floor(Date.now() / 1000);
         const startTimer = await getAsync("time");
-        const startTimerNum = startTimer.toNumber();
+        const startTimerNum = parseInt(startTimer);
         let intervalTime = await getAsync("roundDuration");
         let intervalTimeNum = intervalTime.toNumber();
         if (await isNewGame()) {
