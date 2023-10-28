@@ -107,9 +107,7 @@ bot.onText(/\/?nft ([\d,]+)/i, async (msg, match) => {
                 message += `Last Battle Details:\n`;
                 message += `👥 Opponent ID: ${battleDetail.opponentId}\n`;
 
-                const resultText = battleDetail.result === 0 ? 'Victory' :
-                                battleDetail.result === 1 ? 'Defeat' : 'No Contest';
-                message += `🏆 Result: ${resultText}\n`;
+                message += `🏆 Result: ${battleDetail.result}\n`;
 
                 message += `💥 Used XTRA: ${battleDetail.usedXTRA ? 'Yes' : 'No'}\n`;
                 message += `⚡ Used BOOST: ${battleDetail.usedBOOST ? 'Yes' : 'No'}\n`;
