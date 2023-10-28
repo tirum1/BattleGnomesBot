@@ -48,7 +48,7 @@ setInterval(async () => {
         isProcessing = true;
         console.log('Polling started...');
 
-        const timerPassed = await hasTimerPassed();
+        const timerPassed = (await hasTimerPassed()) === "true";
         console.log('Timer passed:', timerPassed);
 
         const newGame = await isNewGame();
