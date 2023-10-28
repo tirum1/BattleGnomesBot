@@ -100,9 +100,11 @@ setInterval(async () => {
     await setAsync("dead", JSON.stringify(Array.from(dead.entries())));
     await setAsync("queue", JSON.stringify(Array.from(queue.entries())));
     await setAsync("aliveByID", JSON.stringify(aliveByID));
-    await setAsync("roundDuration", JSON.stringify(roundDuration));
+    await setAsync("roundDuration", roundDuration.toString());
     await setAsync("roundWinners", JSON.stringify(roundWinners));
+    await setAsync("roundWinnersLength", JSON.stringify(roundWinners.length));
     await setAsync("queuecounter", queuecounter.toString());
+    await setAsync("maxAmountOfWinners", maxAmountOfWinners.toString());
     await setAsync("stats", JSON.stringify(stats));
     if(!activeRound){
     // await lookForOpponent();

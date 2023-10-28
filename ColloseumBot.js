@@ -10,23 +10,21 @@ const FormData = require('form-data');
 
 const registerBotToken = process.env.REGISTER_BOT_TOKEN;
 const mainBotToken = process.env.MAIN_BOT_TOKEN;
-const redisUrl = process.env.REDIS_URL;
+const redisUrl = process.env.MAIN_REDIS_URL;
 const MYMaintenance = process.env.MYMAINTENANCE;
 const TELEGRAM_BASE_URL = `https://api.telegram.org/bot${mainBotToken}/`;
 
 const registerBot = new TelegramBot(registerBotToken, { polling: true });
-const hungerGamesAddress = '0x86B8837f50Cb1f6d07a0245fDC123A66CC50d581';
-const battleGnomesAddress = '0xe306cB8DCeA669d9De206BE116468d5a8AbB6bDb';
-const GnomesCollectiveAddress = "0x2391C069B5262E5c1aC2dfD84b09743a91657239";
+const hungerGamesAddress = '0xfaAEFD5D384113d4b87D5eE41c5DD4c28329697f';
+const GnomesCollectiveAddress = "0xF447E3a627F924EA8b064724001C484fEB39F6f9";
 const provider = new ethers.providers.JsonRpcProvider(process.env.PROVIDER_URL);
 const MYMaintenanceWallet = new ethers.Wallet(MYMaintenance, provider);
 const TokenABI = JSON.parse(fs.readFileSync('./ABI/HungerGames.json', 'utf8')).abi;
 const NFTABI = JSON.parse(fs.readFileSync('./ABI/GnomesCollective.json', 'utf8')).abi;
-const battleABI = JSON.parse(fs.readFileSync('./ABI/BattleContract.json', 'utf8')).abi;
 const NFTContract = new ethers.Contract(GnomesCollectiveAddress, NFTABI, provider);
 const TokenContract = new ethers.Contract(hungerGamesAddress, TokenABI, provider);
 const TokenContractWithSigner = TokenContract.connect(MYMaintenanceWallet);
-const battleContract = new ethers.Contract(battleGnomesAddress, battleABI, provider);
+
 
 
 const client = redis.createClient({ 
@@ -489,12 +487,33 @@ function startBot() {
                 userOngoingTransactions[username] = false;
                 return;
             }
-            const allNFTsAlive = await Promise.all(nftIds.map(id => battleContract.dead(id)));
-            if (allNFTsAlive.some(status => status)) { 
-                registerBot.sendMessage(chatId, "❌ Some of the provided NFT IDs correspond to dead NFTs.");
-                userOngoingTransactions[username] = false;
-                return;
+            
+            const retrievedDead = await getAsync("dead");
+
+            if (retrievedDead) {
+                const parsedDead = JSON.parse(retrievedDead);
+            
+                if (Array.isArray(parsedDead)) {
+                    let isAnyNFTDead = false;
+            
+                    for (const entry of parsedDead) {
+                        if (Array.isArray(entry) && entry.length === 2 && nftIds.includes(entry[0]) && entry[1] === true) {
+                            const nftID = entry[0];
+                            console.log(`NFT with ID ${nftID} is marked as dead.`);
+                            isAnyNFTDead = true;
+                        }
+                    }
+            
+                    if (!isAnyNFTDead) {
+                        console.log("No NFTs in nftIds are marked as dead in Redis.");
+                    }
+                } else {
+                    console.log("Invalid or empty dead array.");
+                }
+            } else {
+                console.log("No dead data found in Redis.");
             }
+            
            
             
             let hasSufficientBalance = false;
@@ -617,8 +636,18 @@ function startBot() {
             let completedCount = 0;
 
             const fetchDetails = async (NFTId, totalNFTs) => {
-                const [isDead, boostBalance, vBalance, xtraBalance, skipBalance] = await Promise.all([
-                    battleContract.dead(NFTId),
+                const retrievedDead = await getAsync("dead"); 
+                let isDead = false; 
+            
+                if (retrievedDead) {
+                    const parsedDead = JSON.parse(retrievedDead);
+            
+                    if (Array.isArray(parsedDead)) {
+                        isDead = parsedDead.some(entry => Array.isArray(entry) && entry.length === 2 && entry[0] === NFTId && entry[1] === true);
+                    }
+                }
+
+                const [boostBalance, vBalance, xtraBalance, skipBalance] = await Promise.all([
                     TokenContract.NFTBOOSTBalance(NFTId),
                     TokenContract.NFTVBalance(NFTId),
                     TokenContract.NFTXTRABalance(NFTId),
@@ -632,7 +661,6 @@ function startBot() {
                 if (skipBalance) response += `SKIP ✅\n`;
                 response += '\n';
             
-                // Increment the completed count and update the progress
                 completedCount++;
                 const progress = Math.round((completedCount / totalNFTs) * 100);
                 await registerBot.editMessageText(`Fetching NFT status... ${progress}%`, {
@@ -642,6 +670,7 @@ function startBot() {
             
                 return response;
             };
+            
             
             const results = await Promise.all(NFTsOwned.map(nft => {
                 const NFTId = nft.toNumber();

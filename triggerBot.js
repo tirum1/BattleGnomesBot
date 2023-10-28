@@ -1,22 +1,9 @@
 require('dotenv').config();
 const { ethers } = require('ethers');
-const fs = require('fs');
 const axios = require('axios');
 const Redis = require('ioredis'); 
 const bluebird = require('bluebird');
-const INFURA_ENDPOINT = process.env.INFURA_ENDPOINT;  
 const AlchemyProvider = new ethers.providers.JsonRpcProvider(process.env.PROVIDER_URL);
-const InfuraProvider = new ethers.providers.JsonRpcProvider(INFURA_ENDPOINT);
-const CONTRACT_ADDRESS = '0xe306cB8DCeA669d9De206BE116468d5a8AbB6bDb';  
-const TOKEN_CONTRACT_ADDRESS = '0x86B8837f50Cb1f6d07a0245fDC123A66CC50d581';  
-const ABI_PATH = './ABI/BattleContract.json'; 
-const TOKEN_ABI_PATH = './ABI/HungerGames.json'; 
-const contractData = JSON.parse(fs.readFileSync(ABI_PATH, 'utf8'));
-const TokenContractData = JSON.parse(fs.readFileSync(ABI_PATH, 'utf8'));
-const ABI = contractData.abi;
-const TokenABI = TokenContractData.abi;
-const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, AlchemyProvider);
-const TokenContract = new ethers.Contract(TOKEN_CONTRACT_ADDRESS, TokenABI, AlchemyProvider);
 const PRIVATE_KEY = process.env.MYMAINTENANCE;  
 const wallet = new ethers.Wallet(PRIVATE_KEY, AlchemyProvider);
 const token = process.env.MAIN_BOT_TOKEN;
@@ -34,19 +21,6 @@ const client = new Redis({
 bluebird.promisifyAll(client);
 const getAsync = bluebird.promisify(client.get).bind(client);
 
-const tokenFilter = {
-    address: TokenContract.address,
-    topics: [ethers.utils.id("PayoutWinnersExecuted(address[],uint256)")], // Use the event signature
-};
-
-TokenContract.on(tokenFilter, async (eventData) => {
-    try {
-        console.log("PayoutWinnersExecuted event detected on TokenContract:", eventData);
-        txHashForWinnersFound = eventData.transactionHash;
-    } catch (error) {
-        console.error('Error while handling PayoutWinnersExecuted event on TokenContract:', error);
-    }
-});
 
 setInterval(async () => {
     if (isProcessing) {
@@ -59,9 +33,9 @@ setInterval(async () => {
             sendMessageViaAxios(CHANNEL_ID, randomMessage);
         }
         const currentTime = Math.floor(Date.now() / 1000);
-        const startTimer = await contract._startTimer();
+        const startTimer = await getAsync("time");
         const startTimerNum = startTimer.toNumber();
-        let intervalTime = await contract.roundDuration();
+        let intervalTime = await getAsync("roundDuration");
         let intervalTimeNum = intervalTime.toNumber();
         if (await isNewGame()) {
             intervalTimeNum = intervalTimeNum * 6;
@@ -85,27 +59,24 @@ setInterval(async () => {
 
         if (newGame && timerPassed) {
             sendMessageViaAxios(CHANNEL_ID, "🔮✨ HUNGERGAMES INITIATED: DAWN OF DESTINY ✨🔮");
-            await triggerFunction('startHungerGames');  
-            console.log('HungerGames Started');
             const hungerGamesMessage = `🚀 THE BATTLEGROUND AWAITS THE BRAVE!`;
             sendMessageViaAxios(CHANNEL_ID, hungerGamesMessage);
             
         } else if (timerPassed && counter >= 2) {
             sendMessageViaAxios(CHANNEL_ID, "🌙🔥 ROUND INITIATED: ECHOES OF VALOR 🔥🌙");
-            await triggerFunction('lookForOpponent');
-            console.log('Round Started!');
-            const maxAmountOfWinnerBigNumber = await contract.maxAmountOfWinners();
+            const maxAmountOfWinnerBigNumber = await getAsync("maxAmountOfWinners");
             const maxAmountOfWinner = maxAmountOfWinnerBigNumber.toNumber();
             console.log("maxamountofwinners:", maxAmountOfWinner);
-            const aliveCount = await contract.getAliveByID(); 
-            console.log("aliveCountLength:", aliveCount.length);
+            const aliveData = await getAsync("aliveByID");
+            const aliveCount = aliveData ? JSON.parse(aliveData).length : 0;
+            console.log("aliveCountLength:", aliveCount);            
 
             let roundMessage = "";
 
             if (aliveCount.length <= maxAmountOfWinner) {
-                const roundWinnerLength = (await contract.getRoundWinnersLength()).toNumber();
+                const roundWinnerLength = (await getAsync("roundWinnersLength")).toNumber();
                 console.log("roundWinnerLength:", roundWinnerLength);
-                const aliveById = (await contract.getAliveByID()).map(id => id.toNumber());
+                const aliveById = (await getAsync("aliveByID")).map(id => id.toNumber());
                 console.log("aliveByID:", aliveById);
                 const etherscanLink = `https://goerli.etherscan.io/tx/${txHashForWinnersFound}`;
                 roundMessage = `⚔️ THE GAME HAS ENDED AND WE HAVE ${aliveCount.length} SURVIVORS ${aliveById.join(', ')}. \n\n [View on EtherScan](${etherscanLink})`;
@@ -139,28 +110,15 @@ async function sendMessageViaAxios(chatId, text, parseMode = 'Markdown') {
     }
 }
 async function hasTimerPassed() {
-    return await contract.hasTimerPassed();
+    return await getAsync("hasTimerPassed");
 }
 async function isNewGame() {
-    return await contract.newGame();
+    return getAsync("newGame");
 }
-async function triggerFunction(functionName) {
-    const contractWithSigner = contract.connect(wallet);
 
-    try {
-        const estimatedGas = await contractWithSigner.estimateGas[functionName]();
-        const gasWithBuffer = estimatedGas.mul(ethers.BigNumber.from("120")).div(ethers.BigNumber.from("100"));
-
-        let tx = await contractWithSigner[functionName]({ gasLimit: gasWithBuffer });
-        let receipt = await tx.wait();
-        console.log(`Successfully called ${functionName}! Transaction hash: ${receipt.transactionHash}`);
-    } catch (error) {
-        console.error('Error:', error);
-    }
-}
 async function queuecounter() {
     try {
-        const counter = await contract.queuecounter();
+        const counter = await getAsync("queuecounter");
         return counter.toNumber(); 
     } catch (error) {
         console.error('Error in queuecounter:', error);
