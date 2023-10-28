@@ -2,14 +2,10 @@ console.log("Starting the script...");
 require('colors');
 require('dotenv').config({ path: './.env' });
 const fs = require('fs');
-const TelegramBot = require('node-telegram-bot-api');
 const { ethers } = require('ethers');
 const bluebird = require('bluebird');
 const redis = require('redis');
 const axios = require('axios');
-const FormData = require('form-data');
-const csv = require('csv-parser');
-const { Console } = require('console');
 const token = process.env.MAIN_BOT_TOKEN;
 const TELEGRAM_BASE_URL = `https://api.telegram.org/bot${token}/`;
 const CHANNEL_ID = '-1001672659906';
@@ -104,8 +100,10 @@ setInterval(async () => {
     await setAsync("dead", JSON.stringify(Array.from(dead.entries())));
     await setAsync("queue", JSON.stringify(Array.from(queue.entries())));
     await setAsync("aliveByID", JSON.stringify(aliveByID));
+    await setAsync("roundDuration", JSON.stringify(roundDuration));
     await setAsync("roundWinners", JSON.stringify(roundWinners));
     await setAsync("queuecounter", queuecounter.toString());
+    await setAsync("stats", JSON.stringify(stats));
     if(!activeRound){
     // await lookForOpponent();
     }
