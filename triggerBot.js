@@ -36,7 +36,7 @@ setInterval(async () => {
         const startTimer = await getAsync("time");
         const startTimerNum = parseInt(startTimer);
         let intervalTime = await getAsync("roundDuration");
-        let intervalTimeNum = intervalTime.toNumber();
+        let intervalTimeNum = parseInt(intervalTime);
         if (await isNewGame()) {
             intervalTimeNum = intervalTimeNum * 6;
         }
