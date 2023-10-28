@@ -135,9 +135,9 @@ bot.onText(/\/?leaderboard/i, async (msg) => {
         const roundWinsArrayPromises = aliveArray.map(id => getAsync(`RoundWinsOf${id}`));
         const roundWinsArray = await Promise.all(roundWinsArrayPromises);
 
-        const sortedAliveArray = aliveArrayData.sort((a, b) => {
-            const roundWinsA = parseInt(roundWinsArray[aliveArrayData.indexOf(a)]) || 0;
-            const roundWinsB = parseInt(roundWinsArray[aliveArrayData.indexOf(b)]) || 0;
+        const sortedAliveArray = aliveArray.sort((a, b) => {
+            const roundWinsA = parseInt(roundWinsArray[aliveArray.indexOf(a)]) || 0;
+            const roundWinsB = parseInt(roundWinsArray[aliveArray.indexOf(b)]) || 0;
             return roundWinsB - roundWinsA;
         });
 
