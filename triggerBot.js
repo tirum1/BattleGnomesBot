@@ -77,7 +77,9 @@ setInterval(async () => {
                 const roundWinnerLengthNUM = await getAsync("roundWinnersLength")
                 const roundWinnerLength =  parseInt(roundWinnerLengthNUM);
                 console.log("roundWinnerLength:", roundWinnerLength);
-                const aliveById = (await getAsync("aliveByID")).map(id => id.toNumber());
+                const aliveData = await getAsync("aliveByID");
+                const aliveArray = aliveData ? JSON.parse(aliveData).map(id => parseInt(id)) : [];
+                console.log("aliveById:", aliveArray);
                 console.log("aliveByID:", aliveById);
                 const etherscanLink = `https://goerli.etherscan.io/tx/${txHashForWinnersFound}`;
                 roundMessage = `⚔️ THE GAME HAS ENDED AND WE HAVE ${aliveCount.length} SURVIVORS ${aliveById.join(', ')}. \n\n [View on EtherScan](${etherscanLink})`;
