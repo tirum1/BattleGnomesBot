@@ -3,19 +3,46 @@ const fs = require('fs');
 const { ethers} = require('ethers');
 const TelegramBot = require('node-telegram-bot-api');
 const token = process.env.MAIN_BOT_TOKEN;
-
+const redis = require('redis');
 const bot = new TelegramBot(token, { polling: true });
 const hungerGamesAddress = '0xfaAEFD5D384113d4b87D5eE41c5DD4c28329697f';
 const GnomesCollectiveAddress = "0xF447E3a627F924EA8b064724001C484fEB39F6f9";
-
+const redisUrl = process.env.MAIN_REDIS_URL;
 const provider = new ethers.providers.JsonRpcProvider(process.env.PROVIDER_URL);
 const tokenContractABI = JSON.parse(fs.readFileSync('./ABI/HungerGames.json', 'utf8')).abi;
 const NFTContractABI = JSON.parse(fs.readFileSync('./ABI/GnomesCollective.json', 'utf8')).abi;
 const tokenContract = new ethers.Contract(hungerGamesAddress, tokenContractABI, provider);
-const NFTContract = new ethers.Contract(GnomesCollectiveAddress, tokenContractABI, provider);
+const NFTContract = new ethers.Contract(GnomesCollectiveAddress, NFTContractABI, provider);
 
 const userTimestamps = {};
 const RATE_LIMIT = 1 * 10 * 1000;
+
+const client = redis.createClient({ 
+    url: redisUrl,
+    retry_strategy: function(options) {
+        if (options.error && options.error.code === 'ECONNREFUSED') {
+            return new Error('The server refused the connection');
+        }
+        if (options.total_retry_time > 1000 * 60 * 60) {
+            return new Error('Retry time exhausted');
+        }
+        if (options.attempt > 10) {
+            return undefined;
+        }
+        return Math.min(options.attempt * 100, 3000);
+    }
+});
+
+bluebird.promisifyAll(client);
+
+client.on('connect', () => {
+    console.log('[PASS]'.green + ' Redis Connected');
+});
+client.on('error', (err) => {
+    console.error('Redis error:', err);
+});
+
+const getAsync = bluebird.promisify(client.get).bind(client);
 
 bot.onText(/\/?nft ([\d,]+)/i, async (msg, match) => {
     const userId = msg.from.id;
@@ -145,7 +172,6 @@ bot.onText(/\/?leaderboard/i, async (msg) => {
     }
 });
 
-
 bot.onText(/\/?ca/i, (msg) => {
     const chatId = msg.chat.id;
     
@@ -242,7 +268,6 @@ bot.onText(/\/?time/i, async (msg) => {
         console.error("Error in the /time command:", error);
     }
 });
-
 
 bot.onText(/\/?stats ([\d,]+)/i, async (msg, match) => {
     const userId = msg.from.id;
