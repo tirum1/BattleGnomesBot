@@ -109,10 +109,10 @@ bot.onText(/\/?nft ([\d,]+)/i, async (msg, match) => {
 
                 message += `🏆 Result: ${battleDetail.result}\n`;
 
-                message += `💥 Used XTRA: ${battleDetail.usedXTRA ? 'Yes' : 'No'}\n`;
-                message += `⚡ Used BOOST: ${battleDetail.usedBOOST ? 'Yes' : 'No'}\n`;
-                message += `✨ Used V: ${battleDetail.usedV ? 'Yes' : 'No'}\n`;
-                message += `⏭️ Used SKIP: ${battleDetail.usedSKIP ? 'Yes' : 'No'}`;
+                message += `💥 Used XTRA: ${battleDetail.XTRA ? 'Yes' : 'No'}\n`;
+                message += `⚡ Used BOOST: ${battleDetail.BOOST ? 'Yes' : 'No'}\n`;
+                message += `✨ Used V: ${battleDetail.V ? 'Yes' : 'No'}\n`;
+                message += `⏭️ Used SKIP: ${battleDetail.SKIP ? 'Yes' : 'No'}`;
             }
 
 
