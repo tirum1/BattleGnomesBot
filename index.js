@@ -1,6 +1,6 @@
 require('./ColloseumBot.js');
 require('./GnomesBattleBot.js');
-//require('./triggerBot.js');  
+require('./triggerBot.js');  
 
 const express = require('express');
 const app = express();
