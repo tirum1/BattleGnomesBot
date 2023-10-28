@@ -130,8 +130,9 @@ bot.onText(/\/?leaderboard/i, async (msg) => {
     const safeUsername = username.replace(/_/g, '\\_');
 
     try {
-        const aliveArrayData = await getAsync("aliveByID"); 
-        const roundWinsArrayPromises = aliveArrayData.map(id => getAsync(`RoundWinsOf${id}`)); 
+        const aliveArrayData = await getAsync("aliveByID");
+        const aliveArray = aliveArrayData ? JSON.parse(aliveArrayData) : []; 
+        const roundWinsArrayPromises = aliveArray.map(id => getAsync(`RoundWinsOf${id}`));
         const roundWinsArray = await Promise.all(roundWinsArrayPromises);
 
         const sortedAliveArray = aliveArrayData.sort((a, b) => {
