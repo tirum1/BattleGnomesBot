@@ -51,7 +51,7 @@ setInterval(async () => {
         const timerPassed = (await hasTimerPassed()) === "true";
         console.log('Timer passed:', timerPassed);
 
-        const newGame = await isNewGame();
+        const newGame = (await isNewGame()) === "true";
         console.log('Is new game:', newGame);
 
         const counter = await queuecounter();
