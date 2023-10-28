@@ -26,7 +26,6 @@ const TokenContract = new ethers.Contract(hungerGamesAddress, TokenABI, provider
 const TokenContractWithSigner = TokenContract.connect(MYMaintenanceWallet);
 
 
-
 const client = redis.createClient({ 
     url: redisUrl,
     retry_strategy: function(options) {
@@ -219,8 +218,9 @@ function startBot() {
     
             const NFTChunks = chunkArray(NFTByID, 50); 
 
-            for (const [index, chunk] of NFTChunks.entries()) {
-                const response = 
+            if (NFTChunks.length === 0) {
+                // User doesn't own any NFTs, send a specific response
+                const noNFTsResponse =
                 "─────────────────────────────────\n" +
                 "🔹 Hunger Games Balance 🔹 (Page " + (index + 1) + "/" + NFTChunks.length + ")\n" +
                 "─────────────────────────────────\n" +
@@ -229,19 +229,44 @@ function startBot() {
                 "🔗 Wallet Address: " + shortWalletAddress + "\n" +
                 "\n" +
                 (index === 0 ? (
-                "🟢 HGMS: " + hgmsBalanceInMillions + "K $HGMS\n" +
-                "🔵 ETH: " + ethBalanceInFullUnits + " ETH\n" +
-                "🟣 XTRA: " + xtraBalance + " XTRA\n" +
-                "🟠 BOOST: " + boostBalance + " BOOST\n" +
-                "🔷 V: " + vBalance + " V\n" +
-                "🟡 SKIP: " + skipBalance + " SKIP\n"
+                    "🟢 HGMS: " + hgmsBalanceInMillions + "K $HGMS\n" +
+                    "🔵 ETH: " + ethBalanceInFullUnits + " ETH\n" +
+                    "🟣 XTRA: " + xtraBalance + " XTRA\n" +
+                    "🟠 BOOST: " + boostBalance + " BOOST\n" +
+                    "🔷 V: " + vBalance + " V\n" +
+                    "🟡 SKIP: " + skipBalance + " SKIP\n"
                 ) : "") +
-                "🔖 NFT IDs: " + chunk.join(', ') + "\n" +
+                "🔖 NFT IDs: None " +"\n" +
                 "\n" +
                 "Thank you for using the Hunger Games Colosseum!\n" +
                 "──────────────────────────────────\n";
-                
-                await registerBot.sendMessage(msg.chat.id, response);
+            
+                await registerBot.sendMessage(msg.chat.id, noNFTsResponse);
+            } else {
+                for (const [index, chunk] of NFTChunks.entries()) {
+                    const response =
+                        "─────────────────────────────────\n" +
+                        "🔹 Hunger Games Balance 🔹 (Page " + (index + 1) + "/" + NFTChunks.length + ")\n" +
+                        "─────────────────────────────────\n" +
+                        "\n" +
+                        "👤 User: @" + username + "\n" +
+                        "🔗 Wallet Address: " + shortWalletAddress + "\n" +
+                        "\n" +
+                        (index === 0 ? (
+                            "🟢 HGMS: " + hgmsBalanceInMillions + "K $HGMS\n" +
+                            "🔵 ETH: " + ethBalanceInFullUnits + " ETH\n" +
+                            "🟣 XTRA: " + xtraBalance + " XTRA\n" +
+                            "🟠 BOOST: " + boostBalance + " BOOST\n" +
+                            "🔷 V: " + vBalance + " V\n" +
+                            "🟡 SKIP: " + skipBalance + " SKIP\n"
+                        ) : "") +
+                        "🔖 NFT IDs: " + chunk.join(', ') + "\n" +
+                        "\n" +
+                        "Thank you for using the Hunger Games Colosseum!\n" +
+                        "──────────────────────────────────\n";
+            
+                    await registerBot.sendMessage(msg.chat.id, response);
+                }
             }
             
 
