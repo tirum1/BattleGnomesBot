@@ -65,7 +65,7 @@ setInterval(async () => {
         } else if (timerPassed && counter >= 2) {
             sendMessageViaAxios(CHANNEL_ID, "🌙🔥 ROUND INITIATED: ECHOES OF VALOR 🔥🌙");
             const maxAmountOfWinnerBigNumber = await getAsync("maxAmountOfWinners");
-            const maxAmountOfWinner = maxAmountOfWinnerBigNumber.toNumber();
+            const maxAmountOfWinner =  parseInt(maxAmountOfWinnerBigNumber);
             console.log("maxamountofwinners:", maxAmountOfWinner);
             const aliveData = await getAsync("aliveByID");
             const aliveCount = aliveData ? JSON.parse(aliveData).length : 0;
@@ -74,7 +74,8 @@ setInterval(async () => {
             let roundMessage = "";
 
             if (aliveCount.length <= maxAmountOfWinner) {
-                const roundWinnerLength = (await getAsync("roundWinnersLength")).toNumber();
+                const roundWinnerLengthNUM = await getAsync("roundWinnersLength")
+                const roundWinnerLength =  parseInt(roundWinnerLengthNUM);
                 console.log("roundWinnerLength:", roundWinnerLength);
                 const aliveById = (await getAsync("aliveByID")).map(id => id.toNumber());
                 console.log("aliveByID:", aliveById);
@@ -119,7 +120,7 @@ async function isNewGame() {
 async function queuecounter() {
     try {
         const counter = await getAsync("queuecounter");
-        return counter.toNumber(); 
+        return parseInt(counter); 
     } catch (error) {
         console.error('Error in queuecounter:', error);
         return 0; 
