@@ -4,6 +4,7 @@ const { ethers} = require('ethers');
 const TelegramBot = require('node-telegram-bot-api');
 const token = process.env.MAIN_BOT_TOKEN;
 const redis = require('redis');
+const bluebird = require('bluebird');
 const bot = new TelegramBot(token, { polling: true });
 const hungerGamesAddress = '0xfaAEFD5D384113d4b87D5eE41c5DD4c28329697f';
 const GnomesCollectiveAddress = "0xF447E3a627F924EA8b064724001C484fEB39F6f9";
