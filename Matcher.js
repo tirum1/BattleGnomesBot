@@ -208,7 +208,7 @@ async function lookForOpponent() {
     roundsCount++;
     resetTimer();
     resetAlive();
-    // await removePotions();
+     await removePotions();
     activeRound = false;
     console.log("Look For Opponend PASS");
     sendMessageViaAxios(CHANNEL_ID, `${aliveByID.length} Survived the Round!`);
