@@ -162,7 +162,7 @@ async function lookForOpponent (){
                     }
                 }
 
-                const progressPercentage = Math.round((i / queuecounter) * 100);
+                const progressPercentage = ((i / queuecounter) * 100).toFixed(2);
 
                 if (progressPercentage !== previousProgressPercentage) {
                     sendMessageViaAxios(CHANNEL_ID, `Round Progress: ${progressPercentage.toFixed(2)}%`);
@@ -187,6 +187,7 @@ async function lookForOpponent (){
     roundsCount++;
     resetTimer();
     resetAlive();
+    await removePotions();
     activeRound = false;
     console.log("Look For Opponend PASS");
 }
@@ -288,7 +289,6 @@ async function enterBattle(First, Second) {
 
     if (shouldSkipBattle(firstNFTData, secondNFTData)) {
         fillLastBattle(First, Second, BattleResult.Skipped, firstNFTData, secondNFTData);
-        removePotions(First, Second);
         alive.set(First, true);
         alive.set(Second, true);
         return;
@@ -325,7 +325,6 @@ async function enterBattle(First, Second) {
 
     await updateNFTStatus(First, Second, isFirstWinner, firstNFTData, secondNFTData);
     restoreOriginalStats(First, Second, originalStatsFirst, originalStatsSecond);
-    await removePotions(First, Second);
 }
 async function collectNFTData(tokenId) {
     console.log("collecting data for: ", tokenId);
@@ -408,8 +407,8 @@ function restoreOriginalStats(First, Second, originalStatsFirst, originalStatsSe
     stats[First] = originalStatsFirst;
     stats[Second] = originalStatsSecond;
 }
-async function removePotions(First, Second) {
-     const tx = await TokenContractWithSigner.removePotions(First, Second);
+async function removePotions() {
+   //  const tx = await TokenContractWithSigner.removePotions(await NFTContract.getMintAmount());
 }
 function getAmountOfNonDead() {
     let nonDeadCount = 0;

@@ -136,7 +136,9 @@ bot.onText(/\/?leaderboard/i, async (msg) => {
         const deadArray = deadData ? JSON.parse(deadData) : [];
         console.log("Parsed dead array:", deadArray);
 
-        const liveNFTs = deadArray.filter(entry => entry[1] === true);
+
+        const liveNFTs = deadArray.filter(entry => entry[1] === false).map(entry => entry[0]);
+
         console.log("Filtered live NFTs:", liveNFTs);
 
         const roundWinsArrayPromises = liveNFTs.map(entry => getAsync(`RoundWinsOf${entry[0]}`));
