@@ -106,7 +106,7 @@ setInterval(async () => {
     await setAsync("maxAmountOfWinners", maxAmountOfWinners.toString());
     await setAsync("stats", JSON.stringify(stats));
     if(!activeRound && queuecounter >= 2 && hasTimerPassed()){
-     await lookForOpponent();
+     // await lookForOpponent();
     }
 }, 500);
 
@@ -192,7 +192,7 @@ async function lookForOpponent() {
     roundsCount++;
     resetTimer();
     resetAlive();
-    await removePotions();
+    // await removePotions();
     activeRound = false;
     console.log("Look For Opponend PASS");
     sendMessageViaAxios(CHANNEL_ID, `${aliveByID.length} Survived the Round!`);
@@ -414,7 +414,25 @@ function restoreOriginalStats(First, Second, originalStatsFirst, originalStatsSe
     stats[Second] = originalStatsSecond;
 }
 async function removePotions() {
-   //  const tx = await TokenContractWithSigner.removePotions(await NFTContract.getMintAmount());
+    const mintAmount = await NFTContract.getMintAmount();
+
+    const gasLimit = await TokenContract.estimateGas.removePotions(mintAmount);
+
+    const gasBuffer = Math.ceil(gasLimit.toNumber() * 1.1); 
+
+    const totalGasLimit = gasBuffer > gasLimit ? gasBuffer : gasLimit;
+
+    const tx = await TokenContract.removePotions(mintAmount, {
+        gasLimit: totalGasLimit,
+        gasPrice: await provider.getGasPrice(),
+    });
+
+    try {
+        const receipt = await wallet.sendTransaction(tx);
+        console.log('Transaction hash:', receipt.hash);
+    } catch (error) {
+        console.error('Transaction failed:', error);
+    }
 }
 function getAmountOfNonDead() {
     let nonDeadCount = 0;
