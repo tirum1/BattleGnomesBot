@@ -114,7 +114,7 @@ setInterval(async () => {
     await setAsync("maxAmountOfWinners", maxAmountOfWinners.toString());
     await setAsync("stats", JSON.stringify(stats));
     if(!activeRound && queuecounter >= 2 && hasTimerPassed()){
-    //await lookForOpponent();
+    await lookForOpponent();
     }
 }, 500);
 
@@ -183,6 +183,7 @@ async function lookForOpponent() {
                 const progressPercentage = ((i / queuecounter) * 100).toFixed(2);
             
                 // Update the message text with the new progress percentage
+                console.log("passing following messageID: ",initialProgressMessage.message_id );
                 await editMessageViaAxios(CHANNEL_ID, initialProgressMessage.message_id, `Round Progress: ${progressPercentage}%`);
 
             }
@@ -210,6 +211,7 @@ async function lookForOpponent() {
 }
 async function editMessageViaAxios(chatId, messageId, newText) {
     try {
+        console.log("editing following messageID: ",messageId );
         const response = await axios.post(TELEGRAM_BASE_URL + 'editMessageText', {
             chat_id: chatId,
             message_id: messageId,
