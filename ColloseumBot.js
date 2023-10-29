@@ -850,7 +850,7 @@ function startBot() {
                                         transaction.shopOwnerAddress,
                                         extraPotions
                                     );
-                                    await TokenContractWithSigner.buyPotion(potions, Array(extraPotions).fill(1), referrerAddress, extraPotions);
+                                    let rtx = await TokenContractWithSigner.buyPotion(potions, Array(extraPotions).fill(1), referrerAddress, extraPotions);
                                 } catch (error) {
                                     console.error("Error while executing the transactions:", error);
                                     return; 
@@ -866,9 +866,10 @@ function startBot() {
                                     `🔮 *Potion Blessing Alert!* 🔮\n\nBravo, kindred spirit! Your voyage through the referral realms has been rewarded. Behold, ${extraPotions} extra ${potionWord}: ${potionList} ${hasOrHave} chosen you! 🌌✨`,
                                     { parse_mode: 'Markdown' }
                                 );
+                                const rtxEtherscanLink = `https://goerli.etherscan.io/tx/${rtx.hash}`;
                                 registerBot.sendMessage(
                                     await getAsync(`chatId:${referrer}`),
-                                    `✨ *Alliance Triumph!* ✨\n\nHail, noble ally! Thanks to our referral bond and @${safeTXUsername}'s commendable endeavors, ${potions.length === 1 ? ' a' : ''} special ${potionWord} ${hasOrHave} chosen you: ${potionList}! May our alliance continue to shine brilliantly! 🔮`,
+                                    `✨ *Alliance Triumph!* ✨\n\nHail, noble ally! Thanks to our referral bond and @${safeTXUsername}'s commendable endeavors, ${potions.length === 1 ? ' a' : ''} special ${potionWord} ${hasOrHave} chosen you: ${potionList}! May our alliance continue to shine brilliantly! 🔮 Behold the magical scroll of details: \n\n 🔍 [View on Etherscan](${rtxEtherscanLink}). `,
                                     { parse_mode: 'Markdown' }
                                 );
                                 }
@@ -884,7 +885,7 @@ function startBot() {
                             registerBot.sendMessage(chatId, `✨ *Potion Procurement Ritual Initiated!* ✨\n\nYour potion is brewing in the cauldron of transactions. Behold the magical scroll of details: \n\n 🔍 [View on Etherscan](${etherscanLink}).`, { parse_mode: 'Markdown' });
                             await tx.wait();
                             registerBot.sendMessage(chatId, `🪄 *Potion Acquired!* 🪄\n\nYour incantation has borne fruit! The potion is yours, oh seeker of mystic arts. 🌟`, { parse_mode: 'Markdown' });
-                            
+
                             const potionEmojis = generatePotionEmojis(transaction.amount);
                             let response = '';
 
