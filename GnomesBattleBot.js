@@ -45,7 +45,8 @@ client.on('error', (err) => {
 
 const getAsync = bluebird.promisify(client.get).bind(client);
 
-bot.onText(/\/?nft ([\d,]+)/i, async (msg, match) => {
+bot.onText(/\/?nft ([\d\s,]+)/i, async (msg, match) => {
+
     const userId = msg.from.id;
     const currentTime = Date.now();
     const username = msg.from.username ? `@${msg.from.username}` : msg.from.first_name;
@@ -181,8 +182,6 @@ bot.onText(/\/?leaderboard/i, async (msg) => {
     }
 });
 
-
-
 bot.onText(/\/?ca/i, (msg) => {
     const chatId = msg.chat.id;
     
@@ -280,7 +279,7 @@ bot.onText(/\/?time/i, async (msg) => {
     }
 });
 
-bot.onText(/\/?stats ([\d,]+)/i, async (msg, match) => {
+bot.onText(/\/?stats ([\d\s,]+)/i, async (msg, match) => {
     const userId = msg.from.id;
     const currentTime = Date.now();
     const mintAmount = await NFTContract.getMintAmount();
