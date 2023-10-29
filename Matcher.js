@@ -91,7 +91,6 @@ setInterval(async () => {
     if(newGame && hasTimerPassed()){
     startHungerGames();
     }
-    console.log("running");
     await setAsync("time", time);
     await setAsync("newGame", newGame);
     await setAsync("hasTimerPassed", hasTimerPassed());
