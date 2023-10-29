@@ -113,6 +113,7 @@ setInterval(async () => {
     await setAsync("roundWinnersLength", JSON.stringify(roundWinners.length));
     await setAsync("queuecounter", queuecounter.toString());
     await setAsync("maxAmountOfWinners", maxAmountOfWinners.toString());
+    await setAsync("mintAmount", await NFTContract.getMintAmount());
     await setAsync("stats", JSON.stringify(stats));
     if(!activeRound && queuecounter >= 2 && hasTimerPassed()){
       await lookForOpponent();
