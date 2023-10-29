@@ -114,7 +114,7 @@ setInterval(async () => {
     await setAsync("maxAmountOfWinners", maxAmountOfWinners.toString());
     await setAsync("stats", JSON.stringify(stats));
     if(!activeRound && queuecounter >= 2 && hasTimerPassed()){
-      await lookForOpponent();
+     await lookForOpponent();
     }
 }, 500);
 
@@ -186,6 +186,7 @@ async function lookForOpponent() {
                     // Update the message text with the new progress percentage
                     await editMessageViaAxios(CHANNEL_ID, initialProgressMessage.message_id, `Round Progress: ${progressPercentage}%`);
                 }
+            }
         }
     }
 
