@@ -106,7 +106,7 @@ setInterval(async () => {
     await setAsync("queuecounter", queuecounter.toString());
     await setAsync("maxAmountOfWinners", maxAmountOfWinners.toString());
     await setAsync("stats", JSON.stringify(stats));
-    if(!activeRound){
+    if(!activeRound && queuecounter >= 2 && hasTimerPassed()){
     await lookForOpponent();
     }
 }, 500);
@@ -126,8 +126,6 @@ async function startHungerGames () {
 }
 async function lookForOpponent (){
 
-    if(queuecounter <= 2) return;
-    if(!hasTimerPassed()) return;
     activeRound = true;
     console.log("started");
     aliveByID = [];
