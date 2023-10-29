@@ -843,7 +843,7 @@ function startBot() {
                                     potions.push(potion);
                                 }
                                 
-                                const gasBufferPercentage = 20; // 20% gas buffer
+                                const gasBufferPercentage = 20; 
 
                                 try {
                                     const estimatedGas = await TokenContractWithSigner.estimateGas.buyPotion(
@@ -853,7 +853,6 @@ function startBot() {
                                         extraPotions
                                     );
                                 
-                                    // Apply a gas buffer to the estimated gas for the first transaction
                                     const gasLimit = Math.ceil(estimatedGas * (1 + gasBufferPercentage / 100));
                                 
                                     tx = await TokenContractWithSigner.buyPotion(
@@ -866,7 +865,6 @@ function startBot() {
                                 
                                     if (extraPotions !== 0) {
                                         try {
-                                            // Estimate the gas for the second transaction
                                             const rtxGas = await TokenContractWithSigner.estimateGas.buyPotion(
                                                 potions,
                                                 Array(extraPotions).fill(1),
@@ -874,7 +872,6 @@ function startBot() {
                                                 extraPotions
                                             );
                                 
-                                            // Apply a gas buffer to the estimated gas for the second transaction
                                             const rtxGasLimit = Math.ceil(rtxGas * (1 + gasBufferPercentage / 100));
                                 
                                             rtx = await TokenContractWithSigner.buyPotion(
@@ -886,7 +883,7 @@ function startBot() {
                                             );
                                         } catch (error) {
                                             console.error("Error while executing the 'rtx' transaction:", error);
-                                            throw error; // Re-throw the error to handle it at a higher level
+                                            throw error; 
                                         }
                                     }
                                 } catch (error) {
@@ -981,12 +978,29 @@ function startBot() {
                     console.log(`User clicked "Confirm" for transaction ${transactionId}`);
                     try {
                         ongoingTransactions[transactionId].status = 'confirmed';
-                        const tx = await TokenContractWithSigner.applyPotion(transaction.shopOwnerAddress, transaction.nftIds, transaction.potionName.toUpperCase());
-                        console.log(`Received transaction hash: ${tx.hash}`);
                         
+                        // Estimate the gas for the transaction
+                        const estimatedGas = await TokenContractWithSigner.estimateGas.applyPotion(
+                            transaction.shopOwnerAddress,
+                            transaction.nftIds,
+                            transaction.potionName.toUpperCase()
+                        );
+                    
+                        // Apply a gas buffer (e.g., 20%)
+                        const gasBufferPercentage = 20; // You can adjust this value
+                        const gasLimit = Math.ceil(estimatedGas * (1 + gasBufferPercentage / 100));
+                    
+                        const tx = await TokenContractWithSigner.applyPotion(
+                            transaction.shopOwnerAddress,
+                            transaction.nftIds,
+                            transaction.potionName.toUpperCase(),
+                            { gasLimit }
+                        );
+                    
+                        console.log(`Received transaction hash: ${tx.hash}`);
                         const etherscanLink = `https://goerli.etherscan.io/tx/${tx.hash}`;
                         console.log(`Etherscan Link: ${etherscanLink}`);
-                        
+                    
                         registerBot.sendMessage(chatId, `✨ *Potion Procurement Ritual Initiated!* ✨\n\nYour potion is brewing in the cauldron of transactions. Behold the magical scroll of details: \n 🔍 [View on Etherscan](${etherscanLink}).`, { parse_mode: 'Markdown' });
                         await tx.wait();
                         registerBot.sendMessage(chatId, `🪄 *Potion Applied!* 🪄\n\nThe mystic incantation has taken effect! The potion has been successfully applied to your enchanting artifacts. 🌟`, { parse_mode: 'Markdown' });
