@@ -107,7 +107,7 @@ setInterval(async () => {
     await setAsync("maxAmountOfWinners", maxAmountOfWinners.toString());
     await setAsync("stats", JSON.stringify(stats));
     if(!activeRound){
-    // await lookForOpponent();
+    await lookForOpponent();
     }
 }, 500);
 
