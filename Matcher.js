@@ -66,8 +66,7 @@ let newGame = true;
 let HungerGamesBegin = false;
 let queuecounter = 0;
 let StatsSize = 5;
-let previousProgressPercentage = -1; 
-let progressPercentage = 0;
+
 const BattleResult = {
     Won: "Won",
     Lost: "Lost",
@@ -113,7 +112,7 @@ setInterval(async () => {
     await setAsync("maxAmountOfWinners", maxAmountOfWinners.toString());
     await setAsync("stats", JSON.stringify(stats));
     if(!activeRound && queuecounter >= 2 && hasTimerPassed()){
-    // await lookForOpponent();
+    await lookForOpponent();
     }
 }, 500);
 
@@ -173,11 +172,8 @@ async function lookForOpponent() {
                     }
                 }
 
-                try {
-                    previousProgressPercentage = await updateRoundProgress(i, queuecounter, previousProgressPercentage);
-                } catch (error) {
-                    console.error('Error sending progress update:', error);
-                }
+                const initialProgressMessage = await sendMessageViaAxios(CHANNEL_ID, "Round Progress: 0.00%");
+                const updatedProgressMessage = await updateRoundProgress(i, queuecounter, initialProgressMessage);
             }
         }
     }
@@ -201,30 +197,34 @@ async function lookForOpponent() {
     console.log("Look For Opponend PASS");
     sendMessageViaAxios(CHANNEL_ID, `${aliveByID.length} Survived the Round!`);
 }
-async function updateRoundProgress(i, queuecounter, previousProgressPercentage) {
-    return new Promise(async (resolve, reject) => {
-        const progressPercentage = ((i / queuecounter) * 100).toFixed(2);
+async function updateRoundProgress(i, queuecounter, previousProgressMessage) {
+    const progressPercentage = ((i / queuecounter) * 100).toFixed(2);
 
-        if (progressPercentage !== previousProgressPercentage) {
-            try {
-                await sendMessageViaAxios(CHANNEL_ID, `Round Progress: ${progressPercentage}%`).then((sent) => {
-                    if (sent) {
-                        previousProgressPercentage = progressPercentage;
-                        resolve(previousProgressPercentage);
-                    } else {
-                        console.log("SENDING ERROR");
-                        reject("Message sending error");
-                    }
-                });
-            } catch (error) {
-                console.error('Error sending progress update:', error);
-                reject(error);
-            }
-        } else {
-            resolve(previousProgressPercentage);
+    if (progressPercentage !== previousProgressMessage.text) {
+        try {
+            await editMessageViaAxios(CHANNEL_ID, previousProgressMessage.message_id, `Round Progress: ${progressPercentage}%`);
+            previousProgressMessage.text = progressPercentage;
+        } catch (error) {
+            console.error('Error updating progress message:', error);
         }
-    });
+    }
+    return previousProgressMessage;
 }
+
+async function editMessageViaAxios(chatId, messageId, newText) {
+    try {
+        const response = await axios.post(TELEGRAM_BASE_URL + 'editMessageText', {
+            chat_id: chatId,
+            message_id: messageId,
+            text: newText,
+            parse_mode: 'Markdown',
+        });
+        console.log(response.data);
+    } catch (error) {
+        console.error(`Error editing message: ${error.message}`);
+    }
+}
+
 
 function hasTimerPassed() {
     if (newGame) {
