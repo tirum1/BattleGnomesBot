@@ -448,25 +448,16 @@ function restoreOriginalStats(First, Second, originalStatsFirst, originalStatsSe
     stats[Second] = originalStatsSecond;
 }
 async function removePotions() {
-    const mintAmount = await NFTContract.getMintAmount();
+    const gasBufferPercentage = 10;
+    const gasPrice = await provider.getGasPrice();
+    const gasLimit = await TokenContractWithSigner.estimateGas.removePotions(queuecounter);
+    
+    const gasBuffer = Math.ceil(gasLimit.toNumber() * (1 + gasBufferPercentage / 100));
 
-    const gasLimit = await TokenContract.estimateGas.removePotions(mintAmount);
-
-    const gasBuffer = Math.ceil(gasLimit.toNumber() * 1.1); 
-
-    const totalGasLimit = gasBuffer > gasLimit ? gasBuffer : gasLimit;
-
-    const tx = await TokenContract.removePotions(mintAmount, {
-        gasLimit: totalGasLimit,
-        gasPrice: await provider.getGasPrice(),
+    const tx = await TokenContractWithSigner.removePotions(queuecounter, {
+        gasLimit: gasBuffer, 
+        gasPrice: gasPrice,
     });
-
-    try {
-        const receipt = await wallet.sendTransaction(tx);
-        console.log('Transaction hash:', receipt.hash);
-    } catch (error) {
-        console.error('Transaction failed:', error);
-    }
 }
 function getAmountOfNonDead() {
     let nonDeadCount = 0;
