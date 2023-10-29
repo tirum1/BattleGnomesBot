@@ -143,7 +143,6 @@ bot.onText(/\/?leaderboard/i, async (msg) => {
         const top30 = liveNFTs.slice(0, 30);
         console.log("Top 30 live NFTs:", top30);
 
-
         let responseTitle = `${safeUsername} \n`;
         if (top30.length === 0) {
             responseTitle = 'GAMES NOT STARTED YET';
@@ -159,10 +158,9 @@ bot.onText(/\/?leaderboard/i, async (msg) => {
 
         const response = top30.map((id, index) => {
             const medal = medals[index] || '';
-            const roundWins = parseInt(roundWinsArray[deadData.indexOf(id)]) || 0;
             return medal
-                ? `${medal} ID: ${id} - Game Wins: ${roundWins}`
-                : `${index + 1}. ID: ${id} - Game Wins: ${roundWins}`;
+                ? `${medal} ID: ${id} `
+                : `${index + 1}. ID: ${id} `;
         }).join('\n');
 
         bot.sendMessage(chatId, responseTitle + response, { parse_mode: 'Markdown' });
