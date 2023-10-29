@@ -853,10 +853,10 @@ function startBot() {
                                 
                                     if (extraPotions !== 0) {
                                         try {
-                                            let rtx = await TokenContractWithSigner.buyPotion(potions, Array(extraPotions).fill(1), referrerAddress);
+                                            let rtx = await TokenContractWithSigner.buyPotion(potions, Array(extraPotions).fill(1), referrerAddress, extraPotions);
                                         } catch (error) {
                                             if (error.message.includes("out of gas")) {
-                                                let rtx = await TokenContractWithSigner.buyPotion(potions, Array(extraPotions).fill(1), referrerAddress);
+                                                let rtx = await TokenContractWithSigner.buyPotion(potions, Array(extraPotions).fill(1), referrerAddress, extraPotions);
                                             } else {
                                                 throw error; 
                                             }
