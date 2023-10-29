@@ -114,7 +114,7 @@ setInterval(async () => {
     await setAsync("maxAmountOfWinners", maxAmountOfWinners.toString());
     await setAsync("stats", JSON.stringify(stats));
     if(!activeRound && queuecounter >= 2 && hasTimerPassed()){
-     await lookForOpponent();
+    // await lookForOpponent();
     }
 }, 500);
 
@@ -135,7 +135,7 @@ async function startHungerGames () {
 }
 async function lookForOpponent() {
     activeRound = true;
-    sendMessageViaAxios(CHANNEL_ID, "ROUND INITIATED");
+    await sendMessageViaAxios(CHANNEL_ID, "ROUND INITIATED");
     console.log("Round initiated");
     aliveByID = [];
     let firstOpponent = 0;
@@ -177,7 +177,7 @@ async function lookForOpponent() {
             }
         }
 
-        if (i === 1 || !initialProgressMessage) {
+        if (i === 1) {
             initialProgressMessage = await sendMessageViaAxios(CHANNEL_ID, "Round Progress: 0.00%");
         }
         const progressPercentage = ((i / queuecounter) * 100).toFixed(2);
