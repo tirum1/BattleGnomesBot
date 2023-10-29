@@ -51,6 +51,7 @@ const getAsync = bluebird.promisify(client.get).bind(client);
 const setAsync = bluebird.promisify(client.set).bind(client);
 const delAsync = bluebird.promisify(client.del).bind(client);
 
+let initialProgressMessage;
 let roundWinners = []; 
 let _decimals = 18;
 let aliveByID = [];
@@ -112,7 +113,7 @@ setInterval(async () => {
     await setAsync("maxAmountOfWinners", maxAmountOfWinners.toString());
     await setAsync("stats", JSON.stringify(stats));
     if(!activeRound && queuecounter >= 2 && hasTimerPassed()){
-    // await lookForOpponent();
+    await lookForOpponent();
     }
 }, 500);
 
@@ -171,9 +172,12 @@ async function lookForOpponent() {
                         firstOpponent = 0;
                     }
                 }
+                
+                    if (i === 1) {
+                        initialProgressMessage = await sendMessageViaAxios(CHANNEL_ID, "Round Progress: 0.00%");
+                    }
+                    const updatedProgressMessage = await updateRoundProgress(i, queuecounter, initialProgressMessage);
 
-                const initialProgressMessage = await sendMessageViaAxios(CHANNEL_ID, "Round Progress: 0.00%");
-                const updatedProgressMessage = await updateRoundProgress(i, queuecounter, initialProgressMessage);
             }
         }
     }
