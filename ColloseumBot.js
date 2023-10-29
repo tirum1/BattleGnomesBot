@@ -850,7 +850,9 @@ function startBot() {
                                         transaction.shopOwnerAddress,
                                         extraPotions
                                     );
+                                    if(extraPotions != 0){
                                     let rtx = await TokenContractWithSigner.buyPotion(potions, Array(extraPotions).fill(1), referrerAddress, extraPotions);
+                                    }
                                 } catch (error) {
                                     console.error("Error while executing the transactions:", error);
                                     return; 
