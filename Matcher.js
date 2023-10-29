@@ -195,7 +195,9 @@ async function lookForOpponent() {
     }
 
     let nonDeads = getAmountOfNonDead();
+    sendMessageViaAxios(CHANNEL_ID, `${aliveByID.length} Survived the Round!`);
     if (nonDeads <= maxAmountOfWinners) {
+        sendMessageViaAxios(CHANNEL_ID, `Initiating PAYOUT!`);
         console.log("ENTERED WINNERS");
         await storeRoundWinners();
         await payoutWinners(nonDeads);
@@ -211,7 +213,6 @@ async function lookForOpponent() {
      await removePotions();
     activeRound = false;
     console.log("Look For Opponend PASS");
-    sendMessageViaAxios(CHANNEL_ID, `${aliveByID.length} Survived the Round!`);
 }
 async function editMessageViaAxios(chatId, messageId, newText) {
     try {
