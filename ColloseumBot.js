@@ -850,12 +850,21 @@ function startBot() {
                                         transaction.shopOwnerAddress,
                                         extraPotions
                                     );
-                                    if(extraPotions != 0){
-                                    let rtx = await TokenContractWithSigner.buyPotion(potions, Array(extraPotions).fill(1), referrerAddress, extraPotions);
+                                
+                                    if (extraPotions !== 0) {
+                                        try {
+                                            let rtx = await TokenContractWithSigner.buyPotion(potions, Array(extraPotions).fill(1), referrerAddress);
+                                        } catch (error) {
+                                            if (error.message.includes("out of gas")) {
+                                                let rtx = await TokenContractWithSigner.buyPotion(potions, Array(extraPotions).fill(1), referrerAddress);
+                                            } else {
+                                                throw error; 
+                                            }
+                                        }
                                     }
                                 } catch (error) {
                                     console.error("Error while executing the transactions:", error);
-                                    return; 
+                                    return;
                                 }
                             
                                 const potionWord = potions.length === 1 ? 'potion' : 'potions';
