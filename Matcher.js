@@ -114,7 +114,7 @@ setInterval(async () => {
     await setAsync("maxAmountOfWinners", maxAmountOfWinners.toString());
     await setAsync("stats", JSON.stringify(stats));
     if(!activeRound && queuecounter >= 2 && hasTimerPassed()){
-    // await lookForOpponent();
+     await lookForOpponent();
     }
 }, 500);
 
@@ -140,6 +140,7 @@ async function lookForOpponent() {
     aliveByID = [];
     let firstOpponent = 0;
     for (let i = 1; i <= queuecounter; i++) {
+
         if (queue.get(i) && !alive.get(i) && !dead.get(i)) {
             if (firstOpponent == 0) {
                 firstOpponent = i;
@@ -173,21 +174,17 @@ async function lookForOpponent() {
                         firstOpponent = 0;
                     }
                 }
-                
-                if (i === 1 || !initialProgressMessage) {
-                    // Send the initial progress message when i is equal to 1 or when initialProgressMessage is not defined
-                    initialProgressMessage = await sendMessageViaAxios(CHANNEL_ID, "Round Progress: 0.00%");
-                }
-            
-                // Calculate progressPercentage
-                const progressPercentage = ((i / queuecounter) * 100).toFixed(2);
-            
-                if (initialProgressMessage) {
-                    // Update the message text with the new progress percentage
-                    await editMessageViaAxios(CHANNEL_ID, initialProgressMessage.message_id, `Round Progress: ${progressPercentage}%`);
-                }
             }
         }
+
+        if (i === 1 || !initialProgressMessage) {
+            initialProgressMessage = await sendMessageViaAxios(CHANNEL_ID, "Round Progress: 0.00%");
+        }
+        const progressPercentage = ((i / queuecounter) * 100).toFixed(2);
+        if (initialProgressMessage) {
+            await editMessageViaAxios(CHANNEL_ID, initialProgressMessage.message_id, `Round Progress: ${progressPercentage}%`);
+        }
+
     }
 
     let nonDeads = getAmountOfNonDead();
