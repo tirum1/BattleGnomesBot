@@ -140,6 +140,8 @@ async function lookForOpponent() {
     console.log("Round initiated");
     aliveByID = [];
     let firstOpponent = 0;
+    initialProgressMessage = await sendMessageViaAxios(CHANNEL_ID, "Round Progress: 0.00%");
+
     for (let i = 1; i <= queuecounter; i++) {
 
         if (queue.get(i) && !alive.get(i) && !dead.get(i)) {
@@ -178,10 +180,6 @@ async function lookForOpponent() {
             }
         }
 
-        if (i === 1) {
-            initialProgressMessage = await sendMessageViaAxios(CHANNEL_ID, "Round Progress: 0.00%");
-        }
-        
         const progressPercentage = ((i / queuecounter) * 100).toFixed(2);
 
         if (initialProgressMessage && editCounter >= 10) {
