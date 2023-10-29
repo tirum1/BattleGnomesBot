@@ -12,7 +12,7 @@ const TELEGRAM_BASE_URL = `https://api.telegram.org/bot${token}/`;
 const CHANNEL_ID = '-1001672659906';
 const MainRedisUrl = process.env.MAIN_REDIS_URL;
 const MYMaintenance = process.env.MYMAINTENANCE;
-const hungerGamesAddress = '0xfaAEFD5D384113d4b87D5eE41c5DD4c28329697f';
+const hungerGamesAddress = '0xb7df1df9c07424eb62a3154c141fb0a857b87a40';
 const GnomesCollectiveAddress = "0xF447E3a627F924EA8b064724001C484fEB39F6f9";
 const provider = new ethers.providers.JsonRpcProvider(process.env.PROVIDER_URL);
 const MYMaintenanceWallet = new ethers.Wallet(MYMaintenance, provider);
@@ -115,7 +115,7 @@ setInterval(async () => {
     await setAsync("maxAmountOfWinners", maxAmountOfWinners.toString());
     await setAsync("stats", JSON.stringify(stats));
     if(!activeRound && queuecounter >= 2 && hasTimerPassed()){
-     await lookForOpponent();
+     // await lookForOpponent();
     }
 }, 500);
 
@@ -182,7 +182,7 @@ async function lookForOpponent() {
 
         const progressPercentage = ((i / queuecounter) * 100).toFixed(2);
 
-        if (initialProgressMessage && editCounter >= 20 || i == queuecounter) {
+        if (initialProgressMessage && editCounter >= 40 || i == queuecounter) {
             if(i == queuecounter){
                 await editMessageViaAxios(CHANNEL_ID, initialProgressMessage.message_id, `Round Progress: 100%`);
             } else{
