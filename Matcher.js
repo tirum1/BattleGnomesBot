@@ -114,7 +114,7 @@ setInterval(async () => {
     await setAsync("maxAmountOfWinners", maxAmountOfWinners.toString());
     await setAsync("stats", JSON.stringify(stats));
     if(!activeRound && queuecounter >= 2 && hasTimerPassed()){
-     // await lookForOpponent();
+      await lookForOpponent();
     }
 }, 500);
 
@@ -182,10 +182,10 @@ async function lookForOpponent() {
                 // Calculate progressPercentage
                 const progressPercentage = ((i / queuecounter) * 100).toFixed(2);
             
-                // Update the message text with the new progress percentage
-                console.log("initialmessage_id: ", initialProgressMessage.message_id);
-                await editMessageViaAxios(CHANNEL_ID, initialProgressMessage.message_id, `Round Progress: ${progressPercentage}%`);
-            }
+                if (initialProgressMessage) {
+                    // Update the message text with the new progress percentage
+                    await editMessageViaAxios(CHANNEL_ID, initialProgressMessage.message_id, `Round Progress: ${progressPercentage}%`);
+                }
         }
     }
 
