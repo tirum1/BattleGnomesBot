@@ -174,7 +174,7 @@ bot.onText(/\/?leaderboard/i, async (msg) => {
 
         const response = top30.map((id, index) => {
             const medal = medals[index] || '';
-            const roundWins = parseInt(roundWinsArray[aliveArrayData.indexOf(id)]) || 0;
+            const roundWins = parseInt(roundWinsArray[deadData.indexOf(id)]) || 0;
             return medal
                 ? `${medal} ID: ${id} - Game Wins: ${roundWins}`
                 : `${index + 1}. ID: ${id} - Game Wins: ${roundWins}`;
