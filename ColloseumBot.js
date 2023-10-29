@@ -506,12 +506,18 @@ function startBot() {
             console.log('ownedNFTsAsNumbers:', ownedNFTsAsNumbers);
             console.log('nftIds:', nftIds);
 
-            const ownsAllNFTs = nftIds.every(id => ownedNFTsAsNumbers.includes(id));
-            if (!ownsAllNFTs) {
-                registerBot.sendMessage(chatId, "❌ You don't own all the provided NFT IDs.");
-                userOngoingTransactions[username] = false;
-                return;
-            }
+            const cleanedOwnedNFTs = ownedNFTsAsNumbers
+            .map(value => value.trim()) 
+            .map(Number); 
+          
+          const ownsAllNFTs = nftIds.every(id => cleanedOwnedNFTs.includes(id));
+          
+          if (!ownsAllNFTs) {
+            registerBot.sendMessage(chatId, "❌ You don't own all the provided NFT IDs.");
+            userOngoingTransactions[username] = false;
+            return;
+          }
+          
             
             const retrievedDead = await getAsync("dead");
 
