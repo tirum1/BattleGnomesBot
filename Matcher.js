@@ -72,6 +72,12 @@ const BattleResult = {
     Lost: "Lost",
     Skipped: "Skipped"
 };
+const limiter = new Bottleneck({
+    reservoir: 100, 
+    reservoirRefreshAmount: 100, 
+    reservoirRefreshInterval: 60 * 1000, 
+    maxConcurrent: 1, 
+});
 const stats = [[0, 0, 0, 0, 0]];
 const csvData = fs.readFileSync('stats.csv', 'utf8');
 const rows = csvData.split('\n');
@@ -200,10 +206,17 @@ async function updateRoundProgress(i, queuecounter, previousProgressPercentage) 
 
         if (progressPercentage !== previousProgressPercentage) {
             try {
-                await sendMessageViaAxios(CHANNEL_ID, `Round Progress: ${progressPercentage}%`);
-                previousProgressPercentage = progressPercentage;
-                resolve(previousProgressPercentage);
+                await sendMessageViaAxios(CHANNEL_ID, `Round Progress: ${progressPercentage}%`).then((sent) => {
+                    if (sent) {
+                        previousProgressPercentage = progressPercentage;
+                        resolve(previousProgressPercentage);
+                    } else {
+                        console.log("SENDING ERROR");
+                        reject("Message sending error");
+                    }
+                });
             } catch (error) {
+                console.error('Error sending progress update:', error);
                 reject(error);
             }
         } else {
@@ -211,6 +224,7 @@ async function updateRoundProgress(i, queuecounter, previousProgressPercentage) 
         }
     });
 }
+
 function hasTimerPassed() {
     if (newGame) {
         return Math.floor(Date.now() / 1000) >= (time + roundDuration * 6); 
@@ -504,7 +518,6 @@ async function payoutWinners(nonDeads) {
     });
 
     try {
-        sendMessageViaAxios(CHANNEL_ID, "Processing PAYOUT...");
         const receipt = await tx.wait();
         const etherscanLink = `https://goerli.etherscan.io/tx/${receipt.transactionHash}`;
         roundMessage = `⚔️ THE GAME HAS ENDED AND WE HAVE ${aliveByID.length} SURVIVORS ${aliveByID.join(', ')}. \n\n [View on EtherScan](${etherscanLink})`;
@@ -535,15 +548,18 @@ async function resetAlive() {
     }
 }
 async function sendMessageViaAxios(chatId, text, parseMode = 'Markdown') {
-    try {
-        const response = await axios.post(TELEGRAM_BASE_URL + 'sendMessage', {
-            chat_id: chatId,
-            text: text,
-            parse_mode: parseMode
-        });
-        console.log(response.data);
-    } catch (error) {
-        console.error(`Error sending message: ${error.message}`);
-    }
+    return limiter.schedule(async () => {
+        try {
+            const response = await axios.post(TELEGRAM_BASE_URL + 'sendMessage', {
+                chat_id: chatId,
+                text: text,
+                parse_mode: parseMode,
+            });
+            console.log(response.data);
+            return true; 
+        } catch (error) {
+            console.error(`Error sending message: ${error.message}`);
+            return false; 
+        }
+    });
 }
-
