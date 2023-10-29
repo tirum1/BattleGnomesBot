@@ -138,10 +138,20 @@ bot.onText(/\/?leaderboard/i, async (msg) => {
 
         const liveNFTs = deadArray.filter(entry => entry[1] === false).map(entry => entry[0]);
 
-        console.log("Filtered live NFTs:", liveNFTs);
+        // Create an array of NFTs with their roundWins
+        const liveNFTsData = await Promise.all(liveNFTs.map(async (nftID) => {
+            const roundWinsKey = `roundWinsOf${nftID}`;
+            const roundWins = await getAsync(roundWinsKey) || 0;
+            return { nftID, roundWins };
+        }));        
 
-        const top30 = liveNFTs.slice(0, 30);
-        console.log("Top 30 live NFTs:", top30);
+        // Sort the liveNFTsData array by roundWins in descending order
+        liveNFTsData.sort((a, b) => b.roundWins - a.roundWins);
+
+        // Get the top 30 NFTs
+        const top30 = liveNFTsData.slice(0, 30);
+
+        console.log("Top 30 live NFTs with roundWins:", top30);
 
         let responseTitle = `${safeUsername} \n`;
         if (top30.length === 0) {
@@ -156,11 +166,11 @@ bot.onText(/\/?leaderboard/i, async (msg) => {
 
         const medals = ['🥇', '🥈', '🥉'];
 
-        const response = top30.map((id, index) => {
+        const response = top30.map((data, index) => {
             const medal = medals[index] || '';
             return medal
-                ? `${medal} ID: ${id} `
-                : `${index + 1}. ID: ${id} `;
+                ? `${medal} ID: ${data.nftID}, Round Wins: ${data.roundWins}`
+                : `${index + 1}. ID: ${data.nftID}, Round Wins: ${data.roundWins}`;
         }).join('\n');
 
         bot.sendMessage(chatId, responseTitle + response, { parse_mode: 'Markdown' });
@@ -170,6 +180,8 @@ bot.onText(/\/?leaderboard/i, async (msg) => {
         console.error(error);
     }
 });
+
+
 
 bot.onText(/\/?ca/i, (msg) => {
     const chatId = msg.chat.id;
