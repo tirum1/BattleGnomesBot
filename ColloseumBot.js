@@ -505,17 +505,18 @@ function startBot() {
 
             console.log('ownedNFTsAsNumbers:', ownedNFTsAsNumbers);
             console.log('nftIds:', nftIds);
-            // Check if nftIds is a string or convert it to one if it's not
-            const nftIdsArray = typeof nftIds === 'string' ? nftIds.split(/\s+/) : [nftIds];
+            // Filter out NaN values from nftIds
+            const validNFTIds = nftIds.filter(id => !isNaN(id));
 
-            // Check if the user owns all the NFTs
-            const ownsAllNFTs = nftIdsArray.every(id => ownedNFTsAsNumbers.includes(id));
+            // Check if the user owns all the valid NFTs
+            const ownsAllNFTs = validNFTIds.every(id => ownedNFTsAsNumbers.includes(id));
 
             if (!ownsAllNFTs) {
                 registerBot.sendMessage(chatId, "❌ You don't own all the provided NFT IDs.");
                 userOngoingTransactions[username] = false;
                 return;
             }
+
 
             const retrievedDead = await getAsync("dead");
 
