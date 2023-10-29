@@ -182,7 +182,7 @@ async function lookForOpponent() {
 
         const progressPercentage = ((i / queuecounter) * 100).toFixed(2);
 
-        if (initialProgressMessage && editCounter >= 10 || i == queuecounter) {
+        if (initialProgressMessage && editCounter >= 20 || i == queuecounter) {
             if(i == queuecounter){
                 await editMessageViaAxios(CHANNEL_ID, initialProgressMessage.message_id, `Round Progress: 100%`);
             } else{
