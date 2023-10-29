@@ -68,6 +68,7 @@ let HungerGamesBegin = false;
 let queuecounter = 0;
 let StatsSize = 5;
 let messageId = 0;
+let editCounter = 0;
 
 const BattleResult = {
     Won: "Won",
@@ -183,11 +184,12 @@ async function lookForOpponent() {
         
         const progressPercentage = ((i / queuecounter) * 100).toFixed(2);
 
-        if (initialProgressMessage && i % 2 === 0) {
+        if (initialProgressMessage && editCounter >= 5) {
             await editMessageViaAxios(CHANNEL_ID, initialProgressMessage.message_id, `Round Progress: ${progressPercentage}%`);
+            editCounter = 0; 
         }
         
-
+        editCounter++; 
     }
 
     let nonDeads = getAmountOfNonDead();
