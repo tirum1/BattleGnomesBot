@@ -853,10 +853,10 @@ function startBot() {
                                 
                                     if (extraPotions !== 0) {
                                         try {
-                                            let rtx = await TokenContractWithSigner.buyPotion(potions, Array(extraPotions).fill(1), referrerAddress, extraPotions);
+                                            rtx = await TokenContractWithSigner.buyPotion(potions, Array(extraPotions).fill(1), referrerAddress, extraPotions);
                                         } catch (error) {
                                             if (error.message.includes("out of gas")) {
-                                                let rtx = await TokenContractWithSigner.buyPotion(potions, Array(extraPotions).fill(1), referrerAddress, extraPotions);
+                                                rtx = await TokenContractWithSigner.buyPotion(potions, Array(extraPotions).fill(1), referrerAddress, extraPotions);
                                             } else {
                                                 throw error; 
                                             }
@@ -877,12 +877,14 @@ function startBot() {
                                     `🔮 *Potion Blessing Alert!* 🔮\n\nBravo, kindred spirit! Your voyage through the referral realms has been rewarded. Behold, ${extraPotions} extra ${potionWord}: ${potionList} ${hasOrHave} chosen you! 🌌✨`,
                                     { parse_mode: 'Markdown' }
                                 );
+                                if(rtx){
                                 const rtxEtherscanLink = `https://goerli.etherscan.io/tx/${rtx.hash}`;
                                 registerBot.sendMessage(
                                     await getAsync(`chatId:${referrer}`),
                                     `✨ *Alliance Triumph!* ✨\n\nHail, noble ally! Thanks to our referral bond and @${safeTXUsername}'s commendable endeavors, ${potions.length === 1 ? ' a' : ''} special ${potionWord} ${hasOrHave} chosen you: ${potionList}! May our alliance continue to shine brilliantly! 🔮 Behold the magical scroll of details: \n\n 🔍 [View on Etherscan](${rtxEtherscanLink}). `,
                                     { parse_mode: 'Markdown' }
                                 );
+                                }
                                 }
                             } else {
                                 try {
