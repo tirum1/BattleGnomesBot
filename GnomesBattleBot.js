@@ -130,18 +130,24 @@ bot.onText(/\/?leaderboard/i, async (msg) => {
     const safeUsername = username.replace(/_/g, '\\_');
 
     try {
-        const aliveArrayData = await getAsync("aliveByID");
-        const aliveArray = aliveArrayData ? JSON.parse(aliveArrayData) : []; 
-        const roundWinsArrayPromises = aliveArray.map(id => getAsync(`RoundWinsOf${id}`));
+        const deadData = await getAsync("dead");
+        const deadArray = deadData ? JSON.parse(deadData) : [];
+
+        const liveNFTs = deadArray.filter(entry => entry[1] === true);
+
+        const roundWinsArrayPromises = liveNFTs.map(entry => getAsync(`RoundWinsOf${entry[0]}`));
         const roundWinsArray = await Promise.all(roundWinsArrayPromises);
 
-        const sortedAliveArray = aliveArray.sort((a, b) => {
-            const roundWinsA = parseInt(roundWinsArray[aliveArray.indexOf(a)]) || 0;
-            const roundWinsB = parseInt(roundWinsArray[aliveArray.indexOf(b)]) || 0;
+        const sortedLiveNFTs = liveNFTs.sort((a, b) => {
+            const nftIdA = a[0];
+            const nftIdB = b[0];
+            const roundWinsA = parseInt(roundWinsArray.find(entry => entry.startsWith(`RoundWinsOf${nftIdA}`)) || 0);
+            const roundWinsB = parseInt(roundWinsArray.find(entry => entry.startsWith(`RoundWinsOf${nftIdB}`)) || 0);
             return roundWinsB - roundWinsA;
         });
 
-        const top30 = sortedAliveArray.slice(0, 30);
+        const top30 = sortedLiveNFTs.slice(0, 30);
+
 
         let responseTitle = `${safeUsername} \n`;
         if (top30.length === 0) {
