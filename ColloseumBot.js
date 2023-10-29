@@ -506,13 +506,13 @@ function startBot() {
             console.log('ownedNFTsAsNumbers:', ownedNFTsAsNumbers);
             console.log('nftIds:', nftIds);
 
-// Filter out NaN and non-string values from nftIds, and convert to strings
+// Filter out NaN and non-string values from nftIds, and convert to numbers
 const cleanedNFTIds = nftIds
-  .filter(id => typeof id === 'string' && id.trim() !== '')
-  .map(id => id.trim());
+  .filter(id => typeof id === 'number' && !isNaN(id))
+  .map(Number);
 
 // Check if the user owns all the cleaned NFTs
-const ownsAllNFTs = cleanedNFTIds.every(id => ownedNFTsAsNumbers.includes(Number(id)));
+const ownsAllNFTs = cleanedNFTIds.every(id => ownedNFTsAsNumbers.includes(id));
 
 if (!ownsAllNFTs) {
     registerBot.sendMessage(chatId, "❌ You don't own all the provided NFT IDs.");
