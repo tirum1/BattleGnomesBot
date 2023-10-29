@@ -456,7 +456,7 @@ function startBot() {
         }
     });
 
-    registerBot.onText(/\/?apply (\w+) ([\d,]+)/i, async (msg, match) => {
+    registerBot.onText(/\/?apply (\w+) ([\d\s,]+)/i, async (msg, match) => {
         const chatId = msg.chat.id;
         const username = msg.from.username;
         const potionName = match[1];
@@ -506,20 +506,13 @@ function startBot() {
             console.log('ownedNFTsAsNumbers:', ownedNFTsAsNumbers);
             console.log('nftIds:', nftIds);
 
-// Filter out NaN and non-string values from nftIds, and convert to numbers
-const cleanedNFTIds = nftIds
-  .filter(id => typeof id === 'number' && !isNaN(id))
-  .map(Number);
-
-// Check if the user owns all the cleaned NFTs
-const ownsAllNFTs = cleanedNFTIds.every(id => ownedNFTsAsNumbers.includes(id));
-
-if (!ownsAllNFTs) {
-    registerBot.sendMessage(chatId, "❌ You don't own all the provided NFT IDs.");
-    userOngoingTransactions[username] = false;
-    return;
-}
-
+            const ownsAllNFTs = nftIds.every(id => ownedNFTsAsNumbers.includes(id));
+            if (!ownsAllNFTs) {
+                registerBot.sendMessage(chatId, "❌ You don't own all the provided NFT IDs.");
+                userOngoingTransactions[username] = false;
+                return;
+            }
+            
             const retrievedDead = await getAsync("dead");
 
             if (retrievedDead) {
