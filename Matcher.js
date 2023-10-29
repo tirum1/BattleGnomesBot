@@ -547,18 +547,22 @@ async function resetAlive() {
     }
 }
 async function sendMessageViaAxios(chatId, text, parseMode = 'Markdown') {
-    return limiter.schedule(async () => {
-        try {
-            const response = await axios.post(TELEGRAM_BASE_URL + 'sendMessage', {
-                chat_id: chatId,
-                text: text,
-                parse_mode: parseMode,
-            });
-            console.log(response.data);
-            return true; 
-        } catch (error) {
-            console.error(`Error sending message: ${error.message}`);
-            return false; 
+    try {
+        const response = await axios.post(TELEGRAM_BASE_URL + 'sendMessage', {
+            chat_id: chatId,
+            text: text,
+            parse_mode: parseMode,
+        });
+
+        if (response.data && response.data.result) {
+            return response.data.result;
+        } else {
+            console.error('No message object found in the response:', response.data);
+            return null;
         }
-    });
+    } catch (error) {
+        console.error(`Error sending message: ${error.message}`);
+        return null;
+    }
 }
+
