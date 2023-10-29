@@ -166,13 +166,10 @@ async function lookForOpponent() {
                     }
                 }
 
-                progressPercentage = ((i / queuecounter) * 100).toFixed(2);
-                console.log(`Progress Percentage: ${progressPercentage}`);
-                console.log(`queuecounter: ${queuecounter}`);
-                if (progressPercentage !== previousProgressPercentage) {
-                    sendMessageViaAxios(CHANNEL_ID, `Round Progress: ${progressPercentage}%`);
-                    console.log(`Sent progress update to channel: ${progressPercentage}%`);
-                    previousProgressPercentage = progressPercentage;
+                try {
+                    previousProgressPercentage = await updateRoundProgress(i, queuecounter, previousProgressPercentage);
+                } catch (error) {
+                    console.error('Error sending progress update:', error);
                 }
             }
         }
@@ -197,7 +194,23 @@ async function lookForOpponent() {
     console.log("Look For Opponend PASS");
     sendMessageViaAxios(CHANNEL_ID, `${aliveByID.length} Survived the Round!`);
 }
+async function updateRoundProgress(i, queuecounter, previousProgressPercentage) {
+    return new Promise(async (resolve, reject) => {
+        const progressPercentage = ((i / queuecounter) * 100).toFixed(2);
 
+        if (progressPercentage !== previousProgressPercentage) {
+            try {
+                await sendMessageViaAxios(CHANNEL_ID, `Round Progress: ${progressPercentage}%`);
+                previousProgressPercentage = progressPercentage;
+                resolve(previousProgressPercentage);
+            } catch (error) {
+                reject(error);
+            }
+        } else {
+            resolve(previousProgressPercentage);
+        }
+    });
+}
 function hasTimerPassed() {
     if (newGame) {
         return Math.floor(Date.now() / 1000) >= (time + roundDuration * 6); 
@@ -463,23 +476,32 @@ async function payoutWinners(nonDeads) {
         return;
     }
     const contractBalance = await provider.getBalance(hungerGamesAddress);
-    const balanceInEther = ethers.utils.formatEther(contractBalance);
-    const share = Math.floor(balanceInEther * 10**_decimals / nonDeads);
+    const balanceInWei = contractBalance; 
+    const balanceInEther = ethers.utils.formatUnits(balanceInWei, 'ether');
+    const balanceInEtherBN = ethers.utils.parseUnits(balanceInEther, 'ether');
+    const share = balanceInEtherBN.div(nonDeads); 
+
 
     console.log('Contract Balance:', contractBalance);
     console.log('Balance in Ether:', balanceInEther);
     console.log("nonDeads: ", nonDeads);
-    console.log('Share:', share);
+    console.log('Share:', share.toString());
     console.log("RoundWinners: ", roundWinners);
 
+    const gasBufferPercentage = 10;
+    const gasPrice = await provider.getGasPrice();
+    const gasLimit = await TokenContractWithSigner.estimateGas.payoutWinners(roundWinners, share, nonDeads);
+    
+    const gasBuffer = Math.ceil(gasLimit.toNumber() * (1 + gasBufferPercentage / 100));
+
+    const tx = await TokenContractWithSigner.payoutWinners(roundWinners, share, nonDeads, {
+        gasLimit: gasBuffer, 
+        gasPrice: gasPrice,
+    });
+
     try {
-        tx = await TokenContractWithSigner.payoutWinners(
-            roundWinners,
-            share,
-            nonDeads
-        );
         sendMessageViaAxios(CHANNEL_ID, "Processing PAYOUT...");
-        let receipt = await tx.wait();
+        const receipt = await tx.wait();
         const etherscanLink = `https://goerli.etherscan.io/tx/${receipt.transactionHash}`;
         roundMessage = `⚔️ THE GAME HAS ENDED AND WE HAVE ${aliveByID.length} SURVIVORS ${aliveByID.join(', ')}. \n\n [View on EtherScan](${etherscanLink})`;
         sendMessageViaAxios(CHANNEL_ID, roundMessage);

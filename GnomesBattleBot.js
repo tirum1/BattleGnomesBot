@@ -136,29 +136,12 @@ bot.onText(/\/?leaderboard/i, async (msg) => {
         const deadArray = deadData ? JSON.parse(deadData) : [];
         console.log("Parsed dead array:", deadArray);
 
-
         const liveNFTs = deadArray.filter(entry => entry[1] === false).map(entry => entry[0]);
 
         console.log("Filtered live NFTs:", liveNFTs);
 
-        const roundWinsArrayPromises = liveNFTs.map(entry => getAsync(`RoundWinsOf${entry[0]}`));
-        console.log("Round wins promises:", roundWinsArrayPromises);
-
-        const roundWinsArray = await Promise.all(roundWinsArrayPromises);
-        console.log("Fetched round wins data:", roundWinsArray);
-
-        const sortedLiveNFTs = liveNFTs.sort((a, b) => {
-            const nftIdA = a[0];
-            const nftIdB = b[0];
-            const roundWinsA = parseInt(roundWinsArray.find(entry => entry.startsWith(`RoundWinsOf${nftIdA}`)) || 0);
-            const roundWinsB = parseInt(roundWinsArray.find(entry => entry.startsWith(`RoundWinsOf${nftIdB}`)) || 0);
-            return roundWinsB - roundWinsA;
-        });
-        console.log("Sorted live NFTs:", sortedLiveNFTs);
-
-        const top30 = sortedLiveNFTs.slice(0, 30);
+        const top30 = liveNFTs.slice(0, 30);
         console.log("Top 30 live NFTs:", top30);
-
 
 
         let responseTitle = `${safeUsername} \n`;
