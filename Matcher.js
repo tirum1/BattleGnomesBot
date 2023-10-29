@@ -424,7 +424,7 @@ function getAmountOfNonDead() {
     return nonDeadCount;
 }
 async function storeRoundWinners() {
-    
+    roundWinners = [];
     for (let i = 0; i < aliveByID.length; i++) {
             const roundWinsOfNFT = await getAsync(`roundWinsOf${aliveByID[i]}`);
             const owner = await NFTContract.ownerOf(aliveByID[i]);
