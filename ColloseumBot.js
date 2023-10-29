@@ -979,15 +979,13 @@ function startBot() {
                     try {
                         ongoingTransactions[transactionId].status = 'confirmed';
                         
-                        // Estimate the gas for the transaction
                         const estimatedGas = await TokenContractWithSigner.estimateGas.applyPotion(
                             transaction.shopOwnerAddress,
                             transaction.nftIds,
                             transaction.potionName.toUpperCase()
                         );
                     
-                        // Apply a gas buffer (e.g., 20%)
-                        const gasBufferPercentage = 20; // You can adjust this value
+                        const gasBufferPercentage = 20; 
                         const gasLimit = Math.ceil(estimatedGas * (1 + gasBufferPercentage / 100));
                     
                         const tx = await TokenContractWithSigner.applyPotion(
@@ -1001,7 +999,7 @@ function startBot() {
                         const etherscanLink = `https://goerli.etherscan.io/tx/${tx.hash}`;
                         console.log(`Etherscan Link: ${etherscanLink}`);
                     
-                        registerBot.sendMessage(chatId, `✨ *Potion Procurement Ritual Initiated!* ✨\n\nYour potion is brewing in the cauldron of transactions. Behold the magical scroll of details: \n 🔍 [View on Etherscan](${etherscanLink}).`, { parse_mode: 'Markdown' });
+                        registerBot.sendMessage(chatId, `✨ *Potion Procurement Ritual Initiated!* ✨\n\nYour potion is brewing in the cauldron of transactions. Behold the magical scroll of details: \n\n 🔍 [View on Etherscan](${etherscanLink}).`, { parse_mode: 'Markdown' });
                         await tx.wait();
                         registerBot.sendMessage(chatId, `🪄 *Potion Applied!* 🪄\n\nThe mystic incantation has taken effect! The potion has been successfully applied to your enchanting artifacts. 🌟`, { parse_mode: 'Markdown' });
                         delete userOngoingTransactions[username];
