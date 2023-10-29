@@ -4,6 +4,7 @@ require('dotenv').config({ path: './.env' });
 const fs = require('fs');
 const { ethers } = require('ethers');
 const bluebird = require('bluebird');
+const Bottleneck = require('bottleneck');
 const redis = require('redis');
 const axios = require('axios');
 const token = process.env.MAIN_BOT_TOKEN;
