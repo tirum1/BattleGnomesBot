@@ -67,6 +67,7 @@ let newGame = true;
 let HungerGamesBegin = false;
 let queuecounter = 0;
 let StatsSize = 5;
+let messageId = 0;
 
 const BattleResult = {
     Won: "Won",
@@ -113,7 +114,7 @@ setInterval(async () => {
     await setAsync("maxAmountOfWinners", maxAmountOfWinners.toString());
     await setAsync("stats", JSON.stringify(stats));
     if(!activeRound && queuecounter >= 2 && hasTimerPassed()){
-    // await lookForOpponent();
+    await lookForOpponent();
     }
 }, 500);
 
@@ -175,8 +176,11 @@ async function lookForOpponent() {
                 
                     if (i === 1) {
                         initialProgressMessage = await sendMessageViaAxios(CHANNEL_ID, "Round Progress: 0.00%");
+                        messageId = initialMessage.message_id; 
                     }
-                    const updatedProgressMessage = await updateRoundProgress(i, queuecounter, initialProgressMessage);
+                    const progressPercentage = ((i / queuecounter) * 100).toFixed(2);
+
+                    await editMessageViaAxios(CHANNEL_ID, messageId, `Round Progress: ${progressPercentage}%`);
 
             }
         }
@@ -201,20 +205,6 @@ async function lookForOpponent() {
     console.log("Look For Opponend PASS");
     sendMessageViaAxios(CHANNEL_ID, `${aliveByID.length} Survived the Round!`);
 }
-async function updateRoundProgress(i, queuecounter, previousProgressMessage) {
-    const progressPercentage = ((i / queuecounter) * 100).toFixed(2);
-
-    if (progressPercentage !== previousProgressMessage.text) {
-        try {
-            await editMessageViaAxios(CHANNEL_ID, previousProgressMessage.message_id, `Round Progress: ${progressPercentage}%`);
-            previousProgressMessage.text = progressPercentage;
-        } catch (error) {
-            console.error('Error updating progress message:', error);
-        }
-    }
-    return previousProgressMessage;
-}
-
 async function editMessageViaAxios(chatId, messageId, newText) {
     try {
         const response = await axios.post(TELEGRAM_BASE_URL + 'editMessageText', {
@@ -228,7 +218,6 @@ async function editMessageViaAxios(chatId, messageId, newText) {
         console.error(`Error editing message: ${error.message}`);
     }
 }
-
 
 function hasTimerPassed() {
     if (newGame) {
