@@ -180,10 +180,13 @@ async function lookForOpponent() {
         if (i === 1) {
             initialProgressMessage = await sendMessageViaAxios(CHANNEL_ID, "Round Progress: 0.00%");
         }
+        
         const progressPercentage = ((i / queuecounter) * 100).toFixed(2);
-        if (initialProgressMessage) {
+
+        if (initialProgressMessage && i % 2 === 0) {
             await editMessageViaAxios(CHANNEL_ID, initialProgressMessage.message_id, `Round Progress: ${progressPercentage}%`);
         }
+        
 
     }
 
