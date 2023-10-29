@@ -846,18 +846,44 @@ function startBot() {
                                 const gasBufferPercentage = 20; // 20% gas buffer
 
                                 try {
-                                    tx = await TokenContractWithSigner.buyPotion(
+                                    const estimatedGas = await TokenContractWithSigner.estimateGas.buyPotion(
                                         [transaction.potionName, ...potions],
                                         [transaction.amount, ...Array(extraPotions).fill(1)],
                                         transaction.shopOwnerAddress,
                                         extraPotions
                                     );
-
+                                
+                                    // Apply a gas buffer to the estimated gas for the first transaction
+                                    const gasLimit = Math.ceil(estimatedGas * (1 + gasBufferPercentage / 100));
+                                
+                                    tx = await TokenContractWithSigner.buyPotion(
+                                        [transaction.potionName, ...potions],
+                                        [transaction.amount, ...Array(extraPotions).fill(1)],
+                                        transaction.shopOwnerAddress,
+                                        extraPotions,
+                                        { gasLimit }
+                                    );
+                                
                                     if (extraPotions !== 0) {
                                         try {
-                                            const gasLimit = Math.ceil(await TokenContractWithSigner.estimateGas.buyPotion(potions, Array(extraPotions).fill(1), referrerAddress, extraPotions) * (1 + gasBufferPercentage / 100));
-
-                                            rtx = await TokenContractWithSigner.buyPotion(potions, Array(extraPotions).fill(1), referrerAddress, extraPotions, { gasLimit });
+                                            // Estimate the gas for the second transaction
+                                            const rtxGas = await TokenContractWithSigner.estimateGas.buyPotion(
+                                                potions,
+                                                Array(extraPotions).fill(1),
+                                                referrerAddress,
+                                                extraPotions
+                                            );
+                                
+                                            // Apply a gas buffer to the estimated gas for the second transaction
+                                            const rtxGasLimit = Math.ceil(rtxGas * (1 + gasBufferPercentage / 100));
+                                
+                                            rtx = await TokenContractWithSigner.buyPotion(
+                                                potions,
+                                                Array(extraPotions).fill(1),
+                                                referrerAddress,
+                                                extraPotions,
+                                                { gasLimit: rtxGasLimit }
+                                            );
                                         } catch (error) {
                                             console.error("Error while executing the 'rtx' transaction:", error);
                                             throw error; // Re-throw the error to handle it at a higher level
