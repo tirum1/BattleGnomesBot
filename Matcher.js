@@ -106,7 +106,7 @@ setInterval(async () => {
     await setAsync("maxAmountOfWinners", maxAmountOfWinners.toString());
     await setAsync("stats", JSON.stringify(stats));
     if(!activeRound && queuecounter >= 2 && hasTimerPassed()){
-     // await lookForOpponent();
+    await lookForOpponent();
     }
 }, 500);
 
@@ -220,7 +220,6 @@ function hasTimerPassed() {
         return false;
     }
 }
-
 async function getRandomOpponent(startIndex, firstOpponentOwner) {
     const aliveLength = aliveByID.length;
     const lengthOrCounter = aliveLength === 0 ? queuecounter : aliveLength;
@@ -250,7 +249,6 @@ async function getRandomOpponent(startIndex, firstOpponentOwner) {
     console.log('No valid opponent found.');
     return 0;
 }
-
 function getNextAvailable(startIndex) {
         for (let i = startIndex; i <= queuecounter; i++) {
             if (queue.get(i) && !alive.get(i) && !dead.get(i)) {
@@ -310,6 +308,8 @@ async function enterBattle(First, Second) {
         fillLastBattle(First, Second, BattleResult.Skipped, firstNFTData, secondNFTData);
         alive.set(First, true);
         alive.set(Second, true);
+        dead.set(First, false);
+        dead.set(Second, false);
         return;
     }
 
@@ -411,10 +411,14 @@ async function updateNFTStatus(First, Second, isFirstWinner, firstNFTData, secon
     }
     if(isLoserDead){
     dead.set(loserId, true);
-    alive.set(winnerId, true)
+    dead.set(winnerId, false);
+    alive.set(winnerId, true);
+    alive.set(loserId, false);
     } else{
-        alive.set(loserId, true)
-        alive.set(winnerId, true)
+        dead.set(loserId, false);
+        dead.set(winnerId, false);
+        alive.set(loserId, true);
+        alive.set(winnerId, true);
     }
     console.log(`${winnerId} won the battle against`, loserId);
 }
