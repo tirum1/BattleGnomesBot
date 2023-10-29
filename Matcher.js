@@ -117,6 +117,7 @@ function startTimer() {
     time = Math.floor(Date.now() / 1000); 
 }
 async function startHungerGames () {
+    sendMessageViaAxios(CHANNEL_ID, "HUNGERGAMES INITIATED");
     queuecounter = await NFTContract.getMintAmount();
     for (let i=1;i<=queuecounter;i++){
     queue.set(i, true);
@@ -125,8 +126,8 @@ async function startHungerGames () {
     newGame = false;
 }
 async function lookForOpponent (){
-
     activeRound = true;
+    sendMessageViaAxios(CHANNEL_ID, "ROUND INITIATED");
     console.log("started");
     aliveByID = [];
     let firstOpponent = 0;
@@ -200,7 +201,6 @@ function hasTimerPassed() {
         return false;
     }
 }
-
 
 async function getRandomOpponent(startIndex, firstOpponentOwner) {
     const aliveLength = aliveByID.length;
@@ -410,7 +410,7 @@ function restoreOriginalStats(First, Second, originalStatsFirst, originalStatsSe
     stats[Second] = originalStatsSecond;
 }
 async function removePotions(First, Second) {
-    // const tx = await TokenContractWithSigner.removePotions(First, Second);
+     const tx = await TokenContractWithSigner.removePotions(First, Second);
 }
 function getAmountOfNonDead() {
     let nonDeadCount = 0;
@@ -465,7 +465,6 @@ async function payoutWinners(nonDeads) {
         console.error('Error:', error);
     }
 }
-
 function reviveAll(){
     for (let i = 1; i <= queuecounter; i++) {
         dead.set(i, false);
@@ -487,7 +486,6 @@ async function resetAlive() {
         alive.set(i, false);
     }
 }
-
 async function sendMessageViaAxios(chatId, text, parseMode = 'Markdown') {
     try {
         const response = await axios.post(TELEGRAM_BASE_URL + 'sendMessage', {

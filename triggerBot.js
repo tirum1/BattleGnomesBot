@@ -5,7 +5,6 @@ const bluebird = require('bluebird');
 const token = process.env.MAIN_BOT_TOKEN;
 const TELEGRAM_BASE_URL = `https://api.telegram.org/bot${token}/`;
 const CHANNEL_ID = '-1001672659906';
-let isProcessing = false;
 let txHashForWinnersFound; 
 
 const client = new Redis({
@@ -19,10 +18,6 @@ const getAsync = bluebird.promisify(client.get).bind(client);
 
 
 setInterval(async () => {
-    if (isProcessing) {
-        console.log('Still processing the last iteration. Skipping this interval.');
-        return;
-    }
     try {
         if (shouldTellSomething()) {
             const randomMessage = getRandomMessage();
@@ -41,32 +36,10 @@ setInterval(async () => {
             const readyMessage = getReadyQuote(remainingTime);
             sendMessageViaAxios(CHANNEL_ID, readyMessage);
         }
-        isProcessing = true;
-        console.log('Polling started...');
-
-        const timerPassed = (await hasTimerPassed()) === "true";
-        console.log('Timer passed:', timerPassed);
-
-        const newGame = (await isNewGame()) === "true";
-        console.log('Is new game:', newGame);
-
-        const counter = await queuecounter();
-        console.log('Queue counter:', counter);
-
-        if (newGame && timerPassed) {
-            sendMessageViaAxios(CHANNEL_ID, "🔮✨ HUNGERGAMES INITIATED: DAWN OF DESTINY ✨🔮");
-            const hungerGamesMessage = `🚀 THE BATTLEGROUND AWAITS THE BRAVE!`;
-            sendMessageViaAxios(CHANNEL_ID, hungerGamesMessage);
-            
-        } else {
-            console.log('No conditions met for triggering functions.');
-        }
 
     } catch (error) {
         console.error('Error in polling mechanism:', error);
-    } finally {
-        isProcessing = false;
-    }
+    } 
 }, 10000);
 
 async function sendMessageViaAxios(chatId, text, parseMode = 'Markdown') {
@@ -81,21 +54,8 @@ async function sendMessageViaAxios(chatId, text, parseMode = 'Markdown') {
         console.error(`Error sending message: ${error.message}`);
     }
 }
-async function hasTimerPassed() {
-    return await getAsync("hasTimerPassed");
-}
 async function isNewGame() {
     return getAsync("newGame");
-}
-
-async function queuecounter() {
-    try {
-        const counter = await getAsync("queuecounter");
-        return parseInt(counter); 
-    } catch (error) {
-        console.error('Error in queuecounter:', error);
-        return 0; 
-    }
 }
 function shouldTellSomething() {
     return Math.random() < 0.1;  
@@ -166,7 +126,6 @@ function getReadyQuote(remainingTime) {
         return generalQuotes[Math.floor(Math.random() * generalQuotes.length)];
     }
 }
-
 
 const jokes = [
     "Why did the scarecrow win an award? 🌾 Because he was outstanding in his field!",
