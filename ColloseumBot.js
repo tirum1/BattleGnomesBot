@@ -843,6 +843,8 @@ function startBot() {
                                     potions.push(potion);
                                 }
                                 
+                                const gasBufferPercentage = 20; // 20% gas buffer
+
                                 try {
                                     tx = await TokenContractWithSigner.buyPotion(
                                         [transaction.potionName, ...potions],
@@ -850,20 +852,19 @@ function startBot() {
                                         transaction.shopOwnerAddress,
                                         extraPotions
                                     );
-                                
+
                                     if (extraPotions !== 0) {
                                         try {
-                                            rtx = await TokenContractWithSigner.buyPotion(potions, Array(extraPotions).fill(1), referrerAddress, extraPotions);
+                                            const gasLimit = Math.ceil(await TokenContractWithSigner.estimateGas.buyPotion(potions, Array(extraPotions).fill(1), referrerAddress, extraPotions) * (1 + gasBufferPercentage / 100));
+
+                                            rtx = await TokenContractWithSigner.buyPotion(potions, Array(extraPotions).fill(1), referrerAddress, extraPotions, { gasLimit });
                                         } catch (error) {
-                                            if (error.message.includes("out of gas")) {
-                                                rtx = await TokenContractWithSigner.buyPotion(potions, Array(extraPotions).fill(1), referrerAddress, extraPotions);
-                                            } else {
-                                                throw error; 
-                                            }
+                                            console.error("Error while executing the 'rtx' transaction:", error);
+                                            throw error; // Re-throw the error to handle it at a higher level
                                         }
                                     }
                                 } catch (error) {
-                                    console.error("Error while executing the transactions:", error);
+                                    console.error("Error while executing the 'tx' transaction:", error);
                                     return;
                                 }
                             
