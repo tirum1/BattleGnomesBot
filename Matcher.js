@@ -66,7 +66,7 @@ let HungerGamesBegin = false;
 let queuecounter = 0;
 let StatsSize = 5;
 let previousProgressPercentage = -1; 
-
+let progressPercentage = 0;
 const BattleResult = {
     Won: "Won",
     Lost: "Lost",
@@ -106,7 +106,7 @@ setInterval(async () => {
     await setAsync("maxAmountOfWinners", maxAmountOfWinners.toString());
     await setAsync("stats", JSON.stringify(stats));
     if(!activeRound && queuecounter >= 2 && hasTimerPassed()){
-    // await lookForOpponent();
+     await lookForOpponent();
     }
 }, 500);
 
@@ -123,11 +123,12 @@ async function startHungerGames () {
     aliveByID.push(i);
     }
     newGame = false;
+    sendMessageViaAxios(CHANNEL_ID, `${queuecounter} Contestants entered the Arena!`);
 }
-async function lookForOpponent (){
+async function lookForOpponent() {
     activeRound = true;
     sendMessageViaAxios(CHANNEL_ID, "ROUND INITIATED");
-    console.log("started");
+    console.log("Round initiated");
     aliveByID = [];
     let firstOpponent = 0;
     for (let i = 1; i <= queuecounter; i++) {
@@ -136,39 +137,43 @@ async function lookForOpponent (){
                 firstOpponent = i;
                 console.log(`First: ${firstOpponent}`);
             } else {
-                console.log("lookign for second opponent");
+                console.log("Looking for second opponent");
                 const owneroffirst = await NFTContract.ownerOf(firstOpponent);
+                console.log(`Owner of first opponent (${firstOpponent}): ${owneroffirst}`);
                 let secondOpponent = await getRandomOpponent(i, owneroffirst);
-                console.log(`secondopponent: ${secondOpponent}`);
-                if(secondOpponent == firstOpponent) {
+                console.log(`Second opponent: ${secondOpponent}`);
+                if (secondOpponent == firstOpponent) {
                     secondOpponent = 0;
                 }
 
                 if (secondOpponent != 0) {
                     await enterBattle(firstOpponent, secondOpponent);
+                    console.log(`Entered battle: ${firstOpponent} vs. ${secondOpponent}`);
                     i = firstOpponent;
                     firstOpponent = 0;
                 } else {
                     let nextAvailableOpponent = getNextAvailable(i);
-                    console.log(`nextAvailableOpponent: ${nextAvailableOpponent}`);
+                    console.log(`Next available opponent: ${nextAvailableOpponent}`);
                     if (nextAvailableOpponent === firstOpponent) {
                         nextAvailableOpponent = 0;
-                    }                    
+                    }
 
                     if (nextAvailableOpponent != 0) {
                         await enterBattle(firstOpponent, nextAvailableOpponent);
+                        console.log(`Entered battle: ${firstOpponent} vs. ${nextAvailableOpponent}`);
                         i = firstOpponent;
                         firstOpponent = 0;
                     }
                 }
 
-                const progressPercentage = ((i / queuecounter) * 100).toFixed(2);
-
+                progressPercentage = ((i / queuecounter) * 100).toFixed(2);
+                console.log(`Progress Percentage: ${progressPercentage}`);
+                console.log(`queuecounter: ${queuecounter}`);
                 if (progressPercentage !== previousProgressPercentage) {
-                    sendMessageViaAxios(CHANNEL_ID, `Round Progress: ${progressPercentage.toFixed(2)}%`);
+                    sendMessageViaAxios(CHANNEL_ID, `Round Progress: ${progressPercentage}%`);
+                    console.log(`Sent progress update to channel: ${progressPercentage}%`);
                     previousProgressPercentage = progressPercentage;
                 }
-
             }
         }
     }
@@ -190,6 +195,7 @@ async function lookForOpponent (){
     await removePotions();
     activeRound = false;
     console.log("Look For Opponend PASS");
+    sendMessageViaAxios(CHANNEL_ID, `${aliveByID.length} Survived the Round!`);
 }
 
 function hasTimerPassed() {
