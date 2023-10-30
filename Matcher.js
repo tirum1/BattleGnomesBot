@@ -232,7 +232,7 @@ async function editMessageViaAxios(chatId, messageId, newText) {
 }
 function hasTimerPassed() {
     if (newGame) {
-        return Math.floor(Date.now() / 1000) >= (time + roundDuration * 6); 
+        return Math.floor(Date.now() / 1000) >= (time + roundDuration * 1); 
     } else if (HungerGamesBegin) {
         return Math.floor(Date.now() / 1000) >= (time + roundDuration);
     } else {
