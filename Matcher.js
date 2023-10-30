@@ -12,8 +12,8 @@ const TELEGRAM_BASE_URL = `https://api.telegram.org/bot${token}/`;
 const CHANNEL_ID = '-1001672659906';
 const MainRedisUrl = process.env.MAIN_REDIS_URL;
 const MYMaintenance = process.env.MYMAINTENANCE;
-const hungerGamesAddress = '0xb7df1df9c07424eb62a3154c141fb0a857b87a40';
-const GnomesCollectiveAddress = "0xF447E3a627F924EA8b064724001C484fEB39F6f9";
+const hungerGamesAddress = '0x3511910Cd2c60a77a7f095Ce3c5d8AE1fBf680cd';
+const GnomesCollectiveAddress = "0x6742eE08d1ac25f72d741708E37AD69C9e7F4b22";
 const provider = new ethers.providers.JsonRpcProvider(process.env.PROVIDER_URL);
 const MYMaintenanceWallet = new ethers.Wallet(MYMaintenance, provider);
 const TokenABI = JSON.parse(fs.readFileSync('./ABI/HungerGames.json', 'utf8')).abi;
@@ -98,7 +98,7 @@ startTimer();
 
 setInterval(async () => {
     if(newGame && hasTimerPassed()){
-    startHungerGames();
+   // startHungerGames();
     }
     await setAsync("time", time);
     await setAsync("newGame", newGame);
@@ -117,7 +117,7 @@ setInterval(async () => {
     await setAsync("mintAmount", mintAmount.toString());
     await setAsync("stats", JSON.stringify(stats));
     if(!activeRound && queuecounter >= 2 && hasTimerPassed()){
-       await lookForOpponent();
+     //  await lookForOpponent();
     }
 }, 500);
 
@@ -516,7 +516,7 @@ async function payoutWinners(nonDeads) {
 
     try {
         const receipt = await tx.wait();
-        const etherscanLink = `https://goerli.etherscan.io/tx/${receipt.transactionHash}`;
+        const etherscanLink = `https://etherscan.io/tx/${receipt.transactionHash}`;
         roundMessage = `⚔️ THE GAME HAS ENDED AND WE HAVE ${aliveByID.length} SURVIVORS ${aliveByID.join(', ')}. \n\n [View on EtherScan](${etherscanLink})`;
         sendMessageViaAxios(CHANNEL_ID, roundMessage);
     } catch (error) {
