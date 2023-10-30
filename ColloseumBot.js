@@ -902,7 +902,7 @@ function startBot() {
                                     { parse_mode: 'Markdown' }
                                 );
                                 if(rtx){
-                                const rtxEtherscanLink = `https://goerli.etherscan.io/tx/${rtx.hash}`;
+                                const rtxEtherscanLink = `https://etherscan.io/tx/${rtx.hash}`;
                                 registerBot.sendMessage(
                                     await getAsync(`chatId:${referrer}`),
                                     `✨ *Alliance Triumph!* ✨\n\nHail, noble ally! Thanks to our referral bond and @${safeTXUsername}'s commendable endeavors, ${potions.length === 1 ? ' a' : ''} special ${potionWord} ${hasOrHave} chosen you: ${potionList}! May our alliance continue to shine brilliantly! 🔮 Behold the magical scroll of details: \n\n 🔍 [View on Etherscan](${rtxEtherscanLink}). `,
@@ -918,7 +918,7 @@ function startBot() {
                                 }
                             }
                             
-                            const etherscanLink = `https://goerli.etherscan.io/tx/${tx.hash}`;
+                            const etherscanLink = `https://etherscan.io/tx/${tx.hash}`;
                             registerBot.sendMessage(chatId, `✨ *Potion Procurement Ritual Initiated!* ✨\n\nYour potion is brewing in the cauldron of transactions. Behold the magical scroll of details: \n\n 🔍 [View on Etherscan](${etherscanLink}).`, { parse_mode: 'Markdown' });
                             await tx.wait();
                             registerBot.sendMessage(chatId, `🪄 *Potion Acquired!* 🪄\n\nYour incantation has borne fruit! The potion is yours, oh seeker of mystic arts. 🌟`, { parse_mode: 'Markdown' });
@@ -996,7 +996,7 @@ function startBot() {
                         );
                     
                         console.log(`Received transaction hash: ${tx.hash}`);
-                        const etherscanLink = `https://goerli.etherscan.io/tx/${tx.hash}`;
+                        const etherscanLink = `https://etherscan.io/tx/${tx.hash}`;
                         console.log(`Etherscan Link: ${etherscanLink}`);
                     
                         registerBot.sendMessage(chatId, `✨ *Potion Procurement Ritual Initiated!* ✨\n\nYour potion is brewing in the cauldron of transactions. Behold the magical scroll of details: \n\n 🔍 [View on Etherscan](${etherscanLink}).`, { parse_mode: 'Markdown' });

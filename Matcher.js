@@ -230,7 +230,6 @@ async function editMessageViaAxios(chatId, messageId, newText) {
         console.error(`Error editing message: ${error.message}`);
     }
 }
-
 function hasTimerPassed() {
     if (newGame) {
         return Math.floor(Date.now() / 1000) >= (time + roundDuration * 6); 
