@@ -98,7 +98,7 @@ startTimer();
 
 setInterval(async () => {
     if(newGame && hasTimerPassed()){
-   // startHungerGames();
+    startHungerGames();
     }
     await setAsync("time", time);
     await setAsync("newGame", newGame);
@@ -117,7 +117,7 @@ setInterval(async () => {
     await setAsync("mintAmount", mintAmount.toString());
     await setAsync("stats", JSON.stringify(stats));
     if(!activeRound && queuecounter >= 2 && hasTimerPassed()){
-     //  await lookForOpponent();
+       await lookForOpponent();
     }
 }, 500);
 
