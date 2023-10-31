@@ -367,10 +367,10 @@ async function enterBattle(First, Second) {
 async function collectNFTData(tokenId) {
     console.log("collecting data for: ", tokenId);
     return {
-        XTRA: await TokenContract.getNFTXTRABalance(tokenId),
-        BOOST: await TokenContract.getNFTBOOSTBalance(tokenId),
-        V: await TokenContract.getNFTVBalance(tokenId),
-        SKIP: await TokenContract.getNFTSKIPBalance(tokenId),
+        XTRA: await getAsync(`${tokenId}XTRABalance`),
+        BOOST: await getAsync(`${tokenId}BOOSTBalance`),
+        V: await getAsync(`${tokenId}VBalance`),
+        SKIP: await getAsync(`${tokenId}SKIPBalance`),
     };
 }
 function shouldSkipBattle(firstNFTData, secondNFTData) {
@@ -450,16 +450,16 @@ function restoreOriginalStats(First, Second, originalStatsFirst, originalStatsSe
     stats[Second] = originalStatsSecond;
 }
 async function removePotions() {
-    const gasBufferPercentage = 10;
-    const gasPrice = await provider.getGasPrice();
-    const gasLimit = await TokenContractWithSigner.estimateGas.removePotions(queuecounter);
-    
-    const gasBuffer = Math.ceil(gasLimit.toNumber() * (1 + gasBufferPercentage / 100));
 
-    const tx = await TokenContractWithSigner.removePotions(queuecounter, {
-        gasLimit: gasBuffer, 
-        gasPrice: gasPrice,
-    });
+    const mintAmount = await NFTContract.getMintAmount();
+    const potionsToRemove = ['XTRA', 'BOOST', 'V', 'SKIP'];
+
+    for (let i = 1; i <= mintAmount; i++) {
+        for(let j = 0; j< potionsToRemove.length; j++){
+        await setAsync(`${i}${potionsToRemove[j]}Balance`, false);
+        }
+    }
+
 }
 function getAmountOfNonDead() {
     let nonDeadCount = 0;

@@ -642,7 +642,7 @@ function startBot() {
             return;
         }
         console.log('Fetching NFT status for username:', username);
-
+    
         try {
             const walletAddress = await client.getAsync(username);
             if (!walletAddress) {
@@ -650,16 +650,16 @@ function startBot() {
                 return;
             }
             const NFTsOwned = await NFTContract.walletOfOwner(walletAddress);
-            
+    
             if (NFTsOwned.length === 0) {
                 registerBot.sendMessage(msg.chat.id, "You don't own any NFTs.");
                 return;
             }
-
+    
             let progressMessage = await registerBot.sendMessage(msg.chat.id, "Fetching NFT status... 0%");
-
+    
             let completedCount = 0;
-
+    
             const fetchDetails = async (NFTId, totalNFTs) => {
                 const retrievedDead = await getAsync("dead"); 
                 let isDead = false; 
@@ -692,16 +692,15 @@ function startBot() {
                     chat_id: msg.chat.id,
                     message_id: progressMessage.message_id
                 });
-            
+                await delay(500);
                 return response;
             };
-            
             
             const results = await Promise.all(NFTsOwned.map(nft => {
                 const NFTId = nft.toNumber();
                 return fetchDetails(NFTId, NFTsOwned.length);
             }));
-
+    
             const responseMessage = `🖼️ *Your NFTs and Their Status & Active Potions:* 🖼️\n\n` + results.join('');
             registerBot.sendMessage(msg.chat.id, responseMessage, { parse_mode: 'Markdown' });
         } catch (error) {
@@ -709,6 +708,11 @@ function startBot() {
             registerBot.sendMessage(msg.chat.id, "🚫 Oops! We encountered an issue fetching your NFT status. Please give it another try in a moment.");
         }
     });
+    
+
+    function delay(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
 
     registerBot.onText(/\/setRef (\w+)/i, async (msg, match) => {
         const username = msg.from.username;
@@ -1001,6 +1005,9 @@ function startBot() {
                     
                         registerBot.sendMessage(chatId, `✨ *Potion Procurement Ritual Initiated!* ✨\n\nYour potion is brewing in the cauldron of transactions. Behold the magical scroll of details: \n\n 🔍 [View on Etherscan](${etherscanLink}).`, { parse_mode: 'Markdown' });
                         await tx.wait();
+                        for(let i = 0; i<transaction.nftIds.length;i++){
+                        await setAsync(`${transaction.nftIds[i]}${transaction.potionName.toUpperCase()}Balance`, true);
+                        }
                         registerBot.sendMessage(chatId, `🪄 *Potion Applied!* 🪄\n\nThe mystic incantation has taken effect! The potion has been successfully applied to your enchanting artifacts. 🌟`, { parse_mode: 'Markdown' });
                         delete userOngoingTransactions[username];
                     } catch (error) {
