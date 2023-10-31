@@ -244,7 +244,7 @@ bot.onText(/\/?time/i, async (msg) => {
         console.log("Converted intervalTime:", intervalTimeNum);
 
         if (newGame === 'true') {
-            intervalTimeNum = intervalTimeNum * 6;
+            intervalTimeNum = intervalTimeNum * 3;
             notificationMessage = `🚀 New Hunger Games will begin in `;
             console.log("Setting interval for new game:", intervalTimeNum);
         } else if (newGame === 'false' && HungerGamesBegin === 'true') {
