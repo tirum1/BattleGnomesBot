@@ -366,13 +366,15 @@ async function enterBattle(First, Second) {
 }
 async function collectNFTData(tokenId) {
     console.log("collecting data for: ", tokenId);
-    return {
-        XTRA: await getAsync(`${tokenId}XTRABalance`),
-        BOOST: await getAsync(`${tokenId}BOOSTBalance`),
-        V: await getAsync(`${tokenId}VBalance`),
-        SKIP: await getAsync(`${tokenId}SKIPBalance`),
+    const data = {
+        XTRA: await getAsync(`${tokenId}XTRABalance`).then(value => value === "true"),
+        BOOST: await getAsync(`${tokenId}BOOSTBalance`).then(value => value === "true"),
+        V: await getAsync(`${tokenId}VBalance`).then(value => value === "true"),
+        SKIP: await getAsync(`${tokenId}SKIPBalance`).then(value => value === "true"),
     };
+    return data;
 }
+
 function shouldSkipBattle(firstNFTData, secondNFTData) {
     return (firstNFTData.SKIP && !secondNFTData.V) || (secondNFTData.SKIP && !firstNFTData.V);
 }
