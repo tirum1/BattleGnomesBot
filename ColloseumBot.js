@@ -673,18 +673,19 @@ function startBot() {
                 }
 
                 const [boostBalance, vBalance, xtraBalance, skipBalance] = await Promise.all([
-                    await getAsync(`${NFTId}BOOSTBalance`),
-                    await getAsync(`${NFTId}VBalance`),
-                    await getAsync(`${NFTId}XTRABalance`),
-                    await getAsync(`${NFTId}SKIPBalance`),
+                    await getAsync(`${NFTId}BOOSTBalance`).then(value => value === "true"),
+                    await getAsync(`${NFTId}VBalance`).then(value => value === "true"),
+                    await getAsync(`${NFTId}XTRABalance`).then(value => value === "true"),
+                    await getAsync(`${NFTId}SKIPBalance`).then(value => value === "true"),
                 ]);
-            
+                
                 let response = `NFT ID: ${NFTId} - ${isDead ? "Dead" : "Alive"}\n`;
                 if (boostBalance) response += `BOOST ✅\n`;
                 if (vBalance) response += `V ✅\n`;
                 if (xtraBalance) response += `XTRA ✅\n`;
                 if (skipBalance) response += `SKIP ✅\n`;
                 response += '\n';
+                
             
                 completedCount++;
                 const progress = Math.round((completedCount / totalNFTs) * 100);
