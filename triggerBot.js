@@ -29,7 +29,7 @@ setInterval(async () => {
         let intervalTime = await getAsync("roundDuration");
         let intervalTimeNum = parseInt(intervalTime);
         if (await isNewGame()) {
-            intervalTimeNum = intervalTimeNum * 6;
+            intervalTimeNum = intervalTimeNum * 3;
         }
         const remainingTime = startTimerNum + intervalTimeNum - currentTime;
         if (Math.random() < 0.1) { 
