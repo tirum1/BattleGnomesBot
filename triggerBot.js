@@ -55,8 +55,10 @@ async function sendMessageViaAxios(chatId, text, parseMode = 'Markdown') {
     }
 }
 async function isNewGame() {
-    return getAsync("newGame");
+    const value = await getAsync("newGame");
+    return value === "true";
 }
+
 function shouldTellSomething() {
     return Math.random() < 0.1;  
 }
