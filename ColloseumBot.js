@@ -692,7 +692,7 @@ function startBot() {
                         chat_id: msg.chat.id,
                         message_id: progressMessage.message_id
                     });
-                } else if(editcounter>3){
+                } else if(editcounter>5){
                 await registerBot.editMessageText(`Fetching NFT status... ${progress}%`, {
                     chat_id: msg.chat.id,
                     message_id: progressMessage.message_id
