@@ -673,10 +673,10 @@ function startBot() {
                 }
 
                 const [boostBalance, vBalance, xtraBalance, skipBalance] = await Promise.all([
-                    TokenContract.NFTBOOSTBalance(NFTId),
-                    TokenContract.NFTVBalance(NFTId),
-                    TokenContract.NFTXTRABalance(NFTId),
-                    TokenContract.NFTSKIPBalance(NFTId)
+                    await getAsync(`${NFTId}BOOSTBalance`),
+                    await getAsync(`${NFTId}VBalance`),
+                    await getAsync(`${NFTId}XTRABalance`),
+                    await getAsync(`${NFTId}SKIPBalance`),
                 ]);
             
                 let response = `NFT ID: ${NFTId} - ${isDead ? "Dead" : "Alive"}\n`;
