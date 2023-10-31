@@ -139,17 +139,16 @@ bot.onText(/\/?leaderboard/i, async (msg) => {
 
         const liveNFTs = deadArray.filter(entry => entry[1] === false).map(entry => entry[0]);
 
-        // Create an array of NFTs with their roundWins
         const liveNFTsData = await Promise.all(liveNFTs.map(async (nftID) => {
             const roundWinsKey = `roundWinsOf${nftID}`;
-            const roundWins = await getAsync(roundWinsKey) || 0;
+            const roundWinsStr = await getAsync(roundWinsKey) || "0"; 
+            const roundWins = parseInt(roundWinsStr, 10); 
             return { nftID, roundWins };
-        }));        
+        }));
+               
 
-        // Sort the liveNFTsData array by roundWins in descending order
         liveNFTsData.sort((a, b) => b.roundWins - a.roundWins);
 
-        // Get the top 30 NFTs
         const top30 = liveNFTsData.slice(0, 30);
 
         console.log("Top 30 live NFTs with roundWins:", top30);
