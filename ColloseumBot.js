@@ -642,7 +642,7 @@ function startBot() {
             return;
         }
         console.log('Fetching NFT status for username:', username);
-
+    
         try {
             const walletAddress = await client.getAsync(username);
             if (!walletAddress) {
@@ -650,58 +650,19 @@ function startBot() {
                 return;
             }
             const NFTsOwned = await NFTContract.walletOfOwner(walletAddress);
-            
+    
             if (NFTsOwned.length === 0) {
                 registerBot.sendMessage(msg.chat.id, "You don't own any NFTs.");
                 return;
             }
-
-            let progressMessage = await registerBot.sendMessage(msg.chat.id, "Fetching NFT status... 0%");
-
-            let completedCount = 0;
-
-            const fetchDetails = async (NFTId, totalNFTs) => {
-                const retrievedDead = await getAsync("dead"); 
-                let isDead = false; 
-            
-                if (retrievedDead) {
-                    const parsedDead = JSON.parse(retrievedDead);
-            
-                    if (Array.isArray(parsedDead)) {
-                        isDead = parsedDead.some(entry => Array.isArray(entry) && entry.length === 2 && entry[0] === NFTId && entry[1] === true);
-                    }
-                }
-
-                const [boostBalance, vBalance, xtraBalance, skipBalance] = await Promise.all([
-                    TokenContract.NFTBOOSTBalance(NFTId),
-                    TokenContract.NFTVBalance(NFTId),
-                    TokenContract.NFTXTRABalance(NFTId),
-                    TokenContract.NFTSKIPBalance(NFTId)
-                ]);
-            
-                let response = `NFT ID: ${NFTId} - ${isDead ? "Dead" : "Alive"}\n`;
-                if (boostBalance) response += `BOOST ✅\n`;
-                if (vBalance) response += `V ✅\n`;
-                if (xtraBalance) response += `XTRA ✅\n`;
-                if (skipBalance) response += `SKIP ✅\n`;
-                response += '\n';
-            
-                completedCount++;
-                const progress = Math.round((completedCount / totalNFTs) * 100);
-                await registerBot.editMessageText(`Fetching NFT status... ${progress}%`, {
-                    chat_id: msg.chat.id,
-                    message_id: progressMessage.message_id
-                });
-            
-                return response;
-            };
-            
-            
-            const results = await Promise.all(NFTsOwned.map(nft => {
-                const NFTId = nft.toNumber();
-                return fetchDetails(NFTId, NFTsOwned.length);
-            }));
-
+    
+            const batchSize = 10;
+            let results = [];
+            for (let i = 0; i < NFTsOwned.length; i += batchSize) {
+                const batch = NFTsOwned.slice(i, i + batchSize);
+                results = results.concat(await fetchBatchDetails(batch, NFTsOwned.length));
+            }
+    
             const responseMessage = `🖼️ *Your NFTs and Their Status & Active Potions:* 🖼️\n\n` + results.join('');
             registerBot.sendMessage(msg.chat.id, responseMessage, { parse_mode: 'Markdown' });
         } catch (error) {
@@ -709,6 +670,17 @@ function startBot() {
             registerBot.sendMessage(msg.chat.id, "🚫 Oops! We encountered an issue fetching your NFT status. Please give it another try in a moment.");
         }
     });
+    
+    async function fetchBatchDetails(NFTs, totalNFTs) {
+        let batchResults = [];
+        for (const nft of NFTs) {
+            const NFTId = nft.toNumber();
+            const result = await fetchDetails(NFTId, totalNFTs);
+            batchResults.push(result);
+        }
+        return batchResults;
+    }
+    
 
     registerBot.onText(/\/setRef (\w+)/i, async (msg, match) => {
         const username = msg.from.username;
@@ -843,7 +815,7 @@ function startBot() {
                                     potions.push(potion);
                                 }
                                 
-                                const gasBufferPercentage = 20; 
+                                const gasBufferPercentage = 30; 
 
                                 try {
                                     const estimatedGas = await TokenContractWithSigner.estimateGas.buyPotion(
@@ -985,7 +957,7 @@ function startBot() {
                             transaction.potionName.toUpperCase()
                         );
                     
-                        const gasBufferPercentage = 20; 
+                        const gasBufferPercentage = 30; 
                         const gasLimit = Math.ceil(estimatedGas * (1 + gasBufferPercentage / 100));
                     
                         const tx = await TokenContractWithSigner.applyPotion(
