@@ -568,16 +568,14 @@ function startBot() {
                 return;
             }
 
-            const potionFunctionName = `NFT${potionName.toUpperCase()}Balance`;
-
-            console.log(`Using function name: ${potionFunctionName}`);
 
             const nftsWithPotionPromises = await Promise.all(nftIds.map(async id => {
-                const hasPotion = await TokenContract[potionFunctionName](id);
-                console.log(`NFT ID: ${id}, hasPotion: ${hasPotion}`);
+                const hasPotion = await getAsync(`${id}${potionName.toUpperCase()}Balance`);
+                const hasPotionBool = JSON.parse(hasPotion);
+                console.log(`NFT ID: ${id}, hasPotion: ${hasPotionBool}`);
                 return {
                     id: id,
-                    hasPotion: hasPotion
+                    hasPotion: hasPotionBool
                 };
             }));
 
@@ -636,6 +634,7 @@ function startBot() {
 
     registerBot.onText(/\/status/i, async (msg) => {
         const username = msg.from.username;
+        let editcounter = 0;
         if (!username) {
             console.error("Username is not defined.");
             registerBot.sendMessage(msg.chat.id, `❌ You haven't set up a Telegram Username.`);
@@ -688,11 +687,14 @@ function startBot() {
             
                 completedCount++;
                 const progress = Math.round((completedCount / totalNFTs) * 100);
+                if(editcounter>2){
                 await registerBot.editMessageText(`Fetching NFT status... ${progress}%`, {
                     chat_id: msg.chat.id,
                     message_id: progressMessage.message_id
                 });
-                await delay(500);
+                editcounter = 0;
+                }
+                editcounter++;
                 return response;
             };
             
@@ -710,9 +712,6 @@ function startBot() {
     });
     
 
-    function delay(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
 
     registerBot.onText(/\/setRef (\w+)/i, async (msg, match) => {
         const username = msg.from.username;
