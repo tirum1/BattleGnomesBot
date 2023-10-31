@@ -687,7 +687,12 @@ function startBot() {
             
                 completedCount++;
                 const progress = Math.round((completedCount / totalNFTs) * 100);
-                if(editcounter>2){
+                if(editcounter == totalNFTs){
+                    await registerBot.editMessageText(`Fetching NFT status... 100%`, {
+                        chat_id: msg.chat.id,
+                        message_id: progressMessage.message_id
+                    });
+                } else if(editcounter>3){
                 await registerBot.editMessageText(`Fetching NFT status... ${progress}%`, {
                     chat_id: msg.chat.id,
                     message_id: progressMessage.message_id
@@ -711,8 +716,6 @@ function startBot() {
         }
     });
     
-
-
     registerBot.onText(/\/setRef (\w+)/i, async (msg, match) => {
         const username = msg.from.username;
         if (!username) {
