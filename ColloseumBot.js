@@ -685,18 +685,27 @@ function startBot() {
                 if (xtraBalance) response += `XTRA ✅\n`;
                 if (skipBalance) response += `SKIP ✅\n`;
                 response += '\n';
-                
             
+    
                 completedCount++;
                 const progress = Math.round((completedCount / totalNFTs) * 100);
-                await registerBot.editMessageText(`Fetching NFT status... ${progress}%`, {
-                    chat_id: msg.chat.id,
-                    message_id: progressMessage.message_id
-                });
-                await delay(500);
+                await delay(500); 
+    
+                if (completedCount === totalNFTs) {
+                    await registerBot.editMessageText(`Fetching NFT status... 100%`, {
+                        chat_id: msg.chat.id,
+                        message_id: progressMessage.message_id
+                    });
+                } else {
+                    await registerBot.editMessageText(`Fetching NFT status... ${progress}%`, {
+                        chat_id: msg.chat.id,
+                        message_id: progressMessage.message_id
+                    });
+                }
+    
                 return response;
             };
-            
+    
             const results = await Promise.all(NFTsOwned.map(nft => {
                 const NFTId = nft.toNumber();
                 return fetchDetails(NFTId, NFTsOwned.length);
