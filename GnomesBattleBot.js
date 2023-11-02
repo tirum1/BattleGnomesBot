@@ -74,7 +74,9 @@ bot.onText(/\/?nft ([\d\s,]+)/i, async (msg, match) => {
         try {
             console.log("Debug1");
             const retrievedDead = await getAsync("dead"); 
+            const retrievedQueue = await getAsync("queue");
             let isDead = false; 
+            let queued = false;
             console.log("Debug2");
             if (retrievedDead) {
                 const parsedDead = JSON.parse(retrievedDead);
@@ -83,6 +85,14 @@ bot.onText(/\/?nft ([\d\s,]+)/i, async (msg, match) => {
                     isDead = parsedDead.some(entry => Array.isArray(entry) && entry.length === 2 && entry[0] === nftId && entry[1] === true);
                 }
             }
+            if (retrievedQueue) {
+                const parsedQueue = JSON.parse(retrievedQueue);
+
+                if (Array.isArray(parsedQueue)) {
+                    queued = parsedQueue.some(entry => Array.isArray(entry) && entry.length === 2 && entry[0] === nftId && entry[1] === true);
+                }
+            }
+
             console.log("Debug3");
             const keyName = `${nftId}BattleResult`; 
             const battleDetailData = await getAsync(keyName); 
@@ -100,6 +110,11 @@ bot.onText(/\/?nft ([\d\s,]+)/i, async (msg, match) => {
                 message += `😵 The NFT with ID ${nftId} is no longer among the living.\n`;
             } else {
                 message += `🌿 The NFT with ID ${nftId} is alive and well!\n`;
+            }
+            if (queued) {
+                message += `✅ QUEUED\n`;
+            } else {
+                message += `❌ NOT QUEUED\n`;
             }
 
             if (!battleDetailData) {

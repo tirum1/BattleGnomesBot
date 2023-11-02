@@ -97,9 +97,10 @@ rows.forEach((row) => {
 startTimer();
 
 setInterval(async () => {
-    if(newGame && hasTimerPassed()){
-    startHungerGames();
-    }
+    const balance = await provider.getBalance(hungerGamesAddress);
+    if (newGame && hasTimerPassed() && balance >= 0.1) {
+      startHungerGames();
+    }    
     await setAsync("time", time);
     await setAsync("newGame", newGame);
     await setAsync("hasTimerPassed", hasTimerPassed());
@@ -127,12 +128,36 @@ function startTimer() {
     time = Math.floor(Date.now() / 1000); 
 }
 async function startHungerGames () {
+    let ownerAddress=null;
+    let minBalanceRequired = 0;
+    let ownerBalance=0;
+    const tokenTotalSupply = await TokenContract.totalSupply();
+
     sendMessageViaAxios(CHANNEL_ID, "HUNGERGAMES INITIATED");
-    queuecounter = await NFTContract.getMintAmount();
-    for (let i=1;i<=queuecounter;i++){
-    queue.set(i, true);
-    aliveByID.push(i);
+    mintAmount = await NFTContract.getMintAmount();
+
+    for (let i = 1; i <= mintAmount; i++) {
+        const minBalanceRequired = tokenTotalSupply.div(2888);
+        const ownerAddress = await NFTContract.ownerOf(i);
+        const ownerBalance = await TokenContract.balanceOf(ownerAddress);
+        const ownerNFTs = await NFTContract.walletOfOwner(ownerAddress);
+        const checked = [];
+
+        if (i === ownerNFTs[0] && ownerBalance.gte(minBalanceRequired)) { 
+            queue.set(i, true);
+            checked.push(i);
+
+            for (let j = 1; j<ownerNFTs.length; j++){
+                if(ownerBalance.gte(minBalanceRequired.div(2) * j + minBalanceRequired)){
+                    queue.set(ownerNFTs[j], true);
+                    checked.push(ownerNFTs[j]);
+                }
+            }
+        } 
+
     }
+
+    queuecounter = checked.length;
     newGame = false;
     sendMessageViaAxios(CHANNEL_ID, `${queuecounter} Contestants entered the Arena!`);
 }

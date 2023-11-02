@@ -671,14 +671,16 @@ function startBot() {
                     }
                 }
 
-                const [boostBalance, vBalance, xtraBalance, skipBalance] = await Promise.all([
+                const [boostBalance, vBalance, xtraBalance, skipBalance, queue] = await Promise.all([
                     await getAsync(`${NFTId}BOOSTBalance`).then(value => value === "true"),
                     await getAsync(`${NFTId}VBalance`).then(value => value === "true"),
                     await getAsync(`${NFTId}XTRABalance`).then(value => value === "true"),
                     await getAsync(`${NFTId}SKIPBalance`).then(value => value === "true"),
+                    queue.get(NFTId) || false,
                 ]);
                 
                 let response = `NFT ID: ${NFTId} - ${isDead ? "Dead" : "Alive"}\n`;
+                if (queue) response += `queued ✅`;
                 if (boostBalance) response += `BOOST ✅\n`;
                 if (vBalance) response += `V ✅\n`;
                 if (xtraBalance) response += `XTRA ✅\n`;
