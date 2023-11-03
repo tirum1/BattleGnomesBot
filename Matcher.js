@@ -215,7 +215,6 @@ async function lookForOpponent() {
                 if (secondOpponent != 0) {
                     await enterBattle(firstOpponent, secondOpponent);
                     console.log(`Entered battle: ${firstOpponent} vs. ${secondOpponent}`);
-                    i = firstOpponent;
                     firstOpponent = 0;
                 } else {
                     let nextAvailableOpponent = getNextAvailable(checked[i]);
