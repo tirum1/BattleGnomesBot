@@ -144,6 +144,8 @@ async function startHungerGames () {
         const ownerNFTs = await NFTContract.walletOfOwner(ownerAddress);
         const checked = [];
         console.log("debug2");
+        console.log("minBalanceRequired: ", minBalanceRequired);
+        console.log("ownerBalance: ", ownerBalance );
         if (i === ownerNFTs[0] && ownerBalance.gte(minBalanceRequired)) { 
             queue.set(i, true);
             checked.push(i);
