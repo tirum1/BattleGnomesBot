@@ -671,16 +671,20 @@ function startBot() {
                     }
                 }
 
-                const [boostBalance, vBalance, xtraBalance, skipBalance, queue] = await Promise.all([
-                    await getAsync(`${NFTId}BOOSTBalance`).then(value => value === "true"),
-                    await getAsync(`${NFTId}VBalance`).then(value => value === "true"),
-                    await getAsync(`${NFTId}XTRABalance`).then(value => value === "true"),
-                    await getAsync(`${NFTId}SKIPBalance`).then(value => value === "true"),
-                    queue.get(NFTId) || false,
+                const [boostBalance, vBalance, xtraBalance, skipBalance, queueData] = await Promise.all([
+                    getAsync(`${NFTId}BOOSTBalance`).then(value => value === "true"),
+                    getAsync(`${NFTId}VBalance`).then(value => value === "true"),
+                    getAsync(`${NFTId}XTRABalance`).then(value => value === "true"),
+                    getAsync(`${NFTId}SKIPBalance`).then(value => value === "true"),
+                    getAsync("queue").then(value => (value ? JSON.parse(value) : [])),
                 ]);
                 
                 let response = `NFT ID: ${NFTId} - ${isDead ? "Dead" : "Alive"}\n`;
-                if (queue) response += `queued ✅`;
+                
+                queueData.forEach(([nftId, bool]) => {
+                    if (bool) response += `NFT ID ${nftId} is queued ✅\n`;
+                });
+                
                 if (boostBalance) response += `BOOST ✅\n`;
                 if (vBalance) response += `V ✅\n`;
                 if (xtraBalance) response += `XTRA ✅\n`;
