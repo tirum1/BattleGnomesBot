@@ -184,7 +184,7 @@ async function startHungerGames () {
     queuecounter = checked.length;
     newGame = false;
     activeRound = false;
-    sendMessageViaAxios(CHANNEL_ID, `${queuecounter} Contestants entered the Arena!`);
+   // sendMessageViaAxios(CHANNEL_ID, `${queuecounter} Contestants entered the Arena!`);
 }
 async function lookForOpponent() {
     activeRound = true;
