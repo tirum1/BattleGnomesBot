@@ -516,7 +516,7 @@ async function removePotions() {
 function getAmountOfNonDead() {
     let nonDeadCount = 0;
 
-    for (let i = 1; i <= queuecounter; i++) {
+    for (let i = 0; i < queuecounter; i++) {
         if (!dead.get(checked[i])) {
             nonDeadCount++;
             aliveByID.push(checked[i]); 
@@ -528,10 +528,10 @@ function getAmountOfNonDead() {
 async function storeRoundWinners() {
     roundWinners = [];
     for (let i = 0; i < aliveByID.length; i++) {
-            const roundWinsOfNFT = await getAsync(`roundWinsOf${aliveByID[i]}`);
-            const owner = await NFTContract.ownerOf(aliveByID[i]);
+            const roundWinsOfNFT = await getAsync(`roundWinsOf${aliveByID[checked[i]]}`);
+            const owner = await NFTContract.ownerOf(aliveByID[checked[i]]);
             roundWinners.push(owner);
-            await setAsync(`roundWinsOf${i}`, parseInt(roundWinsOfNFT || 0) + 1);
+            await setAsync(`roundWinsOf${checked[i]}`, parseInt(roundWinsOfNFT || 0) + 1);
     }
 
     return roundWinners; 
@@ -576,13 +576,13 @@ async function payoutWinners(nonDeads) {
 }
 function reviveAll(){
     for (let i = 1; i <= queuecounter; i++) {
-        dead.set(i, false);
-        alive.set(i, false);
+        dead.set(checked[i], false);
+        alive.set(checked[i], false);
     }
 }
 function resetQueue() {
     for (let i = 1; i <= queuecounter; i++) {
-        queue.set(i, false);
+        queue.set(checked[i], false);
     }
     queuecounter = 0;
 }
@@ -592,7 +592,7 @@ function resetTimer() {
 }
 async function resetAlive() {
     for (let i = 1; i <= queuecounter; i++) {
-        alive.set(i, false);
+        alive.set(checked[i], false);
     }
 }
 async function sendMessageViaAxios(chatId, text, parseMode = 'Markdown') {
