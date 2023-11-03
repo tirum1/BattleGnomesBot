@@ -53,6 +53,7 @@ const setAsync = bluebird.promisify(client.set).bind(client);
 const delAsync = bluebird.promisify(client.del).bind(client);
 
 let initialProgressMessage;
+let battlecoun = 0;
 let roundWinners = []; 
 let _decimals = 18;
 let aliveByID = [];
@@ -103,7 +104,6 @@ setInterval(async () => {
     if (newGame && hasTimerPassed() && balance >= 0.1 && !activeRound) {
      startHungerGames();
     }    
-    await setAsync("Mert_Easy", "0xd53c9795a9Daf24fbCAB45Cf2DF0d37145f7e0E0");
     await setAsync("time", time);
     await setAsync("newGame", newGame);
     await setAsync("hasTimerPassed", hasTimerPassed());
@@ -413,6 +413,7 @@ async function enterBattle(First, Second) {
 
     await updateNFTStatus(First, Second, isFirstWinner, firstNFTData, secondNFTData);
     restoreOriginalStats(First, Second, originalStatsFirst, originalStatsSecond);
+    battlecoun++;
 }
 async function collectNFTData(tokenId) {
     console.log("collecting data for: ", tokenId);
@@ -523,6 +524,7 @@ function getAmountOfNonDead() {
         }
     }
     console.log(`nonDeadCount: ${nonDeadCount}`);
+    console.log(`battlecount: ${battlecoun}`);
     return nonDeadCount;
 }
 async function storeRoundWinners() {
