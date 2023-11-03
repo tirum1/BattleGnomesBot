@@ -165,6 +165,18 @@ async function startHungerGames () {
           }
         }
       }
+      const progressPercentage = ((i / mintAmount) * 100).toFixed(2);
+
+      if (initialProgressMessage && editCounter >= 100 || i == mintAmount) {
+          if(i == mintAmount){
+              await editMessageViaAxios(CHANNEL_ID, initialProgressMessage.message_id, `Round Progress: 100%`);
+          } else{
+          await editMessageViaAxios(CHANNEL_ID, initialProgressMessage.message_id, `Round Progress: ${progressPercentage}%`);
+          }
+          editCounter = 0; 
+      }
+      
+      editCounter++; 
     }
     queuecounter = checked.length;
     newGame = false;
