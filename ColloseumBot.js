@@ -667,7 +667,7 @@ function startBot() {
                 const batchNFTs = NFTsOwned.slice(startIndex, endIndex);
     
                 const responseMessage = await fetchBatchDetails(batchNFTs);
-                registerBot.sendMessage(msg.chat.id, responseMessage);
+                registerBot.sendMessage(msg.chat.id, responseMessage, { parse_mode: "Markdown" });
             }
         } catch (error) {
             console.error('Error fetching NFT status:', error);
