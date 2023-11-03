@@ -216,7 +216,7 @@ async function lookForOpponent() {
                     console.log(`Entered battle: ${firstOpponent} vs. ${secondOpponent}`);
                     firstOpponent = 0;
                 } else {
-                    let nextAvailableOpponent = getNextAvailable(checked[i]);
+                    let nextAvailableOpponent = getNextAvailable(firstOpponent);
                     console.log(`Next available opponent: ${nextAvailableOpponent}`);
                     if (nextAvailableOpponent == firstOpponent) {
                         nextAvailableOpponent = 0;
