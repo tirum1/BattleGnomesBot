@@ -133,7 +133,7 @@ async function startHungerGames () {
     let minBalanceRequired = 0;
     let ownerBalance=0;
     const tokenTotalSupply = await TokenContract.totalSupply();
-    sendMessageViaAxios(CHANNEL_ID, "HUNGERGAMES INITIATED");
+    // sendMessageViaAxios(CHANNEL_ID, "HUNGERGAMES INITIATED");
     initialProgressMessage = await sendMessageViaAxios(CHANNEL_ID, "Queue Progress: 0.00%");
     mintAmount = await NFTContract.getMintAmount();
 
@@ -169,9 +169,11 @@ async function startHungerGames () {
 
       if (initialProgressMessage && editCounter >= 100 || i == mintAmount) {
           if(i == mintAmount){
-              await editMessageViaAxios(CHANNEL_ID, initialProgressMessage.message_id, `Queue Progress: 100%`);
+         // await editMessageViaAxios(CHANNEL_ID, initialProgressMessage.message_id, `Queue Progress: 100%`);
+  
           } else{
-          await editMessageViaAxios(CHANNEL_ID, initialProgressMessage.message_id, `Queue Progress: ${progressPercentage}%`);
+          // await editMessageViaAxios(CHANNEL_ID, initialProgressMessage.message_id, `Queue Progress: ${progressPercentage}%`);
+          console.log("QUEUE PROGRESS: ", progressPercentage )
           }
           editCounter = 0; 
       }
