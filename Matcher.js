@@ -133,8 +133,8 @@ async function startHungerGames () {
     let ownerBalance=0;
     const checked = [];
     const tokenTotalSupply = await TokenContract.totalSupply();
-
-     sendMessageViaAxios(CHANNEL_ID, "HUNGERGAMES INITIATED");
+    initialProgressMessage = await sendMessageViaAxios(CHANNEL_ID, "Round Progress: 0.00%");
+    sendMessageViaAxios(CHANNEL_ID, "HUNGERGAMES INITIATED");
     mintAmount = await NFTContract.getMintAmount();
 
     for (let i = 1; i <= mintAmount; i++) {
