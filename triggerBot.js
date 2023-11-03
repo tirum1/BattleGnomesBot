@@ -19,10 +19,10 @@ const getAsync = bluebird.promisify(client.get).bind(client);
 
 setInterval(async () => {
     try {
-         if (shouldTellSomething()) {
-             const randomMessage = getRandomMessage();
-             sendMessageViaAxios(CHANNEL_ID, randomMessage);
-         }
+        //  if (shouldTellSomething()) {
+        //      const randomMessage = getRandomMessage();
+        //      sendMessageViaAxios(CHANNEL_ID, randomMessage);
+        //  }
         const currentTime = Math.floor(Date.now() / 1000);
         const startTimer = await getAsync("time");
         const startTimerNum = parseInt(startTimer);

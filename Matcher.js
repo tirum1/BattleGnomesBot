@@ -133,7 +133,7 @@ async function startHungerGames () {
     let ownerBalance=0;
     const tokenTotalSupply = await TokenContract.totalSupply();
 
-    sendMessageViaAxios(CHANNEL_ID, "HUNGERGAMES INITIATED");
+    // sendMessageViaAxios(CHANNEL_ID, "HUNGERGAMES INITIATED");
     mintAmount = await NFTContract.getMintAmount();
 
     for (let i = 1; i <= mintAmount; i++) {
@@ -146,7 +146,7 @@ async function startHungerGames () {
         console.log("debug2");
         console.log("minBalanceRequired: ", minBalanceRequired);
         console.log("ownerBalance: ", ownerBalance );
-        console.log("ownerBalaownerNFTs[0]: ", ownerBalaownerNFTs[0]);
+        console.log("ownerNFTs[0]: ", ownerNFTs[0][0]);
         if (i === ownerNFTs[0] && ownerBalance.gte(minBalanceRequired)) { 
             queue.set(i, true);
             checked.push(i);
