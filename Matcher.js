@@ -99,7 +99,7 @@ startTimer();
 setInterval(async () => {
     const balance = await provider.getBalance(hungerGamesAddress);
     if (newGame && hasTimerPassed() && balance >= 0.1) {
-      startHungerGames();
+   //   startHungerGames();
     }    
     await setAsync("time", time);
     await setAsync("newGame", newGame);
@@ -121,7 +121,6 @@ setInterval(async () => {
        await lookForOpponent();
     }
 }, 500);
-
 
 function startTimer() {
     HungerGamesBegin = true;
@@ -154,7 +153,6 @@ async function startHungerGames () {
                 }
             }
         } 
-
     }
 
     queuecounter = checked.length;
