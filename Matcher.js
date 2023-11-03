@@ -528,22 +528,30 @@ function getAmountOfNonDead() {
 async function storeRoundWinners() {
     roundWinners = [];
     for (let i = 0; i < aliveByID.length; i++) {
-        console.log("DEBUG2")
+        console.log("DEBUG2");
         const roundWinsOfNFT = await getAsync(`roundWinsOf${aliveByID[checked[i]]}`);
         const owner = await NFTContract.ownerOf(aliveByID[checked[i]]);
         roundWinners.push(owner);
+
         if (roundWinsOfNFT !== undefined) {
-            await setAsync(`roundWinsOf${checked[i]}`, parseInt(roundWinsOfNFT) + 1);
+            const parsedWins = parseInt(roundWinsOfNFT);
+            if (!isNaN(parsedWins)) {
+                await setAsync(`roundWinsOf${checked[i]}`, parsedWins + 1);
+            } else {
+                // Handle the case where roundWinsOfNFT is not a valid number
+                console.log(`Error: roundWinsOfNFT is not a valid number for ${checked[i]}`);
+            }
         } else {
             await setAsync(`roundWinsOf${checked[i]}`, 1);
-        }        
-            console.log("DEBUG2.1")
-            await setAsync(`roundWinsOf${checked[i]}`, parseInt(roundWinsOfNFT || 0) + 1);
-            console.log("DEBUG3")
+        }
+
+        console.log("DEBUG2.1");
+        console.log("DEBUG3");
     }
 
-    return roundWinners; 
+    return roundWinners;
 }
+
 async function payoutWinners(nonDeads) {
     if (nonDeads === 0) {
         console.log("RETURNED");
