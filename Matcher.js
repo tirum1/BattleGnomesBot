@@ -290,22 +290,16 @@ function hasTimerPassed() {
     }
 }
 async function getRandomOpponent(startIndex, firstOpponentOwner) {
-    const aliveLength = aliveByID.length;
-    const lengthOrCounter = aliveLength === 0 ? queuecounter : aliveLength;
     const maxAttempts = 4;
 
     console.log('Finding a random opponent...');
-    console.log(`Alive Length: ${aliveLength}`);
-    console.log(`Length Or Counter: ${lengthOrCounter}`);
 
     for (let attempts = 0; attempts < maxAttempts; attempts++) {
         const currentTimestamp = Math.floor(Date.now() / 1000);
         const inputForHash = ethers.utils.solidityKeccak256(['uint', 'uint'], [currentTimestamp, startIndex]);
         const keccak256HashNum = ethers.BigNumber.from(inputForHash);
-        const randomIndex = keccak256HashNum.mod(lengthOrCounter).add(1);
-        const randomID = aliveLength === 0 ? randomIndex.toNumber() : aliveByID[randomIndex.toNumber()];
-
-        console.log(`Attempt ${attempts + 1}: Random Index: ${randomIndex.toNumber()}, Random ID: ${randomID}`);
+        const randomIndex = keccak256HashNum.mod(queuecounter);
+        const randomID = randomIndex.toNumber();
 
         if (queue.get(checked[randomID]) && !alive.get(checked[randomID]) && !dead.get(checked[randomID])) {
             if (await NFTContract.ownerOf(checked[randomID]) !== firstOpponentOwner) {
@@ -315,7 +309,6 @@ async function getRandomOpponent(startIndex, firstOpponentOwner) {
         }
     }
 
-    console.log('No valid opponent found.');
     return 0;
 }
 function getNextAvailable(startIndex) {
