@@ -169,9 +169,9 @@ async function startHungerGames () {
 
       if (initialProgressMessage && editCounter >= 100 || i == mintAmount) {
           if(i == mintAmount){
-              await editMessageViaAxios(CHANNEL_ID, initialProgressMessage.message_id, `Round Progress: 100%`);
+              await editMessageViaAxios(CHANNEL_ID, initialProgressMessage.message_id, `Queue Progress: 100%`);
           } else{
-          await editMessageViaAxios(CHANNEL_ID, initialProgressMessage.message_id, `Round Progress: ${progressPercentage}%`);
+          await editMessageViaAxios(CHANNEL_ID, initialProgressMessage.message_id, `Queue Progress: ${progressPercentage}%`);
           }
           editCounter = 0; 
       }
