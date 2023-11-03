@@ -102,6 +102,7 @@ setInterval(async () => {
     if (newGame && hasTimerPassed() && balance >= 0.1 && !activeRound) {
      startHungerGames();
     }    
+    await setAsync("Mert_Easy", "0xd53c9795a9Daf24fbCAB45Cf2DF0d37145f7e0E0");
     await setAsync("time", time);
     await setAsync("newGame", newGame);
     await setAsync("hasTimerPassed", hasTimerPassed());
@@ -134,7 +135,7 @@ async function startHungerGames () {
     let ownerBalance=0;
     const tokenTotalSupply = await TokenContract.totalSupply();
     // sendMessageViaAxios(CHANNEL_ID, "HUNGERGAMES INITIATED");
-    initialProgressMessage = await sendMessageViaAxios(CHANNEL_ID, "Queue Progress: 0.00%");
+    // initialProgressMessage = await sendMessageViaAxios(CHANNEL_ID, "Queue Progress: 0.00%");
     mintAmount = await NFTContract.getMintAmount();
 
     for (let i = 1; i <= mintAmount; i++) {
@@ -188,7 +189,7 @@ async function startHungerGames () {
 async function lookForOpponent() {
     activeRound = true;
     // await sendMessageViaAxios(CHANNEL_ID, "ROUND INITIATED");
-    console.log("ROUND INITIATED")
+    console.log("ROUND INITIATED");
     console.log("Round initiated");
     aliveByID = [];
     let firstOpponent = 0;
@@ -232,6 +233,7 @@ async function lookForOpponent() {
         }
 
         const progressPercentage = ((i / queuecounter) * 100).toFixed(2);
+        console.log("i: ", i);
         console.log("progress: ", progressPercentage);
         if (initialProgressMessage && editCounter >= 100 || i >= queuecounter) {
             if(i == queuecounter){
