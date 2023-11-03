@@ -9,7 +9,8 @@ const redis = require('redis');
 const axios = require('axios');
 const token = process.env.MAIN_BOT_TOKEN;
 const TELEGRAM_BASE_URL = `https://api.telegram.org/bot${token}/`;
-const CHANNEL_ID = '-1001672659906';
+// const CHANNEL_ID = '-1001672659906';
+const CHANNEL_ID = '-5744595182';
 const MainRedisUrl = process.env.MAIN_REDIS_URL;
 const MYMaintenance = process.env.MYMAINTENANCE;
 const hungerGamesAddress = '0x3511910Cd2c60a77a7f095Ce3c5d8AE1fBf680cd';
@@ -134,7 +135,7 @@ async function startHungerGames () {
     let minBalanceRequired = 0;
     let ownerBalance=0;
     const tokenTotalSupply = await TokenContract.totalSupply();
-    // sendMessageViaAxios(CHANNEL_ID, "HUNGERGAMES INITIATED");
+     sendMessageViaAxios(CHANNEL_ID, "HUNGERGAMES INITIATED");
     // initialProgressMessage = await sendMessageViaAxios(CHANNEL_ID, "Queue Progress: 0.00%");
     mintAmount = await NFTContract.getMintAmount();
 
