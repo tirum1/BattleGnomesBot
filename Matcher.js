@@ -148,14 +148,14 @@ async function startHungerGames () {
         console.log("ownerBalance: ", ownerBalanceBIG.toString());
         console.log("ownerNFTs[0]: ", ownerNFTs[0].toString());
       
-        if (i === ownerNFTs[0] && ownerBalanceBIG.gte(minBalanceRequiredBIG)) {
+        if (i === ownerNFTs[0] && ownerBalanceBIG>=(minBalanceRequiredBIG)) {
           queue.set(i, true);
           checked.push(i);
-      
+            console.log("pushed: ", i);
           for (let j = 1; j < ownerNFTs.length; j++) {
             const requiredBalance = minBalanceRequiredBIG.div(2).mul(j).add(minBalanceRequiredBIG);
       
-            if (ownerBalanceBIG.gte(requiredBalance)) {
+            if (ownerBalanceBIG>=(requiredBalance)) {
               queue.set(ownerNFTs[j].toNumber(), true);
               checked.push(ownerNFTs[j].toNumber());
               console.log("debug4");
@@ -167,7 +167,8 @@ async function startHungerGames () {
     queuecounter = checked.length;
     newGame = false;
     activeRound = false;
-    sendMessageViaAxios(CHANNEL_ID, `${queuecounter} Contestants entered the Arena!`);
+    // sendMessageViaAxios(CHANNEL_ID, `${queuecounter} Contestants entered the Arena!`);
+    console.log(`${queuecounter} Contestants entered the Arena!`);
 }
 async function lookForOpponent() {
     activeRound = true;
