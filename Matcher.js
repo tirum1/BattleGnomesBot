@@ -58,7 +58,7 @@ let aliveByID = [];
 let time = 0;
 let activeRound = false;
 const maxAmountOfWinners = 5;
-const roundDuration = 100;
+const roundDuration = 10;
 let queue = new Map();
 let alive = new Map();
 let dead = new Map();
@@ -137,25 +137,27 @@ async function startHungerGames () {
     mintAmount = await NFTContract.getMintAmount();
 
     for (let i = 1; i <= mintAmount; i++) {
+        console.log("debug1");
         const minBalanceRequired = tokenTotalSupply.div(2888);
         const ownerAddress = await NFTContract.ownerOf(i);
         const ownerBalance = await TokenContract.balanceOf(ownerAddress);
         const ownerNFTs = await NFTContract.walletOfOwner(ownerAddress);
         const checked = [];
-
+        console.log("debug2");
         if (i === ownerNFTs[0] && ownerBalance.gte(minBalanceRequired)) { 
             queue.set(i, true);
             checked.push(i);
-
+            console.log("debug3");
             for (let j = 1; j<ownerNFTs.length; j++){
                 if(ownerBalance.gte(minBalanceRequired.div(2) * j + minBalanceRequired)){
                     queue.set(ownerNFTs[j], true);
                     checked.push(ownerNFTs[j]);
+                    console.log("debug4");
                 }
             }
         } 
     }
-
+    console.log("debug5");
     queuecounter = checked.length;
     newGame = false;
     activeRound = false;
@@ -227,7 +229,7 @@ async function lookForOpponent() {
         sendMessageViaAxios(CHANNEL_ID, `Initiating PAYOUT!`);
         console.log("ENTERED WINNERS");
         await storeRoundWinners();
-        await payoutWinners(nonDeads);
+       // await payoutWinners(nonDeads);
         reviveAll();
         resetQueue();
         roundsCount = 0;
