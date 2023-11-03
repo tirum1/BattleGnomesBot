@@ -69,6 +69,7 @@ let queuecounter = 0;
 let StatsSize = 5;
 let messageId = 0;
 let editCounter = 0;
+const checked = [];
 
 const BattleResult = {
     Won: "Won",
@@ -131,7 +132,6 @@ async function startHungerGames () {
     let ownerAddress=null;
     let minBalanceRequired = 0;
     let ownerBalance=0;
-    const checked = [];
     const tokenTotalSupply = await TokenContract.totalSupply();
     sendMessageViaAxios(CHANNEL_ID, "HUNGERGAMES INITIATED");
     initialProgressMessage = await sendMessageViaAxios(CHANNEL_ID, "Queue Progress: 0.00%");
@@ -193,15 +193,15 @@ async function lookForOpponent() {
 
     for (let i = 1; i <= queuecounter; i++) {
 
-        if (queue.get(i) && !alive.get(i) && !dead.get(i)) {
+        if (queue.get(checked[randomID]) && !alive.get(checked[randomID]) && !dead.get(checked[randomID])) {
             if (firstOpponent == 0) {
-                firstOpponent = i;
+                firstOpponent = checked[randomID];
                 console.log(`First: ${firstOpponent}`);
             } else {
                 console.log("Looking for second opponent");
                 const owneroffirst = await NFTContract.ownerOf(firstOpponent);
                 console.log(`Owner of first opponent (${firstOpponent}): ${owneroffirst}`);
-                let secondOpponent = await getRandomOpponent(i, owneroffirst);
+                let secondOpponent = await getRandomOpponent(checked[randomID], owneroffirst);
                 console.log(`Second opponent: ${secondOpponent}`);
                 if (secondOpponent == firstOpponent) {
                     secondOpponent = 0;
@@ -213,7 +213,7 @@ async function lookForOpponent() {
                     i = firstOpponent;
                     firstOpponent = 0;
                 } else {
-                    let nextAvailableOpponent = getNextAvailable(i);
+                    let nextAvailableOpponent = getNextAvailable(checked[randomID]);
                     console.log(`Next available opponent: ${nextAvailableOpponent}`);
                     if (nextAvailableOpponent === firstOpponent) {
                         nextAvailableOpponent = 0;
@@ -222,7 +222,6 @@ async function lookForOpponent() {
                     if (nextAvailableOpponent != 0) {
                         await enterBattle(firstOpponent, nextAvailableOpponent);
                         console.log(`Entered battle: ${firstOpponent} vs. ${nextAvailableOpponent}`);
-                        i = firstOpponent;
                         firstOpponent = 0;
                     }
                 }
@@ -231,7 +230,7 @@ async function lookForOpponent() {
 
         const progressPercentage = ((i / queuecounter) * 100).toFixed(2);
 
-        if (initialProgressMessage && editCounter >= 100 || i == queuecounter) {
+        if (initialProgressMessage && editCounter >= 100 || i >= queuecounter) {
             if(i == queuecounter){
                 await editMessageViaAxios(CHANNEL_ID, initialProgressMessage.message_id, `Round Progress: 100%`);
             } else{
@@ -304,10 +303,10 @@ async function getRandomOpponent(startIndex, firstOpponentOwner) {
 
         console.log(`Attempt ${attempts + 1}: Random Index: ${randomIndex.toNumber()}, Random ID: ${randomID}`);
 
-        if (queue.get(randomID) && !alive.get(randomID) && !dead.get(randomID)) {
-            if (await NFTContract.ownerOf(randomID) !== firstOpponentOwner) {
-                console.log(`Found a valid opponent: Random ID ${randomID}`);
-                return randomID;
+        if (queue.get(checked[randomID]) && !alive.get(checked[randomID]) && !dead.get(checked[randomID])) {
+            if (await NFTContract.ownerOf(checked[randomID]) !== firstOpponentOwner) {
+                console.log(`Found a valid opponent: Random ID ${checked[randomID]}`);
+                return checked[randomID];
             }
         }
     }

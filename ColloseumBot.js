@@ -635,11 +635,13 @@ function startBot() {
     registerBot.onText(/\/status/i, async (msg) => {
         const username = msg.from.username;
         let editcounter = 0;
+    
         if (!username) {
             console.error("Username is not defined.");
             registerBot.sendMessage(msg.chat.id, `❌ You haven't set up a Telegram Username.`);
             return;
         }
+    
         console.log('Fetching NFT status for username:', username);
     
         try {
@@ -648,6 +650,7 @@ function startBot() {
                 registerBot.sendMessage(msg.chat.id, `No wallet registered for @${username}`);
                 return;
             }
+    
             const NFTsOwned = await NFTContract.walletOfOwner(walletAddress);
     
             if (NFTsOwned.length === 0) {
@@ -655,22 +658,25 @@ function startBot() {
                 return;
             }
     
+            const maxMessageLength = 4000; // Adjust this value based on your requirements
+    
             let progressMessage = await registerBot.sendMessage(msg.chat.id, "Fetching NFT status... 0%");
     
             let completedCount = 0;
+            let responseMessage = `🖼️ *Your NFTs and Their Status & Active Potions:* 🖼️\n\n`;
     
             const fetchDetails = async (NFTId, totalNFTs) => {
-                const retrievedDead = await getAsync("dead"); 
-                let isDead = false; 
-            
+                const retrievedDead = await getAsync("dead");
+                let isDead = false;
+    
                 if (retrievedDead) {
                     const parsedDead = JSON.parse(retrievedDead);
-            
+    
                     if (Array.isArray(parsedDead)) {
                         isDead = parsedDead.some(entry => Array.isArray(entry) && entry.length === 2 && entry[0] === NFTId && entry[1] === true);
                     }
                 }
-
+    
                 const [boostBalance, vBalance, xtraBalance, skipBalance, queueData] = await Promise.all([
                     getAsync(`${NFTId}BOOSTBalance`).then(value => value === "true"),
                     getAsync(`${NFTId}VBalance`).then(value => value === "true"),
@@ -678,44 +684,55 @@ function startBot() {
                     getAsync(`${NFTId}SKIPBalance`).then(value => value === "true"),
                     getAsync("queue").then(value => (value ? JSON.parse(value) : [])),
                 ]);
-                
-                let response = `NFT ID: ${NFTId} - ${isDead ? "Dead" : "Alive"}\n`;
-                
+    
+                // Build the response for the current NFT
+                responseMessage += `NFT ID: ${NFTId} - ${isDead ? "Dead" : "Alive"}\n`;
+    
                 queueData.forEach(([NFTId, bool]) => {
-                    if (bool) response += `NFT ID ${NFTId} is queued ✅\n`;
+                    if (bool) responseMessage += `NFT ID ${NFTId} is queued ✅\n`;
                 });
-                
-                if (boostBalance) response += `BOOST ✅\n`;
-                if (vBalance) response += `V ✅\n`;
-                if (xtraBalance) response += `XTRA ✅\n`;
-                if (skipBalance) response += `SKIP ✅\n`;
-                response += '\n';
-            
+    
+                if (boostBalance) responseMessage += `BOOST ✅\n`;
+                if (vBalance) responseMessage += `V ✅\n`;
+                if (xtraBalance) responseMessage += `XTRA ✅\n`;
+                if (skipBalance) responseMessage += `SKIP ✅\n`;
+                responseMessage += '\n';
+    
                 completedCount++;
                 const progress = Math.round((completedCount / totalNFTs) * 100);
-                if(editcounter>10){
-                await registerBot.editMessageText(`Fetching NFT status... ${progress}%`, {
-                    chat_id: msg.chat.id,
-                    message_id: progressMessage.message_id
-                });
-                editcounter = 0;
+    
+                if (editcounter > 10 || responseMessage.length > maxMessageLength) {
+                    // If the message length is too long or edit counter is reached, send a new message
+                    await registerBot.sendMessage(msg.chat.id, responseMessage, { parse_mode: 'Markdown' });
+                    responseMessage = ''; // Clear the response
+                    editcounter = 0;
+                }
+    
+                if (editcounter > 10) {
+                    await registerBot.editMessageText(`Fetching NFT status... ${progress}%`, {
+                        chat_id: msg.chat.id,
+                        message_id: progressMessage.message_id
+                    });
+                    editcounter = 0;
                 }
                 editcounter++;
-                return response;
             };
-            
-            const results = await Promise.all(NFTsOwned.map(nft => {
+    
+            await Promise.all(NFTsOwned.map(nft => {
                 const NFTId = nft.toNumber();
                 return fetchDetails(NFTId, NFTsOwned.length);
             }));
     
-            const responseMessage = `🖼️ *Your NFTs and Their Status & Active Potions:* 🖼️\n\n` + results.join('');
-            registerBot.sendMessage(msg.chat.id, responseMessage, { parse_mode: 'Markdown' });
+            // Send the final response message
+            if (responseMessage) {
+                await registerBot.sendMessage(msg.chat.id, responseMessage, { parse_mode: 'Markdown' });
+            }
         } catch (error) {
             console.error('Error fetching NFT status:', error);
             registerBot.sendMessage(msg.chat.id, "🚫 Oops! We encountered an issue fetching your NFT status. Please give it another try in a moment.");
         }
     });
+    
     
     registerBot.onText(/\/setRef (\w+)/i, async (msg, match) => {
         const username = msg.from.username;
