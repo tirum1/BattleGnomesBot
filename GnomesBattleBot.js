@@ -46,11 +46,11 @@ client.on('error', (err) => {
 const getAsync = bluebird.promisify(client.get).bind(client);
 
 bot.onText(/\/?nft ([\d\s,]+)/i, async (msg, match) => {
-
     const userId = msg.from.id;
     const currentTime = Date.now();
     const username = msg.from.username ? `@${msg.from.username}` : msg.from.first_name;
     const safeUsername = username.replace(/_/g, '\\_');
+    const owner = [];
     if (userTimestamps[userId] && (currentTime - userTimestamps[userId] < RATE_LIMIT)) {
         bot.sendMessage(msg.chat.id, `${safeUsername} Please wait 10 seconds before using a command again. Alternatively, you can use /nft with up to 10 IDs at once (e.g., /nft ID1, ID2, ...).`, { parse_mode: 'Markdown' });
         return;
@@ -96,6 +96,10 @@ bot.onText(/\/?nft ([\d\s,]+)/i, async (msg, match) => {
             console.log("Debug3");
             const keyName = `${nftId}BattleResult`; 
             const battleDetailData = await getAsync(keyName); 
+            const ownerAddress = await NFTContract.ownerOf(nftId);
+            const owner = await getAsync(ownerAddress);
+            const safeOwner = owner.replace(/_/g, '\\_');
+            
 
             let battleDetail = null; 
             console.log("Debug4");
@@ -128,7 +132,8 @@ bot.onText(/\/?nft ([\d\s,]+)/i, async (msg, match) => {
                 message += `💥 Used XTRA: ${battleDetail.XTRA ? 'Yes' : 'No'}\n`;
                 message += `⚡ Used BOOST: ${battleDetail.BOOST ? 'Yes' : 'No'}\n`;
                 message += `✨ Used V: ${battleDetail.V ? 'Yes' : 'No'}\n`;
-                message += `⏭️ Used SKIP: ${battleDetail.SKIP ? 'Yes' : 'No'}`;
+                message += `⏭️ Used SKIP: ${battleDetail.SKIP ? 'Yes' : 'No'}\n\n`;
+               // message += `Owner: ${}`
             }
 
 
