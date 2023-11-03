@@ -247,7 +247,7 @@ async function lookForOpponent() {
     }
 
     let nonDeads = getAmountOfNonDead();
-    sendMessageViaAxios(CHANNEL_ID, `${aliveByID.length} Survived the Round!`);
+   // sendMessageViaAxios(CHANNEL_ID, `${aliveByID.length} Survived the Round!`);
     if (nonDeads <= maxAmountOfWinners) {
         sendMessageViaAxios(CHANNEL_ID, `Initiating PAYOUT!`);
         console.log("ENTERED WINNERS");
