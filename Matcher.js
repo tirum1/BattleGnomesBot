@@ -191,17 +191,17 @@ async function lookForOpponent() {
     let firstOpponent = 0;
     initialProgressMessage = await sendMessageViaAxios(CHANNEL_ID, "Round Progress: 0.00%");
 
-    for (let i = 1; i <= queuecounter; i++) {
+    for (let i = 0; i < queuecounter; i++) {
 
-        if (queue.get(checked[randomID]) && !alive.get(checked[randomID]) && !dead.get(checked[randomID])) {
+        if (queue.get(checked[i]) && !alive.get(checked[i]) && !dead.get(checked[i])) {
             if (firstOpponent == 0) {
-                firstOpponent = checked[randomID];
+                firstOpponent = checked[i];
                 console.log(`First: ${firstOpponent}`);
             } else {
                 console.log("Looking for second opponent");
                 const owneroffirst = await NFTContract.ownerOf(firstOpponent);
                 console.log(`Owner of first opponent (${firstOpponent}): ${owneroffirst}`);
-                let secondOpponent = await getRandomOpponent(checked[randomID], owneroffirst);
+                let secondOpponent = await getRandomOpponent(checked[i], owneroffirst);
                 console.log(`Second opponent: ${secondOpponent}`);
                 if (secondOpponent == firstOpponent) {
                     secondOpponent = 0;
@@ -213,7 +213,7 @@ async function lookForOpponent() {
                     i = firstOpponent;
                     firstOpponent = 0;
                 } else {
-                    let nextAvailableOpponent = getNextAvailable(checked[randomID]);
+                    let nextAvailableOpponent = getNextAvailable(checked[i]);
                     console.log(`Next available opponent: ${nextAvailableOpponent}`);
                     if (nextAvailableOpponent === firstOpponent) {
                         nextAvailableOpponent = 0;
