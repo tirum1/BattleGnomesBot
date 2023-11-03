@@ -308,7 +308,7 @@ bot.onText(/\/?stats ([\d\s,]+)/i, async (msg, match) => {
     let nftIds = match[1].split(',').map(id => Number(id.trim()));
 
     if (nftIds.length > 10) {
-        nftIds = nftIds.slice(0, 10);  
+        nftIds = nftIds.slice(0, 10);
         bot.sendMessage(chatId, `${safeUsername},\n You provided more than 10 NFT IDs. I'll only process the first 10.`, { parse_mode: 'Markdown' });
     }
 
@@ -318,7 +318,9 @@ bot.onText(/\/?stats ([\d\s,]+)/i, async (msg, match) => {
         if (retrievedStats) {
             const allNFTStats = JSON.parse(retrievedStats);
 
-            for (let nftId of nftIds) {
+            for (let i = 0; i < nftIds.length; i++) {
+                const nftId = nftIds[i];
+
                 if (nftId <= 0 || nftId > mintAmount) {
                     bot.sendMessage(chatId, `${safeUsername}, NFT with ID ${nftId} doesn't exist.`, { parse_mode: 'Markdown' });
                     continue;
@@ -350,7 +352,13 @@ bot.onText(/\/?stats ([\d\s,]+)/i, async (msg, match) => {
                     message += `🧪 *Potions Usage for NFT ${nftId}:*\n\n`;
                     message += `- Total Potions Used: ${totalPotionsUsed || 0}`;
 
-                    bot.sendMessage(chatId, message, { parse_mode: 'Markdown' });
+                    if (i < nftIds.length - 1) {
+                        // Send the message for each NFT, and add a line break for separation
+                        bot.sendMessage(chatId, message, { parse_mode: 'Markdown' });
+                    } else {
+                        // Send the last message
+                        bot.sendMessage(chatId, message, { parse_mode: 'Markdown' });
+                    }
                 } else {
                     bot.sendMessage(chatId, `${safeUsername}, Stats not found for NFT ${nftId}.`, { parse_mode: 'Markdown' });
                 }
@@ -364,7 +372,6 @@ bot.onText(/\/?stats ([\d\s,]+)/i, async (msg, match) => {
         console.error(error);
     }
 });
-
 
 
 

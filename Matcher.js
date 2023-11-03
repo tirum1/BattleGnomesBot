@@ -319,9 +319,9 @@ async function getRandomOpponent(startIndex, firstOpponentOwner) {
     return 0;
 }
 function getNextAvailable(startIndex) {
-        for (let i = startIndex; i <= queuecounter; i++) {
-            if (queue.get(i) && !alive.get(i) && !dead.get(i)) {
-                return i;
+        for (let i = 0; i <= queuecounter; i++) {
+            if (queue.get(checked[i]) && !alive.get(checked[i]) && !dead.get(checked[i])) {
+                return checked[i];
             }
         }
         return 0;  
