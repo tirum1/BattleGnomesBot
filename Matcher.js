@@ -134,7 +134,7 @@ async function startHungerGames () {
     const checked = [];
     const tokenTotalSupply = await TokenContract.totalSupply();
 
-    // sendMessageViaAxios(CHANNEL_ID, "HUNGERGAMES INITIATED");
+     sendMessageViaAxios(CHANNEL_ID, "HUNGERGAMES INITIATED");
     mintAmount = await NFTContract.getMintAmount();
 
     for (let i = 1; i <= mintAmount; i++) {
@@ -169,16 +169,16 @@ async function startHungerGames () {
     queuecounter = checked.length;
     newGame = false;
     activeRound = false;
-    // sendMessageViaAxios(CHANNEL_ID, `${queuecounter} Contestants entered the Arena!`);
+     sendMessageViaAxios(CHANNEL_ID, `${queuecounter} Contestants entered the Arena!`);
     console.log(`${queuecounter} Contestants entered the Arena!`);
 }
 async function lookForOpponent() {
     activeRound = true;
-    // await sendMessageViaAxios(CHANNEL_ID, "ROUND INITIATED");
+     await sendMessageViaAxios(CHANNEL_ID, "ROUND INITIATED");
     console.log("Round initiated");
     aliveByID = [];
     let firstOpponent = 0;
-   // initialProgressMessage = await sendMessageViaAxios(CHANNEL_ID, "Round Progress: 0.00%");
+    initialProgressMessage = await sendMessageViaAxios(CHANNEL_ID, "Round Progress: 0.00%");
 
     for (let i = 1; i <= queuecounter; i++) {
 
@@ -233,9 +233,9 @@ async function lookForOpponent() {
     }
 
     let nonDeads = getAmountOfNonDead();
-   // sendMessageViaAxios(CHANNEL_ID, `${aliveByID.length} Survived the Round!`);
+    sendMessageViaAxios(CHANNEL_ID, `${aliveByID.length} Survived the Round!`);
     if (nonDeads <= maxAmountOfWinners) {
-      //  sendMessageViaAxios(CHANNEL_ID, `Initiating PAYOUT!`);
+        sendMessageViaAxios(CHANNEL_ID, `Initiating PAYOUT!`);
         console.log("ENTERED WINNERS");
         await storeRoundWinners();
        // await payoutWinners(nonDeads);
