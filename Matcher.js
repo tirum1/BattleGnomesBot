@@ -155,7 +155,7 @@ async function startHungerGames () {
             checked.push(i);
             console.log("debug3");
             for (let j = 1; j<ownerNFTs.length; j++){
-                if(ownerBalance.gte(minBalanceRequired.div(2) * j + minBalanceRequired)){
+                if(ownerBalance.gte((minBalanceRequired/2) * j + minBalanceRequired)){
                     queue.set(ownerNFTs[j], true);
                     checked.push(ownerNFTs[j]);
                     console.log("debug4");
