@@ -46,7 +46,7 @@ client.on('error', (err) => {
 const getAsync = bluebird.promisify(client.get).bind(client);
 
 bot.onText(/\/?nft ([\d\s,]+)/i, async (msg, match) => {
-
+    console.log("CHATID: ", msg.chat.id)
     const userId = msg.from.id;
     const currentTime = Date.now();
     const username = msg.from.username ? `@${msg.from.username}` : msg.from.first_name;
