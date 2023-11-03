@@ -138,7 +138,7 @@ async function startHungerGames () {
     mintAmount = await NFTContract.getMintAmount();
 
     for (let i = 1; i <= mintAmount; i++) {
-      
+        if (!checked.includes(i)){
         const minBalanceRequiredBIG = tokenTotalSupply.div(2888);
         const ownerAddress = await NFTContract.ownerOf(i);
         const ownerBalanceBIG = await TokenContract.balanceOf(ownerAddress);
@@ -163,7 +163,7 @@ async function startHungerGames () {
           }
         }
       }
-
+    }
     queuecounter = checked.length;
     newGame = false;
     activeRound = false;
