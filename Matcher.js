@@ -133,8 +133,8 @@ async function startHungerGames () {
     let ownerBalance=0;
     const checked = [];
     const tokenTotalSupply = await TokenContract.totalSupply();
-    initialProgressMessage = await sendMessageViaAxios(CHANNEL_ID, "Round Progress: 0.00%");
     sendMessageViaAxios(CHANNEL_ID, "HUNGERGAMES INITIATED");
+    initialProgressMessage = await sendMessageViaAxios(CHANNEL_ID, "Queue Progress: 0.00%");
     mintAmount = await NFTContract.getMintAmount();
 
     for (let i = 1; i <= mintAmount; i++) {
@@ -181,8 +181,7 @@ async function startHungerGames () {
     queuecounter = checked.length;
     newGame = false;
     activeRound = false;
-     sendMessageViaAxios(CHANNEL_ID, `${queuecounter} Contestants entered the Arena!`);
-    console.log(`${queuecounter} Contestants entered the Arena!`);
+    sendMessageViaAxios(CHANNEL_ID, `${queuecounter} Contestants entered the Arena!`);
 }
 async function lookForOpponent() {
     activeRound = true;

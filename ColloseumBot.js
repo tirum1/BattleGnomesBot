@@ -681,8 +681,8 @@ function startBot() {
                 
                 let response = `NFT ID: ${NFTId} - ${isDead ? "Dead" : "Alive"}\n`;
                 
-                queueData.forEach(([nftId, bool]) => {
-                    if (bool) response += `NFT ID ${nftId} is queued ✅\n`;
+                queueData.forEach(([NFTId, bool]) => {
+                    if (bool) response += `NFT ID ${NFTId} is queued ✅\n`;
                 });
                 
                 if (boostBalance) response += `BOOST ✅\n`;
