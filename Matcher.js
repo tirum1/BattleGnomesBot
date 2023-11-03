@@ -72,6 +72,7 @@ let StatsSize = 5;
 let messageId = 0;
 let editCounter = 0;
 const checked = [];
+let balance = 0;
 
 const BattleResult = {
     Won: "Won",
@@ -100,7 +101,7 @@ rows.forEach((row) => {
 startTimer();
 
 setInterval(async () => {
-    const balance = await provider.getBalance(hungerGamesAddress);
+     balance = await provider.getBalance(hungerGamesAddress);
     if (newGame && hasTimerPassed() && balance >= 0.1 && !activeRound) {
      startHungerGames();
     }    
@@ -285,6 +286,8 @@ function hasTimerPassed() {
         return Math.floor(Date.now() / 1000) >= (time + roundDuration * 3); 
     } else if (HungerGamesBegin) {
         return Math.floor(Date.now() / 1000) >= (time + roundDuration);
+    } else if(balance >= 0.25) {
+        return true;
     } else {
         return false;
     }
@@ -529,6 +532,7 @@ async function storeRoundWinners() {
             const roundWinsOfNFT = await getAsync(`roundWinsOf${aliveByID[checked[i]]}`);
             const owner = await NFTContract.ownerOf(aliveByID[checked[i]]);
             roundWinners.push(owner);
+            console.log("DEBUG2.1")
             await setAsync(`roundWinsOf${checked[i]}`, parseInt(roundWinsOfNFT || 0) + 1);
             console.log("DEBUG3")
     }
