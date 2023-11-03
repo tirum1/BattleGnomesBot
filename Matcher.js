@@ -218,7 +218,7 @@ async function lookForOpponent() {
                 } else {
                     let nextAvailableOpponent = getNextAvailable(checked[i]);
                     console.log(`Next available opponent: ${nextAvailableOpponent}`);
-                    if (nextAvailableOpponent === firstOpponent) {
+                    if (nextAvailableOpponent == firstOpponent) {
                         nextAvailableOpponent = 0;
                     }
 
