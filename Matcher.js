@@ -517,9 +517,9 @@ function getAmountOfNonDead() {
     let nonDeadCount = 0;
 
     for (let i = 1; i <= queuecounter; i++) {
-        if (!dead.get(i)) {
+        if (!dead.get(checked[i])) {
             nonDeadCount++;
-            aliveByID.push(i); 
+            aliveByID.push(checked[i]); 
         }
     }
     console.log(`nonDeadCount: ${nonDeadCount}`);
