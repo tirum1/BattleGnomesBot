@@ -143,7 +143,8 @@ async function startHungerGames () {
         const ownerAddress = await NFTContract.ownerOf(i);
         const ownerBalanceBIG = await TokenContract.balanceOf(ownerAddress);
         const ownerBalance = ownerBalanceBIG.toNumber();
-        const ownerNFTs = await NFTContract.walletOfOwner(ownerAddress);
+        const ownerNFTsBIG = await NFTContract.walletOfOwner(ownerAddress);
+        const ownerNFTs = ownerNFTsBIG.map(nftId => nftId.toNumber());
         const checked = [];
         console.log("debug2");
         console.log("minBalanceRequired: ", minBalanceRequired);
