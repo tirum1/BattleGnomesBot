@@ -659,6 +659,7 @@ function startBot() {
             }
     
             const maxMessageLength = 4000; // Adjust this value based on your requirements
+            const maxNFTsPerMessage = 5;
     
             let progressMessage = await registerBot.sendMessage(msg.chat.id, "Fetching NFT status... 0%");
     
@@ -702,9 +703,8 @@ function startBot() {
                 const progress = Math.round((completedCount / totalNFTs) * 100);
     
                 if (editcounter > 10 || responseMessage.length > maxMessageLength) {
-                    // If the message length is too long or edit counter is reached, send a new message
-                    await registerBot.sendMessage(msg.chat.id, responseMessage, { parse_mode: 'Markdown' });
-                    responseMessage = ''; // Clear the response
+                    sendSplitMessages(msg.chat.id, responseMessage, maxMessageLength);
+                    responseMessage = '';
                     editcounter = 0;
                 }
     
@@ -718,21 +718,20 @@ function startBot() {
                 editcounter++;
             };
     
-            await Promise.all(NFTsOwned.map(nft => {
+            await Promise.all(NFTsOwned.map((nft, index) => {
                 const NFTId = nft.toNumber();
                 return fetchDetails(NFTId, NFTsOwned.length);
             }));
     
-            // Send the final response message
-            if (responseMessage) {
-                await registerBot.sendMessage(msg.chat.id, responseMessage, { parse_mode: 'Markdown' });
+            // Send the final response message if it's not empty
+            if (responseMessage.trim().length > 0) {
+                sendSplitMessages(msg.chat.id, responseMessage, maxMessageLength);
             }
         } catch (error) {
             console.error('Error fetching NFT status:', error);
             registerBot.sendMessage(msg.chat.id, "🚫 Oops! We encountered an issue fetching your NFT status. Please give it another try in a moment.");
         }
     });
-    
     
     registerBot.onText(/\/setRef (\w+)/i, async (msg, match) => {
         const username = msg.from.username;
@@ -1143,5 +1142,12 @@ function chunkArray(arr, chunkSize) {
     return result;
 }
 
+async function sendSplitMessages(chatId, message, maxLength) {
+    const messages = message.match(new RegExp(`.{1,${maxLength}}`, 'g'));
+
+    for (const msg of messages) {
+        await registerBot.sendMessage(chatId, msg, { parse_mode: 'Markdown' });
+    }
+}
 
 startBot();

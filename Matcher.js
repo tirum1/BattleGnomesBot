@@ -290,16 +290,16 @@ function hasTimerPassed() {
     }
 }
 async function getRandomOpponent(startIndex, firstOpponentOwner) {
+    const aliveLength = aliveByID.length;
+    const lengthOrCounter = aliveLength === 0 ? queuecounter : aliveLength;
     const maxAttempts = 4;
-
-    console.log('Finding a random opponent...');
 
     for (let attempts = 0; attempts < maxAttempts; attempts++) {
         const currentTimestamp = Math.floor(Date.now() / 1000);
         const inputForHash = ethers.utils.solidityKeccak256(['uint', 'uint'], [currentTimestamp, startIndex]);
         const keccak256HashNum = ethers.BigNumber.from(inputForHash);
-        const randomIndex = keccak256HashNum.mod(queuecounter);
-        const randomID = randomIndex.toNumber();
+        const randomIndex = keccak256HashNum.mod(lengthOrCounter).add(1);
+        const randomID = aliveLength === 0 ? randomIndex.toNumber() : aliveByID[randomIndex.toNumber()];
 
         if (queue.get(checked[randomID]) && !alive.get(checked[randomID]) && !dead.get(checked[randomID])) {
             if (await NFTContract.ownerOf(checked[randomID]) !== firstOpponentOwner) {
@@ -309,10 +309,11 @@ async function getRandomOpponent(startIndex, firstOpponentOwner) {
         }
     }
 
+    console.log('No valid opponent found.');
     return 0;
 }
 function getNextAvailable(startIndex) {
-        for (let i = 0; i <= queuecounter; i++) {
+        for (let i = 0; i < queuecounter; i++) {
             if (queue.get(checked[i]) && !alive.get(checked[i]) && !dead.get(checked[i])) {
                 return checked[i];
             }
@@ -500,9 +501,9 @@ async function removePotions() {
     const mintAmount = await NFTContract.getMintAmount();
     const potionsToRemove = ['XTRA', 'BOOST', 'V', 'SKIP'];
 
-    for (let i = 1; i <= mintAmount; i++) {
+    for (let i = 0; i < queuecounter; i++) {
         for(let j = 0; j< potionsToRemove.length; j++){
-        await setAsync(`${i}${potionsToRemove[j]}Balance`, false);
+        await setAsync(`${checked[i]}${potionsToRemove[j]}Balance`, false);
         }
     }
 
