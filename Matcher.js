@@ -150,7 +150,7 @@ async function startHungerGames () {
         console.log("i: ", i);
         console.log("ownerNFTs[0]: ", ownerNFTs[0].toString());
       
-        if (i === ownerNFTs[0] && ownerBalanceBIG>=(minBalanceRequiredBIG)) {
+        if (i === ownerNFTs[0].toNumber() && ownerBalanceBIG>=(minBalanceRequiredBIG)) {
           queue.set(i, true);
           checked.push(i);
             console.log("pushed: ", i);
@@ -160,7 +160,7 @@ async function startHungerGames () {
             if (ownerBalanceBIG>=(requiredBalance)) {
               queue.set(ownerNFTs[j], true);
               checked.push(ownerNFTs[j]);
-              console.log("debug4");
+              console.log("pushed: ", j);
             }
           }
         }
