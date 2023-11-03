@@ -155,7 +155,7 @@ async function startHungerGames () {
         if (i == ownerNFTs[0] && ownerBalanceBIG>=(minBalanceRequiredBIG)) {
           queue.set(i, true);
           checked.push(i);
-         console.log("pushed: ", i);
+          console.log("pushed: ", i);
           for (let j = 1; j < ownerNFTs.length; j++) {
             const requiredBalance = minBalanceRequiredBIG.div(2).mul(j).add(minBalanceRequiredBIG);
       
@@ -587,7 +587,7 @@ function resetTimer() {
     console.log('Timer reset at timestamp:', time);
 }
 async function resetAlive() {
-    for (let i = 1; i <= queuecounter; i++) {
+    for (let i = 0; i < queuecounter; i++) {
         alive.set(checked[i], false);
     }
 }
