@@ -530,8 +530,9 @@ async function storeRoundWinners() {
     for (let i = 0; i < aliveByID.length; i++) {
         console.log("DEBUG2");
         const roundWinsOfNFT = await getAsync(`roundWinsOf${aliveByID[checked[i]]}`);
-        roundWinsOfNFT = parseInt(roundWinsOfNFT);
+        console.log("DEBUG2.1");
         const owner = await NFTContract.ownerOf(aliveByID[checked[i]]);
+        console.log("DEBUG3");
         roundWinners.push(owner);
 
         if (roundWinsOfNFT !== undefined) {
@@ -539,15 +540,14 @@ async function storeRoundWinners() {
             if (!isNaN(parsedWins)) {
                 await setAsync(`roundWinsOf${checked[i]}`, parsedWins + 1);
             } else {
-                // Handle the case where roundWinsOfNFT is not a valid number
                 console.log(`Error: roundWinsOfNFT is not a valid number for ${checked[i]}`);
             }
         } else {
             await setAsync(`roundWinsOf${checked[i]}`, 1);
         }
 
-        console.log("DEBUG2.1");
-        console.log("DEBUG3");
+
+
     }
 
     return roundWinners;
