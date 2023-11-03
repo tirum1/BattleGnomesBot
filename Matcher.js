@@ -250,6 +250,7 @@ async function lookForOpponent() {
     if (nonDeads <= maxAmountOfWinners) {
         sendMessageViaAxios(CHANNEL_ID, `Initiating PAYOUT!`);
         console.log("ENTERED WINNERS");
+        
         await storeRoundWinners();
        // await payoutWinners(nonDeads);
         reviveAll();
@@ -500,7 +501,7 @@ async function removePotions() {
 
     const mintAmount = await NFTContract.getMintAmount();
     const potionsToRemove = ['XTRA', 'BOOST', 'V', 'SKIP'];
-
+    console.log("DEBUG3")
     for (let i = 0; i < queuecounter; i++) {
         for(let j = 0; j< potionsToRemove.length; j++){
         await setAsync(`${checked[i]}${potionsToRemove[j]}Balance`, false);
@@ -524,10 +525,12 @@ function getAmountOfNonDead() {
 async function storeRoundWinners() {
     roundWinners = [];
     for (let i = 0; i < aliveByID.length; i++) {
+        console.log("DEBUG2")
             const roundWinsOfNFT = await getAsync(`roundWinsOf${aliveByID[checked[i]]}`);
             const owner = await NFTContract.ownerOf(aliveByID[checked[i]]);
             roundWinners.push(owner);
             await setAsync(`roundWinsOf${checked[i]}`, parseInt(roundWinsOfNFT || 0) + 1);
+            console.log("DEBUG3")
     }
 
     return roundWinners; 
