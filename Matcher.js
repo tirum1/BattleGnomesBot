@@ -185,11 +185,12 @@ async function startHungerGames () {
 }
 async function lookForOpponent() {
     activeRound = true;
-     await sendMessageViaAxios(CHANNEL_ID, "ROUND INITIATED");
+    // await sendMessageViaAxios(CHANNEL_ID, "ROUND INITIATED");
+    console.log("ROUND INITIATED")
     console.log("Round initiated");
     aliveByID = [];
     let firstOpponent = 0;
-    initialProgressMessage = await sendMessageViaAxios(CHANNEL_ID, "Round Progress: 0.00%");
+    // initialProgressMessage = await sendMessageViaAxios(CHANNEL_ID, "Round Progress: 0.00%");
 
     for (let i = 0; i < queuecounter; i++) {
 
@@ -229,16 +230,15 @@ async function lookForOpponent() {
         }
 
         const progressPercentage = ((i / queuecounter) * 100).toFixed(2);
-
+        console.log("progress: ", progressPercentage);
         if (initialProgressMessage && editCounter >= 100 || i >= queuecounter) {
             if(i == queuecounter){
-                await editMessageViaAxios(CHANNEL_ID, initialProgressMessage.message_id, `Round Progress: 100%`);
+            //await editMessageViaAxios(CHANNEL_ID, initialProgressMessage.message_id, `Round Progress: 100%`);
             } else{
-            await editMessageViaAxios(CHANNEL_ID, initialProgressMessage.message_id, `Round Progress: ${progressPercentage}%`);
+            //await editMessageViaAxios(CHANNEL_ID, initialProgressMessage.message_id, `Round Progress: ${progressPercentage}%`);
             }
             editCounter = 0; 
         }
-        
         editCounter++; 
     }
 
