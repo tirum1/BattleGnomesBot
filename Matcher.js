@@ -317,7 +317,7 @@ function getNextAvailable(first) {
                 return checked[i];
             }
         }
-        console.log('No valid opponent found.');
+        console.log('No valid opponent found in getNext.');
         return 0;  
 }
 async function fillLastBattle(First, Second, result, firstNFTData, secondNFTData) {
