@@ -160,7 +160,7 @@ async function startHungerGames () {
             if (ownerBalanceBIG>=(requiredBalance)) {
               queue.set(ownerNFTs[j], true);
               checked.push(ownerNFTs[j]);
-              console.log("pushed: ", j);
+              console.log("pushed: ", ownerNFTs[j]);
             }
           }
         }
