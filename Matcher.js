@@ -98,8 +98,8 @@ startTimer();
 
 setInterval(async () => {
     const balance = await provider.getBalance(hungerGamesAddress);
-    if (newGame && hasTimerPassed() && balance >= 0.1) {
-   //   startHungerGames();
+    if (newGame && hasTimerPassed() && balance >= 0.1 && !activeRound) {
+     startHungerGames();
     }    
     await setAsync("time", time);
     await setAsync("newGame", newGame);
@@ -127,6 +127,7 @@ function startTimer() {
     time = Math.floor(Date.now() / 1000); 
 }
 async function startHungerGames () {
+    activeRound = true;
     let ownerAddress=null;
     let minBalanceRequired = 0;
     let ownerBalance=0;
@@ -157,6 +158,7 @@ async function startHungerGames () {
 
     queuecounter = checked.length;
     newGame = false;
+    activeRound = false;
     sendMessageViaAxios(CHANNEL_ID, `${queuecounter} Contestants entered the Arena!`);
 }
 async function lookForOpponent() {
