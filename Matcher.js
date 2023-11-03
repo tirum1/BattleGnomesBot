@@ -131,44 +131,26 @@ async function startHungerGames () {
     let ownerAddress=null;
     let minBalanceRequired = 0;
     let ownerBalance=0;
+    const checked = [];
     const tokenTotalSupply = await TokenContract.totalSupply();
 
     // sendMessageViaAxios(CHANNEL_ID, "HUNGERGAMES INITIATED");
     mintAmount = await NFTContract.getMintAmount();
 
     for (let i = 1; i <= mintAmount; i++) {
-        console.log("debug1");
       
         const minBalanceRequiredBIG = tokenTotalSupply.div(2888);
-        console.log("debug1.1");
-      
-        // No need to convert minBalanceRequiredBIG to a JavaScript integer
         const ownerAddress = await NFTContract.ownerOf(i);
-        console.log("debug1.3");
-      
         const ownerBalanceBIG = await TokenContract.balanceOf(ownerAddress);
-        console.log("debug1.4");
-      
-        // No need to convert ownerBalanceBIG to a JavaScript integer
         const ownerNFTsBIG = await NFTContract.walletOfOwner(ownerAddress);
-        console.log("debug1.6");
-      
-        // Map ownerNFTsBIG to an array of BigNumbers
         const ownerNFTs = ownerNFTsBIG.map(nftId => nftId);
-      
-        console.log("debug1.7");
-        const checked = [];
-        console.log("debug2");
-      
         console.log("minBalanceRequired: ", minBalanceRequiredBIG.toString());
         console.log("ownerBalance: ", ownerBalanceBIG.toString());
         console.log("ownerNFTs[0]: ", ownerNFTs[0].toString());
       
-        // Perform comparisons with BigNumbers
         if (i === ownerNFTs[0] && ownerBalanceBIG.gte(minBalanceRequiredBIG)) {
           queue.set(i, true);
           checked.push(i);
-          console.log("debug3");
       
           for (let j = 1; j < ownerNFTs.length; j++) {
             const requiredBalance = minBalanceRequiredBIG.div(2).mul(j).add(minBalanceRequiredBIG);
@@ -181,8 +163,7 @@ async function startHungerGames () {
           }
         }
       }
-      
-    console.log("debug5");
+
     queuecounter = checked.length;
     newGame = false;
     activeRound = false;
