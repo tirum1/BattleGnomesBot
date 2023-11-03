@@ -191,7 +191,6 @@ async function lookForOpponent() {
     activeRound = true;
     // await sendMessageViaAxios(CHANNEL_ID, "ROUND INITIATED");
     console.log("ROUND INITIATED");
-    console.log("Round initiated");
     aliveByID = [];
     let firstOpponent = 0;
     // initialProgressMessage = await sendMessageViaAxios(CHANNEL_ID, "Round Progress: 0.00%");
@@ -312,9 +311,9 @@ async function getRandomOpponent(startIndex, firstOpponentOwner) {
     console.log('No valid opponent found.');
     return 0;
 }
-function getNextAvailable(startIndex) {
+function getNextAvailable(first) {
         for (let i = 0; i < queuecounter; i++) {
-            if (queue.get(checked[i]) && !alive.get(checked[i]) && !dead.get(checked[i])) {
+            if (queue.get(checked[i]) && !alive.get(checked[i]) && !dead.get(checked[i]) && checked[i] != first) {
                 return checked[i];
             }
         }

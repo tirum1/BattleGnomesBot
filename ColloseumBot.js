@@ -634,7 +634,6 @@ function startBot() {
 
     registerBot.onText(/\/status/i, async (msg) => {
         const username = msg.from.username;
-        let editcounter = 0;
     
         if (!username) {
             console.error("Username is not defined.");
@@ -658,80 +657,62 @@ function startBot() {
                 return;
             }
     
-            const maxMessageLength = 4000; // Adjust this value based on your requirements
-            const maxNFTsPerMessage = 5;
+            const maxBatchSize = 5;
+            const totalNFTs = NFTsOwned.length;
+            const numBatches = Math.ceil(totalNFTs / maxBatchSize);
     
-            let progressMessage = await registerBot.sendMessage(msg.chat.id, "Fetching NFT status... 0%");
+            for (let batchIndex = 0; batchIndex < numBatches; batchIndex++) {
+                const startIndex = batchIndex * maxBatchSize;
+                const endIndex = Math.min((batchIndex + 1) * maxBatchSize, totalNFTs);
+                const batchNFTs = NFTsOwned.slice(startIndex, endIndex);
     
-            let completedCount = 0;
-            let responseMessage = `🖼️ *Your NFTs and Their Status & Active Potions:* 🖼️\n\n`;
-    
-            const fetchDetails = async (NFTId, totalNFTs) => {
-                const retrievedDead = await getAsync("dead");
-                let isDead = false;
-    
-                if (retrievedDead) {
-                    const parsedDead = JSON.parse(retrievedDead);
-    
-                    if (Array.isArray(parsedDead)) {
-                        isDead = parsedDead.some(entry => Array.isArray(entry) && entry.length === 2 && entry[0] === NFTId && entry[1] === true);
-                    }
-                }
-    
-                const [boostBalance, vBalance, xtraBalance, skipBalance, queueData] = await Promise.all([
-                    getAsync(`${NFTId}BOOSTBalance`).then(value => value === "true"),
-                    getAsync(`${NFTId}VBalance`).then(value => value === "true"),
-                    getAsync(`${NFTId}XTRABalance`).then(value => value === "true"),
-                    getAsync(`${NFTId}SKIPBalance`).then(value => value === "true"),
-                    getAsync("queue").then(value => (value ? JSON.parse(value) : [])),
-                ]);
-    
-                // Build the response for the current NFT
-                responseMessage += `NFT ID: ${NFTId} - ${isDead ? "Dead" : "Alive"}\n`;
-    
-                queueData.forEach(([NFTId, bool]) => {
-                    if (bool) responseMessage += `NFT ID ${NFTId} is queued ✅\n`;
-                });
-    
-                if (boostBalance) responseMessage += `BOOST ✅\n`;
-                if (vBalance) responseMessage += `V ✅\n`;
-                if (xtraBalance) responseMessage += `XTRA ✅\n`;
-                if (skipBalance) responseMessage += `SKIP ✅\n`;
-                responseMessage += '\n';
-    
-                completedCount++;
-                const progress = Math.round((completedCount / totalNFTs) * 100);
-    
-                if (editcounter > 10 || responseMessage.length > maxMessageLength) {
-                    sendSplitMessages(msg.chat.id, responseMessage, maxMessageLength);
-                    responseMessage = '';
-                    editcounter = 0;
-                }
-    
-                if (editcounter > 10) {
-                    await registerBot.editMessageText(`Fetching NFT status... ${progress}%`, {
-                        chat_id: msg.chat.id,
-                        message_id: progressMessage.message_id
-                    });
-                    editcounter = 0;
-                }
-                editcounter++;
-            };
-    
-            await Promise.all(NFTsOwned.map((nft, index) => {
-                const NFTId = nft.toNumber();
-                return fetchDetails(NFTId, NFTsOwned.length);
-            }));
-    
-            // Send the final response message if it's not empty
-            if (responseMessage.trim().length > 0) {
-                sendSplitMessages(msg.chat.id, responseMessage, maxMessageLength);
+                const responseMessage = await fetchBatchDetails(batchNFTs);
+                registerBot.sendMessage(msg.chat.id, responseMessage);
             }
         } catch (error) {
             console.error('Error fetching NFT status:', error);
             registerBot.sendMessage(msg.chat.id, "🚫 Oops! We encountered an issue fetching your NFT status. Please give it another try in a moment.");
         }
     });
+    
+    async function fetchBatchDetails(batchNFTs) {
+        let responseMessage = `🖼️ *Your NFTs and Their Status & Active Potions:* 🖼️\n\n`;
+    
+        for (const NFTId of batchNFTs) {
+            const retrievedDead = await getAsync("dead");
+            let isDead = false;
+    
+            if (retrievedDead) {
+                const parsedDead = JSON.parse(retrievedDead);
+    
+                if (Array.isArray(parsedDead)) {
+                    isDead = parsedDead.some(entry => Array.isArray(entry) && entry.length === 2 && entry[0] === NFTId && entry[1] === true);
+                }
+            }
+    
+            const [boostBalance, vBalance, xtraBalance, skipBalance, queueData] = await Promise.all([
+                getAsync(`${NFTId}BOOSTBalance`).then(value => value === "true"),
+                getAsync(`${NFTId}VBalance`).then(value => value === "true"),
+                getAsync(`${NFTId}XTRABalance`).then(value => value === "true"),
+                getAsync(`${NFTId}SKIPBalance`).then(value => value === "true"),
+                getAsync("queue").then(value => (value ? JSON.parse(value) : [])),
+            ]);
+    
+            responseMessage += `NFT ID: ${NFTId} - ${isDead ? "Dead" : "Alive"}\n`;
+    
+            queueData.forEach(([queuedNFTId, bool]) => {
+                if (bool && queuedNFTId === NFTId) responseMessage += `NFT ID ${queuedNFTId} is queued ✅\n`;
+            });
+    
+            if (boostBalance) responseMessage += `BOOST ✅\n`;
+            if (vBalance) responseMessage += `V ✅\n`;
+            if (xtraBalance) responseMessage += `XTRA ✅\n`;
+            if (skipBalance) responseMessage += `SKIP ✅\n`;
+            responseMessage += '\n';
+        }
+    
+        return responseMessage;
+    }
     
     registerBot.onText(/\/setRef (\w+)/i, async (msg, match) => {
         const username = msg.from.username;
