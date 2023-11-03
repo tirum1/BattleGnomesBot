@@ -34,7 +34,7 @@ setInterval(async () => {
         const remainingTime = startTimerNum + intervalTimeNum - currentTime;
         if (Math.random() < 0.1) { 
             const readyMessage = getReadyQuote(remainingTime);
-            sendMessageViaAxios(CHANNEL_ID, readyMessage);
+           // sendMessageViaAxios(CHANNEL_ID, readyMessage);
         }
 
     } catch (error) {
