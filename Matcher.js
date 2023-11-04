@@ -60,7 +60,7 @@ let aliveByID = [];
 let time = 0;
 let activeRound = false;
 const maxAmountOfWinners = 5;
-const roundDuration = 10;
+const roundDuration = 300;
 let queue = new Map();
 let alive = new Map();
 let dead = new Map();
@@ -102,7 +102,7 @@ startTimer();
 setInterval(async () => {
      balance = await provider.getBalance(hungerGamesAddress);
     if (newGame && hasTimerPassed() && balance >= 0.1 && !activeRound) {
-    // startHungerGames();
+     startHungerGames();
     }    
     await setAsync("time", time);
     await setAsync("newGame", newGame);
@@ -121,7 +121,7 @@ setInterval(async () => {
     await setAsync("mintAmount", mintAmount.toString());
     await setAsync("stats", JSON.stringify(stats));
     if(!activeRound && queuecounter >= 2 && hasTimerPassed()){
-    //   await lookForOpponent();
+     await lookForOpponent();
     }
 }, 500);
 
@@ -252,7 +252,7 @@ async function lookForOpponent() {
         console.log("ENTERED WINNERS");
         
         await storeRoundWinners();
-       // await payoutWinners(nonDeads);
+        await payoutWinners(nonDeads);
         reviveAll();
         resetQueue();
         roundsCount = 0;
