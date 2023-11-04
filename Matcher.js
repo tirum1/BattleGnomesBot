@@ -539,9 +539,9 @@ async function storeRoundWinners() {
         if (roundWinsOfNFT !== undefined) {
             const parsedWins = parseInt(roundWinsOfNFT);
             if (!isNaN(parsedWins)) {
-                await setAsync(`roundWinsOf${checked[i]}`, parsedWins + 1);
+                await setAsync(`roundWinsOf${aliveByID[i]}`, parsedWins + 1);
             } else {
-                console.log(`Error: roundWinsOfNFT is not a valid number for ${aliveByID[checked[i]]}`);
+                console.log(`Error: roundWinsOfNFT is not a valid number for ${aliveByID[i]}`);
             }
         } else {
             await setAsync(`roundWinsOf${checked[i]}`, 1);
