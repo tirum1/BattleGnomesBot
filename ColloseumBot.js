@@ -717,7 +717,7 @@ function startBot() {
     registerBot.onText(/\/calcqueue/i, async (msg, match) => {
         console.log("called calcqueue");
         const username = msg.from.username;
-
+        const safeUsername = username.replace(/_/g, '\\_');
         if (!username) {
             console.error("Username is not defined.");
             registerBot.sendMessage(msg.chat.id, `❌ You haven't set up a Telegram Username.`);
@@ -727,7 +727,7 @@ function startBot() {
         try {
             const walletAddress = await client.getAsync(username);
             if (!walletAddress) {
-                registerBot.sendMessage(msg.chat.id, `No wallet registered for @${username}`);
+                registerBot.sendMessage(msg.chat.id, `No wallet registered for @${safeUsername}`);
                 return;
             }
 
@@ -760,7 +760,7 @@ function startBot() {
                 }
             }
     
-            registerBot.sendMessage(msg.chat.id, `Username: @${username}\nTotal NFTs: ${totalNFTs}\nQueued NFTs: ${queuedNFTs}\nToken Balance: ${balance}`);
+            registerBot.sendMessage(msg.chat.id, `Username: @${safeUsername}\nTotal NFTs: ${totalNFTs}\nQueued NFTs: ${queuedNFTs}\nToken Balance: ${balance}`);
         } catch (error) {
             console.error("Error:", error);
             registerBot.sendMessage(msg.chat.id, "An error occurred while calculating NFT queue.");
