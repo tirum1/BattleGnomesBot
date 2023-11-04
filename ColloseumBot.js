@@ -760,7 +760,7 @@ function startBot() {
                 }
             }
     
-            registerBot.sendMessage(msg.chat.id, `Username: @${username}\nTotal NFTs: ${totalNFTs}\nQueued NFTs: ${queuedNFTs}\nToken Balance: ${balance}`);
+            registerBot.sendMessage(msg.chat.id, `Username: @${username}\nTotal NFTs: ${totalNFTs}\nQueued NFTs: ${queuedNFTs}\nToken Balance: ${ownerBalanceBIG.toNumber()}`);
         } catch (error) {
             console.error("Error:", error);
             registerBot.sendMessage(msg.chat.id, "An error occurred while calculating NFT queue.");
