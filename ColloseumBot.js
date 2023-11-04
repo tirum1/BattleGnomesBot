@@ -754,7 +754,6 @@ function startBot() {
     
                 if (balance >= tokensRequired.toNumber()) {
                     queuedNFTs.push(ownerNFTs[i]);
-                    balance -= tokensRequired.toNumber();
                 } else {
                     break; 
                 }
