@@ -101,7 +101,9 @@ function startBot() {
         response += `🔍 - /wallet: Display your registered wallet.\n`;
         response += `⚖️ - /balance: Check your shop balance.\n`;
         response += `💰 - /price: Get current potion prices.\n`;
+        response += `📝 - /calcQ: Calculates your next Queueposition.\n`;
         response += `📊 - /status: View your NFTs and their potion statuses.\n\n`;
+
         response += `🛒 *Shop:* \nTo deposit and shop, [click here](www.gnomescollective.xyz).\n\n`;
         response += `🧪 *Potions:* \nUse the following commands to buy and apply:\n`;
         response += `🛍️ - /buy [potionName] [potionAmount]\n`;
