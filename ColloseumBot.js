@@ -746,7 +746,7 @@ function startBot() {
     
             const totalNFTs = ownerNFTs.length;
             let queuedNFTs = [];
-            let queuedCount = [];
+            let queuedCount = 0;
             let balance = ownerBalanceBIG;
 
             
@@ -757,13 +757,14 @@ function startBot() {
             
                 if (balance.gt(tokensRequired)) {
                     queuedNFTs.push(ownerNFTs[i - 1]);
+                    queuedCount++;
                     balance = balance.minus(tokensRequired);
                 } else {
                     break;
                 }
             }
     
-            registerBot.sendMessage(msg.chat.id, `Username: @${username}\nTotal NFTs: ${totalNFTs}\nQueued NFTs: ${queuedNFTs}\nToken Balance: ${balance}`);
+            registerBot.sendMessage(msg.chat.id, `Username: @${username}\n\nTotal NFTs: ${totalNFTs}\n Total Queued: ${queuedCount}\nQueued NFTs: ${queuedNFTs}\nToken Balance: ${balance}\n`);
         } catch (error) {
             console.error("Error:", error);
             registerBot.sendMessage(msg.chat.id, "An error occurred while calculating NFT queue.");
