@@ -718,6 +718,7 @@ function startBot() {
         console.log("called calcqueue");
         const username = msg.from.username;
         const safeUsername = username.replace(/_/g, '\\_');
+
         if (!username) {
             console.error("Username is not defined.");
             registerBot.sendMessage(msg.chat.id, `❌ You haven't set up a Telegram Username.`);
@@ -753,7 +754,7 @@ function startBot() {
                 );
     
                 if (balance >= tokensRequired.toNumber()) {
-                    queuedNFTs.push(ownerNFTs[i]);
+                    queuedNFTs.push(ownerNFTs[i-1]);
                 } else {
                     break; 
                 }
