@@ -206,7 +206,7 @@ bot.onText(/\/?leaderboard/i, async (msg) => {
     }
 });
 
-bot.onText(/\/?ca/i, (msg) => {
+bot.onText(/\/ca/i, (msg) => {
     const chatId = msg.chat.id;
     
     // Extract username or first name from the message sender
@@ -224,7 +224,7 @@ bot.onText(/\/?ca/i, (msg) => {
     bot.sendMessage(chatId, replyText, { parse_mode: 'Markdown' });
 });
 
-bot.onText(/\/?time/i, async (msg) => {
+bot.onText(/\/time/i, async (msg) => {
     const userId = msg.from.id;
     const currentTime = Date.now();
 
