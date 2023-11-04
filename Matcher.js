@@ -147,7 +147,7 @@ async function startHungerGames () {
         const ownerBalanceBIG = await TokenContract.balanceOf(ownerAddress);
         const ownerNFTsBIG = await NFTContract.walletOfOwner(ownerAddress);
         const ownerNFTs = ownerNFTsBIG.map(nftId => nftId.toNumber());
-
+        let balance =  parseFloat(ownerBalanceBIG.toString());
         console.log("minBalanceRequired: ", minBalanceRequiredBIG.toString());
         console.log("ownerBalance: ", ownerBalanceBIG.toString());
         console.log("i: ", i);
@@ -162,13 +162,15 @@ async function startHungerGames () {
                 minBalanceRequiredBIG.div(2).mul(j - 1)
             );
             
-            if (ownerBalanceBIG>=(requiredBalance)) {
+            if (balance>=(requiredBalance)) {
               queue.set(ownerNFTs[j], true);
               checked.push(ownerNFTs[j]);
               console.log("pushed: ", ownerNFTs[j]);
             }
           }
         }
+        
+        
       }
       const progressPercentage = ((i / mintAmount) * 100).toFixed(2);
 
