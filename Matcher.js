@@ -282,7 +282,7 @@ async function editMessageViaAxios(chatId, messageId, newText) {
     }
 }
 function hasTimerPassed() {
-    if(balance >= 0.25){
+    if(balance >= 0.25 && newGame){
         return true
     } else if (newGame) {
         return Math.floor(Date.now() / 1000) >= (time + roundDuration * 3); 
