@@ -98,8 +98,11 @@ bot.onText(/\/?nft ([\d\s,]+)/i, async (msg, match) => {
             const battleDetailData = await getAsync(keyName); 
             const ownerAddress = await NFTContract.ownerOf(nftId);
             const owner = await getAsync(ownerAddress);
-            const safeOwner = owner.replace(/_/g, '\\_');
-            
+            let safeOwner;
+
+            if (owner) {
+                safeOwner = owner.replace(/_/g, '\\_');
+            }
 
             let battleDetail = null; 
             console.log("Debug4");
@@ -133,7 +136,9 @@ bot.onText(/\/?nft ([\d\s,]+)/i, async (msg, match) => {
                 message += `⚡ Used BOOST: ${battleDetail.BOOST ? 'Yes' : 'No'}\n`;
                 message += `✨ Used V: ${battleDetail.V ? 'Yes' : 'No'}\n`;
                 message += `⏭️ Used SKIP: ${battleDetail.SKIP ? 'Yes' : 'No'}\n\n`;
-               // message += `Owner: ${}`
+                if(owner){
+                message += `Owner: ${safeOwner}`;
+                }
             }
 
 

@@ -536,23 +536,17 @@ async function storeRoundWinners() {
         console.log("DEBUG3");
         roundWinners.push(owner);
 
-        if (roundWinsOfNFT !== undefined) {
-            const parsedWins = parseInt(roundWinsOfNFT);
-            if (!isNaN(parsedWins)) {
-                await setAsync(`roundWinsOf${aliveByID[i]}`, parsedWins + 1);
-            } else {
-                console.log(`Error: roundWinsOfNFT is not a valid number for ${aliveByID[i]}`);
-            }
+        const parsedWins = parseInt(roundWinsOfNFT);
+        if (!isNaN(parsedWins)) {
+            await setAsync(`roundWinsOf${aliveByID[i]}`, parsedWins + 1);
         } else {
-            await setAsync(`roundWinsOf${aliveByID[i]}`, 1);
+            await setAsync(`roundWinsOf${aliveByID[i]}`, 0);
         }
-
-
-
     }
 
     return roundWinners;
 }
+
 
 async function payoutWinners(nonDeads) {
     if (nonDeads === 0) {
