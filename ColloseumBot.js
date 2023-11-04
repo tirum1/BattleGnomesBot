@@ -762,9 +762,9 @@ function startBot() {
                 }
             }
             if (queuedNFTs.length === 0) {
-                queuedNFTsString = "0";
+                queuedNFTs.push(0);
             } else {
-                queuedNFTsString = queuedNFTs.join(", "); // If you want to display the queued NFTs as a comma-separated string.
+                queuedNFTsString = queuedNFTs.join(", "); 
             }
             
             registerBot.sendMessage(msg.chat.id, `Username: @${username}\n\nTotal NFTs: ${totalNFTs}\nTotal Queued: ${queuedCount}\nQueued NFTs: ${queuedNFTs}\nToken Balance: ${balance}\n`);
