@@ -755,9 +755,8 @@ function startBot() {
                     minBalanceRequiredBIG.div(2).times(i - 1)
                 );
             
-                if (balance.gt(tokensRequired)) {
+                if (balance.isGreaterThanOrEqualTo(tokensRequired)) {
                     queuedNFTs.push(ownerNFTs[i - 1]);
-                    queuedCount++;
                     balance = balance.minus(tokensRequired);
                 } else {
                     break;
