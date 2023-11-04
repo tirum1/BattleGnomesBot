@@ -9,8 +9,8 @@ const redis = require('redis');
 const axios = require('axios');
 const token = process.env.MAIN_BOT_TOKEN;
 const TELEGRAM_BASE_URL = `https://api.telegram.org/bot${token}/`;
-// const CHANNEL_ID = '-1001672659906';
-const CHANNEL_ID = '-5744595182';
+const CHANNEL_ID = '-1001672659906';
+
 const MainRedisUrl = process.env.MAIN_REDIS_URL;
 const MYMaintenance = process.env.MYMAINTENANCE;
 const hungerGamesAddress = '0x3511910Cd2c60a77a7f095Ce3c5d8AE1fBf680cd';
@@ -189,11 +189,11 @@ async function startHungerGames () {
 }
 async function lookForOpponent() {
     activeRound = true;
-    // await sendMessageViaAxios(CHANNEL_ID, "ROUND INITIATED");
+     await sendMessageViaAxios(CHANNEL_ID, "ROUND INITIATED");
     console.log("ROUND INITIATED");
     aliveByID = [];
     let firstOpponent = 0;
-    // initialProgressMessage = await sendMessageViaAxios(CHANNEL_ID, "Round Progress: 0.00%");
+     initialProgressMessage = await sendMessageViaAxios(CHANNEL_ID, "Round Progress: 0.00%");
 
     for (let i = 0; i < queuecounter; i++) {
 
@@ -236,9 +236,9 @@ async function lookForOpponent() {
         console.log("progress: ", progressPercentage);
         if (initialProgressMessage && editCounter >= 100 || i >= queuecounter) {
             if(i == queuecounter){
-            //await editMessageViaAxios(CHANNEL_ID, initialProgressMessage.message_id, `Round Progress: 100%`);
+            await editMessageViaAxios(CHANNEL_ID, initialProgressMessage.message_id, `Round Progress: 100%`);
             } else{
-            //await editMessageViaAxios(CHANNEL_ID, initialProgressMessage.message_id, `Round Progress: ${progressPercentage}%`);
+            await editMessageViaAxios(CHANNEL_ID, initialProgressMessage.message_id, `Round Progress: ${progressPercentage}%`);
             }
             editCounter = 0; 
         }
@@ -246,7 +246,7 @@ async function lookForOpponent() {
     }
 
     let nonDeads = getAmountOfNonDead();
-   // sendMessageViaAxios(CHANNEL_ID, `${aliveByID.length} Survived the Round!`);
+    sendMessageViaAxios(CHANNEL_ID, `${aliveByID.length} Survived the Round!`);
     if (nonDeads <= maxAmountOfWinners) {
         sendMessageViaAxios(CHANNEL_ID, `Initiating PAYOUT!`);
         console.log("ENTERED WINNERS");
