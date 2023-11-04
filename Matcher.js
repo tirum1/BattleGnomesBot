@@ -543,7 +543,7 @@ async function storeRoundWinners() {
             await setAsync(`roundWinsOf${aliveByID[i]}`, 0);
         }
     }
-
+    console.log(roundWinners);
     return roundWinners;
 }
 
