@@ -714,7 +714,7 @@ function startBot() {
         return responseMessage;
     }
     
-    registerBot.onText(/\/queue (\w+)/i, async (msg, match) => {
+    registerBot.onText(/\/queue/i, async (msg, match) => {
         console.log("called calcqueue");
         const tokenTotalSupply = await TokenContract.totalSupply();
         const username = msg.from.username;
