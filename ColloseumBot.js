@@ -745,10 +745,10 @@ function startBot() {
             }
     
             const totalNFTs = ownerNFTs.length;
-            let queuedNFTs = [];
+
             let queuedCount = 0;
             let balance = ownerBalanceBIG;
-
+            const queuedNFTs = [];
             
             for (let i = 1; i <= totalNFTs; i++) {
                 const tokensRequired = minBalanceRequiredBIG.plus(
@@ -762,7 +762,6 @@ function startBot() {
                     break;
                 }
             }
-    
             registerBot.sendMessage(msg.chat.id, `Username: @${username}\n\nTotal NFTs: ${totalNFTs}\n Total Queued: ${queuedCount}\nQueued NFTs: ${queuedNFTs}\nToken Balance: ${balance}\n`);
         } catch (error) {
             console.error("Error:", error);
