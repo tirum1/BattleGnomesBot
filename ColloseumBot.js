@@ -716,29 +716,28 @@ function startBot() {
     
     registerBot.onText(/\/calcqueue/i, async (msg, match) => {
         console.log("called calcqueue");
-        const tokenTotalSupply = await TokenContract.totalSupply();
         const username = msg.from.username;
-        const minBalanceRequiredBIG = tokenTotalSupply.div(2888);
-        const ownerAddress = await NFTContract.ownerOf(i);
-        const ownerBalanceBIG = await TokenContract.balanceOf(ownerAddress);
-        const ownerNFTsBIG = await NFTContract.walletOfOwner(ownerAddress);
-        const ownerNFTs = ownerNFTsBIG.map(nftId => nftId.toNumber());
-    
+
         if (!username) {
             console.error("Username is not defined.");
             registerBot.sendMessage(msg.chat.id, `❌ You haven't set up a Telegram Username.`);
             return;
         }
-    
-        console.log('Fetching NFT status for username:', username);
-    
+
         try {
             const walletAddress = await client.getAsync(username);
             if (!walletAddress) {
                 registerBot.sendMessage(msg.chat.id, `No wallet registered for @${username}`);
                 return;
             }
-    
+
+            const tokenTotalSupply = await TokenContract.totalSupply();
+            const minBalanceRequiredBIG = tokenTotalSupply.div(2888);
+            const ownerAddress = await getAsync(username);
+            const ownerBalanceBIG = await TokenContract.balanceOf(ownerAddress);
+            const ownerNFTsBIG = await NFTContract.walletOfOwner(ownerAddress);
+            const ownerNFTs = ownerNFTsBIG.map(nftId => nftId.toNumber());
+            
             if (ownerNFTs.length === 0) {
                 registerBot.sendMessage(msg.chat.id, "You don't own any NFTs.");
                 return;
