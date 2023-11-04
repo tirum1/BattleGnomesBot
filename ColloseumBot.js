@@ -748,18 +748,20 @@ function startBot() {
             const queuedNFTs = [];
             let queuedCount = 0;
             let balance = ownerBalanceBIG.toString();
-    
+            
             for (let i = 1; i <= totalNFTs; i++) {
                 const tokensRequired = minBalanceRequiredBIG.add(
                     minBalanceRequiredBIG.div(2).mul(i - 1)
                 );
-    
-                if (balance >= tokensRequired.toNumber()) {
-                    queuedNFTs.push(ownerNFTs[i-1]);
+            
+                if (balance >= tokensRequired) {
+                    queuedNFTs.push(ownerNFTs[i - 1]);
+                    queuedCount++;
                 } else {
-                    break; 
+                    break;
                 }
             }
+            
             registerBot.sendMessage(msg.chat.id, `Username: @${username}\n\nTotal NFTs: ${totalNFTs}\n Total Queued: ${queuedCount}\nQueued NFTs: ${queuedNFTs}\nToken Balance: ${balance}\n`);
         } catch (error) {
             console.error("Error:", error);
