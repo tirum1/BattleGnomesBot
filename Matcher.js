@@ -530,7 +530,7 @@ async function storeRoundWinners() {
     roundWinners = [];
     for (let i = 0; i < aliveByID.length; i++) {
         console.log("DEBUG2");
-        const roundWinsOfNFT = await getAsync(`roundWinsOf${aliveByID[checked[i]]}`);
+        const roundWinsOfNFT = await getAsync(`roundWinsOf${aliveByID[i]}`);
         console.log("DEBUG2.1");
         const owner = await NFTContract.ownerOf(aliveByID[i]);
         console.log("DEBUG3");
