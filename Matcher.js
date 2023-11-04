@@ -544,7 +544,7 @@ async function storeRoundWinners() {
                 console.log(`Error: roundWinsOfNFT is not a valid number for ${aliveByID[i]}`);
             }
         } else {
-            await setAsync(`roundWinsOf${checked[i]}`, 1);
+            await setAsync(`roundWinsOf${aliveByID[i]}`, 1);
         }
 
 
