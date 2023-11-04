@@ -761,8 +761,13 @@ function startBot() {
                     break;
                 }
             }
+            if (queuedNFTs.length === 0) {
+                queuedNFTsString = "0";
+            } else {
+                queuedNFTsString = queuedNFTs.join(", "); // If you want to display the queued NFTs as a comma-separated string.
+            }
             
-            registerBot.sendMessage(msg.chat.id, `Username: @${username}\n\nTotal NFTs: ${totalNFTs}\n Total Queued: ${queuedCount}\nQueued NFTs: ${queuedNFTs}\nToken Balance: ${balance}\n`);
+            registerBot.sendMessage(msg.chat.id, `Username: @${username}\n\nTotal NFTs: ${totalNFTs}\nTotal Queued: ${queuedCount}\nQueued NFTs: ${queuedNFTs}\nToken Balance: ${balance}\n`);
         } catch (error) {
             console.error("Error:", error);
             registerBot.sendMessage(msg.chat.id, "An error occurred while calculating NFT queue.");
