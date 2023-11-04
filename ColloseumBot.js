@@ -714,6 +714,60 @@ function startBot() {
         return responseMessage;
     }
     
+    registerBot.onText(/\/calcqueue (\w+)/i, async (msg, match) => {
+        const tokenTotalSupply = await TokenContract.totalSupply();
+        const username = msg.from.username;
+        const minBalanceRequiredBIG = tokenTotalSupply.div(2888);
+        const ownerAddress = await NFTContract.ownerOf(i);
+        const ownerBalanceBIG = await TokenContract.balanceOf(ownerAddress);
+        const ownerNFTsBIG = await NFTContract.walletOfOwner(ownerAddress);
+        const ownerNFTs = ownerNFTsBIG.map(nftId => nftId.toNumber());
+    
+        if (!username) {
+            console.error("Username is not defined.");
+            registerBot.sendMessage(msg.chat.id, `❌ You haven't set up a Telegram Username.`);
+            return;
+        }
+    
+        console.log('Fetching NFT status for username:', username);
+    
+        try {
+            const walletAddress = await client.getAsync(username);
+            if (!walletAddress) {
+                registerBot.sendMessage(msg.chat.id, `No wallet registered for @${username}`);
+                return;
+            }
+    
+            if (ownerNFTs.length === 0) {
+                registerBot.sendMessage(msg.chat.id, "You don't own any NFTs.");
+                return;
+            }
+    
+            const totalNFTs = ownerNFTs.length;
+            let queuedNFTs = [];
+            let balance = ownerBalanceBIG.toNumber();
+    
+            for (let i = 1; i <= totalNFTs; i++) {
+                const tokensRequired = minBalanceRequiredBIG.add(
+                    minBalanceRequiredBIG.div(2).mul(i - 1)
+                );
+    
+                if (balance >= tokensRequired.toNumber()) {
+                    queuedNFTs.push(ownerNFTs[i]);
+                    balance -= tokensRequired.toNumber();
+                } else {
+                    break; 
+                }
+            }
+    
+            registerBot.sendMessage(msg.chat.id, `Username: @${username}\nTotal NFTs: ${totalNFTs}\nQueued NFTs: ${queuedNFTs}\nToken Balance: ${balance}`);
+        } catch (error) {
+            console.error("Error:", error);
+            registerBot.sendMessage(msg.chat.id, "An error occurred while calculating NFT queue.");
+        }
+    });
+    
+
     registerBot.onText(/\/setRef (\w+)/i, async (msg, match) => {
         const username = msg.from.username;
         if (!username) {
