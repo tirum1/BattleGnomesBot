@@ -727,7 +727,7 @@ function startBot() {
         try {
             const walletAddress = await client.getAsync(username);
             if (!walletAddress) {
-                registerBot.sendMessage(msg.chat.id, `No wallet registered for @${safeUsername}`);
+                registerBot.sendMessage(msg.chat.id, `No wallet registered for @${username}`);
                 return;
             }
 
@@ -760,7 +760,7 @@ function startBot() {
                 }
             }
     
-            registerBot.sendMessage(msg.chat.id, `Username: @${safeUsername}\nTotal NFTs: ${totalNFTs}\nQueued NFTs: ${queuedNFTs}\nToken Balance: ${balance}`);
+            registerBot.sendMessage(msg.chat.id, `Username: @${username}\nTotal NFTs: ${totalNFTs}\nQueued NFTs: ${queuedNFTs}\nToken Balance: ${balance}`);
         } catch (error) {
             console.error("Error:", error);
             registerBot.sendMessage(msg.chat.id, "An error occurred while calculating NFT queue.");
