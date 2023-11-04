@@ -159,7 +159,7 @@ async function startHungerGames () {
           console.log("pushed: ", i);
           for (let j = 1; j < ownerNFTs.length; j++) {
             const requiredBalance = minBalanceRequiredBIG.add(
-                minBalanceRequiredBIG.div(2).mul(i - 1)
+                minBalanceRequiredBIG.div(2).mul(j - 1)
             );
             
             if (ownerBalanceBIG>=(requiredBalance)) {
