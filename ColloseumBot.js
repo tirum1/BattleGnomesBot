@@ -7,7 +7,7 @@ const bluebird = require('bluebird');
 const redis = require('redis');
 const axios = require('axios');
 const FormData = require('form-data');
-
+const BigNumber = require('bignumber.js'); 
 const registerBotToken = process.env.REGISTER_BOT_TOKEN;
 const mainBotToken = process.env.MAIN_BOT_TOKEN;
 const redisUrl = process.env.MAIN_REDIS_URL;
@@ -625,14 +625,14 @@ function startBot() {
         }
     });
 
-    registerBot.onText(/\/deposit/i, (msg) => {
+    registerBot.onText(/\/?deposit/i, (msg) => {
         const chatId = msg.chat.id;
 
         const message = 'Please use the website [click here](http://www.gnomescollective.xyz)';
         registerBot.sendMessage(chatId, message, { parse_mode: 'Markdown' });
     });
 
-    registerBot.onText(/\/status/i, async (msg) => {
+    registerBot.onText(/\/?status/i, async (msg) => {
         const username = msg.from.username;
     
         if (!username) {
@@ -714,7 +714,7 @@ function startBot() {
         return responseMessage;
     }
     
-    registerBot.onText(/\/calcqueue/i, async (msg, match) => {
+    registerBot.onText(/\/?calcQ/i, async (msg, match) => {
         console.log("called calcqueue");
         const username = msg.from.username;
         const safeUsername = username.replace(/_/g, '\\_');
@@ -746,17 +746,20 @@ function startBot() {
     
             const totalNFTs = ownerNFTs.length;
             let queuedNFTs = [];
-            let balance = ownerBalanceBIG.toNumber();
-    
+            let queuedCount = [];
+            let balance = ownerBalanceBIG;
+
+            
             for (let i = 1; i <= totalNFTs; i++) {
-                const tokensRequired = minBalanceRequiredBIG.add(
-                    minBalanceRequiredBIG.div(2).mul(i - 1)
+                const tokensRequired = minBalanceRequiredBIG.plus(
+                    minBalanceRequiredBIG.div(2).times(i - 1)
                 );
-    
-                if (balance >= tokensRequired.toNumber()) {
-                    queuedNFTs.push(ownerNFTs[i-1]);
+            
+                if (balance.gt(tokensRequired)) {
+                    queuedNFTs.push(ownerNFTs[i - 1]);
+                    balance = balance.minus(tokensRequired);
                 } else {
-                    break; 
+                    break;
                 }
             }
     
