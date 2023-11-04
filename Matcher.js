@@ -158,8 +158,10 @@ async function startHungerGames () {
           checked.push(i);
           console.log("pushed: ", i);
           for (let j = 1; j < ownerNFTs.length; j++) {
-            const requiredBalance = minBalanceRequiredBIG.div(2).mul(j).add(minBalanceRequiredBIG);
-      
+            const requiredBalance = minBalanceRequiredBIG.add(
+                minBalanceRequiredBIG.div(2).mul(i - 1)
+            );
+            
             if (ownerBalanceBIG>=(requiredBalance)) {
               queue.set(ownerNFTs[j], true);
               checked.push(ownerNFTs[j]);
@@ -190,6 +192,7 @@ async function startHungerGames () {
     // sendMessageViaAxios(CHANNEL_ID, `${queuecounter} Contestants entered the Arena!`);
     console.log(`${queuecounter} ENTERED THE ARENA`);
 }
+
 async function lookForOpponent() {
     activeRound = true;
     // await sendMessageViaAxios(CHANNEL_ID, "ROUND INITIATED");
