@@ -747,7 +747,7 @@ function startBot() {
             const totalNFTs = ownerNFTs.length;
             const queuedNFTs = [];
             let queuedCount = 0;
-            let balance = ownerBalanceBIG.toString();
+            let balance =  parseFloat(ownerBalanceBIG.toString());
             
             for (let i = 1; i <= totalNFTs; i++) {
                 const tokensRequired = minBalanceRequiredBIG.add(
