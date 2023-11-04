@@ -540,7 +540,7 @@ async function storeRoundWinners() {
         if (!isNaN(parsedWins)) {
             await setAsync(`roundWinsOf${aliveByID[i]}`, parsedWins + 1);
         } else {
-            await setAsync(`roundWinsOf${aliveByID[i]}`, 0);
+            await setAsync(`roundWinsOf${aliveByID[i]}`, 1);
         }
     }
     console.log(roundWinners);
