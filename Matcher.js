@@ -235,7 +235,7 @@ async function lookForOpponent() {
         console.log("i: ", i);
         console.log("progress: ", progressPercentage);
         if (initialProgressMessage && editCounter >= 100 || i >= queuecounter) {
-            if(i == queuecounter){
+            if(i >= queuecounter){
             await editMessageViaAxios(CHANNEL_ID, initialProgressMessage.message_id, `Round Progress: 100%`);
             } else{
             await editMessageViaAxios(CHANNEL_ID, initialProgressMessage.message_id, `Round Progress: ${progressPercentage}%`);
