@@ -282,12 +282,12 @@ async function editMessageViaAxios(chatId, messageId, newText) {
     }
 }
 function hasTimerPassed() {
-    if (newGame) {
+    if(balance >= 0.25){
+        return true
+    } else if (newGame) {
         return Math.floor(Date.now() / 1000) >= (time + roundDuration * 3); 
     } else if (HungerGamesBegin) {
         return Math.floor(Date.now() / 1000) >= (time + roundDuration);
-    } else if(balance >= 0.25) {
-        return true;
     } else {
         return false;
     }
