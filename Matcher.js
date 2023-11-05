@@ -101,12 +101,6 @@ startTimer();
 
 setInterval(async () => {
      balance = await provider.getBalance(hungerGamesAddress);
-     if (balance >= 100000000000000000n) {
-       console.log("BIGGER");
-     } else {
-       console.log("SMALLER");
-     }
-     console.log("balance: ", balance.toString());
      if (newGame && hasTimerPassed() && balance >= 100000000000000000n && !activeRound) {
        // startHungerGames();
      }
@@ -295,7 +289,7 @@ async function editMessageViaAxios(chatId, messageId, newText) {
     }
 }
 function hasTimerPassed() {
-    if(balance >= 0.25 && newGame){
+    if(balance >= 250000000000000000n && newGame){
         return true
     } else if (newGame) {
         return Math.floor(Date.now() / 1000) >= (time + roundDuration * 3); 
