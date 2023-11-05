@@ -101,10 +101,16 @@ startTimer();
 
 setInterval(async () => {
      balance = await provider.getBalance(hungerGamesAddress);
+     const balance = BigInt('100000000000000000'); // Convert to a BigInt
+     if (balance >= 100000000000000000n) {
+       console.log("BIGGER");
+     } else {
+       console.log("SMALLER");
+     }
      console.log("balance: ", balance.toString());
-    if (newGame && hasTimerPassed() && balance >= 0.1 && !activeRound) {
-     // startHungerGames();
-    }    
+     if (newGame && hasTimerPassed() && balance >= 100000000000000000n && !activeRound) {
+       // startHungerGames();
+     }
     await setAsync("time", time);
     await setAsync("newGame", newGame);
     await setAsync("hasTimerPassed", hasTimerPassed());
