@@ -205,7 +205,7 @@ bot.onText(/\/?leaderboard/i, async (msg) => {
     }
 });
 
-bot.onText(/^\/ca/, (msg) => {
+bot.onText(/^\/[cC][aA]/, (msg) => {
     const chatId = msg.chat.id;
     
     // Extract username or first name from the message sender
