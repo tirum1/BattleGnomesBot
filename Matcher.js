@@ -135,9 +135,9 @@ async function startHungerGames () {
     let minBalanceRequired = 0;
     let ownerBalance=0;
     const tokenTotalSupply = await TokenContract.totalSupply();
-    // sendMessageViaAxios(CHANNEL_ID, "HUNGERGAMES INITIATED");
+     sendMessageViaAxios(CHANNEL_ID, "HUNGERGAMES INITIATED");
     console.log("HUNGERGAMES INITIATED");
-    // initialProgressMessage = await sendMessageViaAxios(CHANNEL_ID, "Queue Progress: 0.00%");
+     initialProgressMessage = await sendMessageViaAxios(CHANNEL_ID, "Queue Progress: 0.00%");
     mintAmount = await NFTContract.getMintAmount();
 
     for (let i = 1; i <= mintAmount; i++) {
@@ -174,10 +174,10 @@ async function startHungerGames () {
 
       if (initialProgressMessage && editCounter >= 100 || i == mintAmount) {
           if(i == mintAmount){
-        //  await editMessageViaAxios(CHANNEL_ID, initialProgressMessage.message_id, `Queue Progress: 100%`);
+          await editMessageViaAxios(CHANNEL_ID, initialProgressMessage.message_id, `Queue Progress: 100%`);
             
           } else{
-       //    await editMessageViaAxios(CHANNEL_ID, initialProgressMessage.message_id, `Queue Progress: ${progressPercentage}%`);
+          await editMessageViaAxios(CHANNEL_ID, initialProgressMessage.message_id, `Queue Progress: ${progressPercentage}%`);
           console.log("QUEUE PROGRESS: ", progressPercentage )
 
           }
@@ -189,17 +189,17 @@ async function startHungerGames () {
     queuecounter = checked.length;
     newGame = false;
     activeRound = false;
-    // sendMessageViaAxios(CHANNEL_ID, `${queuecounter} Contestants entered the Arena!`);
+    sendMessageViaAxios(CHANNEL_ID, `${queuecounter} Contestants entered the Arena!`);
     console.log(`${queuecounter} ENTERED THE ARENA`);
 }
 
 async function lookForOpponent() {
     activeRound = true;
-    // await sendMessageViaAxios(CHANNEL_ID, "ROUND INITIATED");
+     await sendMessageViaAxios(CHANNEL_ID, "ROUND INITIATED");
     console.log("ROUND INITIATED");
     aliveByID = [];
     let firstOpponent = 0;
-   //  initialProgressMessage = await sendMessageViaAxios(CHANNEL_ID, "Round Progress: 0.00%");
+    initialProgressMessage = await sendMessageViaAxios(CHANNEL_ID, "Round Progress: 0.00%");
 
     for (let i = 0; i < queuecounter; i++) {
 
@@ -242,9 +242,9 @@ async function lookForOpponent() {
         console.log("progress: ", progressPercentage);
         if (initialProgressMessage && editCounter >= 100 || i >= queuecounter) {
             if(i >= queuecounter){
-        //    await editMessageViaAxios(CHANNEL_ID, initialProgressMessage.message_id, `Round Progress: 100%`);
+           await editMessageViaAxios(CHANNEL_ID, initialProgressMessage.message_id, `Round Progress: 100%`);
             } else{
-        //    await editMessageViaAxios(CHANNEL_ID, initialProgressMessage.message_id, `Round Progress: ${progressPercentage}%`);
+            await editMessageViaAxios(CHANNEL_ID, initialProgressMessage.message_id, `Round Progress: ${progressPercentage}%`);
             }
             editCounter = 0; 
         }
@@ -252,14 +252,14 @@ async function lookForOpponent() {
     }
 
     let nonDeads = getAmountOfNonDead();
-   // sendMessageViaAxios(CHANNEL_ID, `${aliveByID.length} Survived the Round!`);
+    sendMessageViaAxios(CHANNEL_ID, `${aliveByID.length} Survived the Round!`);
    console.log(`${aliveByID.length} SURVIVED THE ROUND`);
     if (nonDeads <= maxAmountOfWinners) {
-      //  sendMessageViaAxios(CHANNEL_ID, `Initiating PAYOUT!`);
+        sendMessageViaAxios(CHANNEL_ID, `Initiating PAYOUT!`);
         console.log("ENTERED WINNERS");
         
         await storeRoundWinners();
-      //  await payoutWinners(nonDeads);
+        await payoutWinners(nonDeads);
         reviveAll();
         resetQueue();
         roundsCount = 0;
@@ -587,7 +587,7 @@ async function payoutWinners(nonDeads) {
         const receipt = await tx.wait();
         const etherscanLink = `https://etherscan.io/tx/${receipt.transactionHash}`;
         roundMessage = `⚔️ THE GAME HAS ENDED AND WE HAVE ${aliveByID.length} SURVIVORS ${aliveByID.join(', ')}. \n\n [View on EtherScan](${etherscanLink})`;
-     //   sendMessageViaAxios(CHANNEL_ID, roundMessage);
+        sendMessageViaAxios(CHANNEL_ID, roundMessage);
      console.log(roundMessage);
     } catch (error) {
         console.error('Error:', error);
