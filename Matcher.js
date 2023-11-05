@@ -161,7 +161,7 @@ async function startHungerGames () {
             const requiredBalance = minBalanceRequiredBIG.add(
                 minBalanceRequiredBIG.div(2).mul(j - 1)
             );
-            
+            //
             if (balance>=(requiredBalance)) {
               queue.set(ownerNFTs[j], true);
               checked.push(ownerNFTs[j]);
@@ -169,8 +169,6 @@ async function startHungerGames () {
             }
           }
         }
-        
-        
       }
       const progressPercentage = ((i / mintAmount) * 100).toFixed(2);
 
