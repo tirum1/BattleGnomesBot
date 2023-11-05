@@ -686,7 +686,7 @@ function startBot() {
     
             if (retrievedDead) {
                 const parsedDead = JSON.parse(retrievedDead);
-    
+
                 if (Array.isArray(parsedDead)) {
                     isDead = parsedDead.some(entry => Array.isArray(entry) && entry.length === 2 && entry[0] === NFTId && entry[1] === true);
                 }

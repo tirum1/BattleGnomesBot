@@ -170,7 +170,7 @@ bot.onText(/\/?leaderboard/i, async (msg) => {
             const roundWins = parseInt(roundWinsStr, 10); 
             return { nftID, roundWins };
         }));
-               
+               //
 
         liveNFTsData.sort((a, b) => b.roundWins - a.roundWins);
 
@@ -206,7 +206,7 @@ bot.onText(/\/?leaderboard/i, async (msg) => {
     }
 });
 
-bot.onText(/\/ca/i, (msg) => {
+bot.onText(/\/?ca/i, (msg) => {
     const chatId = msg.chat.id;
     
     // Extract username or first name from the message sender
