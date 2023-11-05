@@ -712,9 +712,9 @@ function startBot() {
             ]);
 
             if (isDead) {
-                responseMessage += `NFT ID: ${nftId} - Dead}\n`;
+                responseMessage += `NFT ID: ${nftId} - Dead\n`;
             } else {
-                responseMessage += `NFT ID: ${nftId} - Alive}\n`;
+                responseMessage += `NFT ID: ${nftId} - Alive\n`;
             }
             
             if (queued) {
