@@ -101,7 +101,6 @@ startTimer();
 
 setInterval(async () => {
      balance = await provider.getBalance(hungerGamesAddress);
-     const balance = BigInt('100000000000000000'); // Convert to a BigInt
      if (balance >= 100000000000000000n) {
        console.log("BIGGER");
      } else {
