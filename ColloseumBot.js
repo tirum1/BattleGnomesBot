@@ -718,9 +718,9 @@ function startBot() {
             }
             
             if (queued) {
-                responseMessage += `NFT ID ${queuedNFTId} is queued ✅\n`;
+                responseMessage += `\n✅ QUEUED\n\n`;
             } else {
-                responseMessage += `NFT ID ${queuedNFTId} is not queued ❌\n`;
+                responseMessage += `\n❌ NOT QUEUED\n\n`;
             }
     
             if (boostBalance) responseMessage += `BOOST ✅\n`;
