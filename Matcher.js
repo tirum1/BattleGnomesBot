@@ -101,7 +101,7 @@ startTimer();
 
 setInterval(async () => {
      balance = await provider.getBalance(hungerGamesAddress);
-     console.log("balance: ", balance);
+     console.log("balance: ", balance.toNumber());
     if (newGame && hasTimerPassed() && balance >= 0.1 && !activeRound) {
      // startHungerGames();
     }    
