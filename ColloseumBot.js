@@ -680,31 +680,48 @@ function startBot() {
     async function fetchBatchDetails(batchNFTs) {
         let responseMessage = `🖼️ *Your NFTs and Their Status & Active Potions:* 🖼️\n\n`;
     
-        for (const NFTId of batchNFTs) {
-            const retrievedDead = await getAsync("dead");
-            let isDead = false;
-    
+
+        for (let nftId of batchNFTs) {
+
+            const retrievedDead = await getAsync("dead"); 
+            const retrievedQueue = await getAsync("queue");
+
+            let isDead = false; 
+            let queued = false;
+
             if (retrievedDead) {
                 const parsedDead = JSON.parse(retrievedDead);
 
                 if (Array.isArray(parsedDead)) {
-                    isDead = parsedDead.some(entry => Array.isArray(entry) && entry.length === 2 && entry[0] === NFTId && entry[1] === true);
+                    isDead = parsedDead.some(entry => Array.isArray(entry) && entry.length === 2 && entry[0] === nftId && entry[1] === true);
+                }
+            }
+            if (retrievedQueue) {
+                const parsedQueue = JSON.parse(retrievedQueue);
+
+                if (Array.isArray(parsedQueue)) {
+                    queued = parsedQueue.some(entry => Array.isArray(entry) && entry.length === 2 && entry[0] === nftId && entry[1] === true);
                 }
             }
     
-            const [boostBalance, vBalance, xtraBalance, skipBalance, queueData] = await Promise.all([
-                getAsync(`${NFTId}BOOSTBalance`).then(value => value === "true"),
-                getAsync(`${NFTId}VBalance`).then(value => value === "true"),
-                getAsync(`${NFTId}XTRABalance`).then(value => value === "true"),
-                getAsync(`${NFTId}SKIPBalance`).then(value => value === "true"),
-                getAsync("queue").then(value => (value ? JSON.parse(value) : [])),
+            const [boostBalance, vBalance, xtraBalance, skipBalance] = await Promise.all([
+                getAsync(`${nftId}BOOSTBalance`).then(value => value === "true"),
+                getAsync(`${nftId}VBalance`).then(value => value === "true"),
+                getAsync(`${nftId}XTRABalance`).then(value => value === "true"),
+                getAsync(`${nftId}SKIPBalance`).then(value => value === "true"),
             ]);
-    
-            responseMessage += `NFT ID: ${NFTId} - ${isDead ? "Dead" : "Alive"}\n`;
-    
-            queueData.forEach(([queuedNFTId, bool]) => {
-                if (bool && queuedNFTId === NFTId) responseMessage += `NFT ID ${queuedNFTId} is queued ✅\n`;
-            });
+
+            if (isDead) {
+                responseMessage += `NFT ID: ${nftId} - Dead}\n`;
+            } else {
+                responseMessage += `NFT ID: ${nftId} - Alive}\n`;
+            }
+            
+            if (queued) {
+                responseMessage += `NFT ID ${queuedNFTId} is queued ✅\n`;
+            } else {
+                responseMessage += `NFT ID ${queuedNFTId} is not queued ❌\n`;
+            }
     
             if (boostBalance) responseMessage += `BOOST ✅\n`;
             if (vBalance) responseMessage += `V ✅\n`;
@@ -769,7 +786,7 @@ function startBot() {
                 queuedNFTsString = queuedNFTs.join(", "); 
             }
             
-            registerBot.sendMessage(msg.chat.id, `Username: @${username}\n\nTotal NFTs: ${totalNFTs}\nTotal Queued: ${queuedCount}\nQueued NFTs: ${queuedNFTs}\nToken Balance: ${balance}\n`);
+            registerBot.sendMessage(msg.chat.id, `Username: @${username}\n\nTotal NFTs: ${totalNFTs}\nWill be Queued: ${queuedCount}\nWill be Queued NFTs: ${queuedNFTs}\nToken Balance: ${balance}\n`);
         } catch (error) {
             console.error("Error:", error);
             registerBot.sendMessage(msg.chat.id, "An error occurred while calculating NFT queue.");

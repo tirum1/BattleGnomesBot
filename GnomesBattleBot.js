@@ -119,9 +119,9 @@ bot.onText(/\/?nft ([\d\s,]+)/i, async (msg, match) => {
                 message += `🌿 The NFT with ID ${nftId} is alive and well!\n`;
             }
             if (queued) {
-                message += `✅ QUEUED\n`;
+                message += `\n✅ QUEUED\n\n`;
             } else {
-                message += `❌ NOT QUEUED\n`;
+                message += `\n❌ NOT QUEUED\n\n`;
             }
 
             if (!battleDetailData) {
