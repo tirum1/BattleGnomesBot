@@ -74,6 +74,7 @@ let editCounter = 0;
 const checked = [];
 let balance = 0;
 
+
 const BattleResult = {
     Won: "Won",
     Lost: "Lost",
@@ -135,9 +136,12 @@ async function startHungerGames () {
     let minBalanceRequired = 0;
     let ownerBalance=0;
     const tokenTotalSupply = await TokenContract.totalSupply();
-     sendMessageViaAxios(CHANNEL_ID, "HUNGERGAMES INITIATED");
+    if (balance >= 250000000000000000n) {
+        sendMessageViaAxios(CHANNEL_ID, "MAX CAP WAS REACHED: STARTING GAMES");
+    }
+    sendMessageViaAxios(CHANNEL_ID, "HUNGERGAMES INITIATED");
     console.log("HUNGERGAMES INITIATED");
-     initialProgressMessage = await sendMessageViaAxios(CHANNEL_ID, "Queue Progress: 0.00%");
+    initialProgressMessage = await sendMessageViaAxios(CHANNEL_ID, "Queue Progress: 0.00%");
     mintAmount = await NFTContract.getMintAmount();
 
     for (let i = 1; i <= mintAmount; i++) {
@@ -192,7 +196,6 @@ async function startHungerGames () {
     sendMessageViaAxios(CHANNEL_ID, `${queuecounter} Contestants entered the Arena!`);
     console.log(`${queuecounter} ENTERED THE ARENA`);
 }
-
 async function lookForOpponent() {
     activeRound = true;
      await sendMessageViaAxios(CHANNEL_ID, "ROUND INITIATED");
@@ -273,7 +276,6 @@ async function lookForOpponent() {
     activeRound = false;
     console.log("Look For Opponend PASS");
 }
-
 async function editMessageViaAxios(chatId, messageId, newText) {
     try {
         console.log("editing following messageID: ",messageId );
